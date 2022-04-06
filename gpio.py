@@ -25,6 +25,11 @@ else:
     import Adafruit_DHT
     import RPi.GPIO as GPIO
     import Adafruit_PCA9685
+    # 导入操控PCA9685芯片的库
+    try:
+        from adafruit_servokit import ServoKit
+    except ImportError:
+        os.system('sudo pip3 install adafruit-circuitpython-servokit')
 
     # 设置编码格式为BCM，关闭警告
     GPIO.setmode(GPIO.BCM)
@@ -333,7 +338,7 @@ class CSB(object):
         pulse_len = finish - start
         distance_cm = pulse_len / 0.000058
         distance_cm = round(distance_cm, 2)  # 保留两位小数  使用round内置函数
-        self.dis = str(distance_cm) + 'cm'
+        self.dis = int(distance_cm)
 
 
 # 普通io口的蜂鸣器,有源蜂鸣器
@@ -492,26 +497,23 @@ class HongWai(object):
             time.sleep(0.01)
 
 
-class Servo():
+class Servo():  # 采用PCA9685芯片提供稳定的PWM波，弃用树莓派的模拟PWM波
     def __init__(self, pin):
-        self.servo_io = IO2GPIO[pin]
-        GPIO.cleanup(self.servo_io)  # 清空IO口
-        GPIO.setup(self.servo_io, GPIO.OUT)
-        self.fa = 'False'
-        self.p = GPIO.PWM(self.servo_io, 50)
+        self.MIN_IMP = 500
+        self.MAX_IMP = 2500
+        self.servo_io = PWM2GPIO[pin]
+        GPIO.cleanup(self.servo_io)  # 清空PWM口
+        self.pca = ServoKit(channels=16)
+        self.fa = 'False'  # 设置一个flag
         self.angle = None
-        self.dic = {'True':'已经打开到', 'False':'当前角度为'}
+        self.dic = {'True': '已经打开到', 'False': '当前角度为'}
 
     def init_servo(self):
-        angle = 0
-        duty = 2 + (180 - angle) /18
-        self.p.start(0)
+        self.pca.servo[self.servo_io].set_pulse_width_range(self.MIN_IMP, self.MAX_IMP)  # 设置PWM口电平宽度
+        self.pca.servo[self.servo_io].angle = 0
         time.sleep(0.01)
-        self.p.ChangeDutyCycle(duty)
-        time.sleep(0.01)
-        self.p.ChangeDutyCycle(0)
-        time.sleep(0.1)
-        self.angle = angle
+        self.angle = 0
+        print("已完成舵机初始化")
 
     def turn(self, flage, angle1, delta):
         if 180 < angle1 or angle1 < 0:
@@ -520,15 +522,9 @@ class Servo():
         curr_angle = self.angle
         diff_angle = abs(curr_angle - angle1)
         while diff_angle >= delta:
-            #print("diffferent", diff_angle)
-            #print(curr_angle)
-            duty = 2 + (180 - curr_angle) / 18
-            self.p.start(0)
-            time.sleep(0.01)
-            self.p.ChangeDutyCycle(duty)
-            time.sleep(0.01)
-            self.p.ChangeDutyCycle(0)
-            time.sleep(0.01)
+            # print("diffferent", diff_angle)
+            # print(curr_angle)
+
             if flage == "open":
                 if curr_angle > angle1:
                     print("输入角度小于之前角度！")
@@ -545,6 +541,8 @@ class Servo():
                 else:
                     self.fa = 'True'
                     curr_angle -= delta
+            self.pca.servo[self.servo_io].angle = curr_angle
+            time.sleep(0.05)
             diff_angle = abs(curr_angle - angle1)
         self.angle = curr_angle
         if flage == "open":

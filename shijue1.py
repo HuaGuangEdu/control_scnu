@@ -5,27 +5,34 @@ import numpy as np
 from collections import deque
 import math
 from .shijue0 import basicImg
-import mediapipe as mp
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 system_platform = sys.platform
 main_path = '/home/pi/class/'  # 读取和保存文件所用主文件夹
+
 if 'win' in system_platform:
+    import mediapipe as mp
     file_path = os.getcwd()
     # 获取当前文件的位置
     main_path = file_path + '/resources/assets/class/'
+else:
+    try:
+        import mediapipe as mp
+    except ImportError:
+        os.system('sudo pip3 install mediapipe-rpi4')
+
 picture_path = main_path + 'picture/'  # 图片文件夹
 model_path = main_path + 'model/'  # 识别模型文件夹
 d_path = main_path + 'camera_pos/'
 dat_path = main_path + 'data/face_recognize/'
 
 items_num = {0: '0', 1: '1', 2: '2', 3: '3',
-             4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9:'9'}  # 方向数字指示牌
+             4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9'}  # 方向数字指示牌
 items_dir = {9: '左转', 10: '右转'}
-
 
 
 class Assist_converse:
@@ -71,7 +78,6 @@ class Img(basicImg):
         self.path = ''
         self.cascade = None
 
-
         '''
         戴帽子、口罩属性
         '''
@@ -88,7 +94,7 @@ class Img(basicImg):
         self.cx = 0
         self.cy = 0
         self.radium = 0
-        self.circle_center = [0,0]
+        self.circle_center = [0, 0]
         self.area = 0
         self.length = 0
         self.shape_type = 'None'
@@ -98,10 +104,9 @@ class Img(basicImg):
                mediapipe属性
          '''
         self.fingertip = {}
-        self.body_menu={}
+        self.body_menu = {}
         # self.mp_drawing = mp.solutions.drawing_utils
         # self.mp_drawing_styles = mp.solutions.drawing_styles
-
 
     '''
             以下 change_ID、get_data、get_info、train、predict_init、predict函数都是用来进行人脸识别的
@@ -254,7 +259,6 @@ class Img(basicImg):
             I.face_detect()
             I.show_image('output')
             I.delay(1)
-
         示例2 戴帽子（戴口罩同理）：
         I = Img()
         I.camera(0)
@@ -265,22 +269,21 @@ class Img(basicImg):
             I.face_cap()
             I.show_image('output')
             I.delay(1)
-
     '''
 
     def face_detect_init(self, model_name):
-        self.mpFaceDetection = mp.solutions.face_detection #人脸识别
+        self.mpFaceDetection = mp.solutions.face_detection  # 人脸识别
         self.mpDraw = mp.solutions.drawing_utils
         self.faceDetection = self.mpFaceDetection.FaceDetection(0.5)
         self.face_data = '没有人'
 
-    def face_detect(self, cool = False, draw = True):
+    def face_detect(self, cool=False, draw=True):
         img_new = self.img.copy()
         imgRGB = cv2.cvtColor(img_new, cv2.COLOR_BGR2RGB)
         self.results = self.faceDetection.process(imgRGB)
         bboxs = []
-        if self.results.detections==None:
-            self.face_data='没有人'
+        if self.results.detections == None:
+            self.face_data = '没有人'
             return img_new, bboxs
         if self.results.detections:
             self.face_data = f'检测到{len(self.results.detections)}个人'
@@ -385,7 +388,7 @@ class Img(basicImg):
         # mean = mean[:, np.newaxis, np.newaxis]
         # std = std[:, np.newaxis, np.newaxis]
         self.color_detect_init('red')
-        self.setcolorvalue('red',[173, 43, 46],[180, 255, 255])
+        self.setcolorvalue('red', [173, 43, 46], [180, 255, 255])
 
         self.color_detect()
 
@@ -418,7 +421,6 @@ class Img(basicImg):
 
     '''
            以下 color_detect_init、set_hsv、getpos、setcolorvalue、color_detect是用来进行颜色检测的
-
         '''
 
     def color_detect_init(self, color):
@@ -495,7 +497,7 @@ class Img(basicImg):
             if self.HSV[y, x][2] > self.Vmax:
                 self.Vmax = self.HSV[y, x][2]
 
-    def setcolorvalue(self, color, color_list_low:list, color_list_up:list):
+    def setcolorvalue(self, color, color_list_low: list, color_list_up: list):
         self.color_list_lower = color_list_low
         self.color_list_upper = color_list_up
         self.colorLower = np.array(self.color_list_lower)  # 这是红色的数值
@@ -538,7 +540,10 @@ class Img(basicImg):
                     # self.img_new=frame_bgr
                     self.img_new = frame
                 else:
-                    self.img_new = frame[y + 5:y + h - 5, x + 5 :x + w - 5]
+                    self.img_new = frame[y + 5:y + h - 5, x + 5:x + w - 5]
+
+                self.img_new = cv2.resize(self.img_new, dsize=None, fx=2, fy=2,
+                                          interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
                 cv2.imshow('result', self.img_new)
                 cv2.waitKey(3)
 
@@ -573,14 +578,16 @@ class Img(basicImg):
             self.color_data = 'other_color'
             self.midle = [0, 0]  # 中心点坐标
             self.distance = 0  # 离中心点的距离
+
     '''
-    
+
     以下是物体形状检测与识别
-    
+
     '''
+
     def color_mask_init(self, mask_color):
         if mask_color == 'red':
-            self.mask_color_list_lower = [131,56,73]  # 这是红色的数值
+            self.mask_color_list_lower = [131, 56, 73]  # 这是红色的数值
             self.mask_color_list_upper = [180, 255, 255]
         elif mask_color == 'green':
             self.mask_color_list_lower = [18, 45, 97]
@@ -589,7 +596,7 @@ class Img(basicImg):
             self.mask_color_list_lower = [26, 43, 46]
             self.mask_color_list_upper = [34, 255, 255]
         elif mask_color == 'blue':
-            self.mask_color_list_lower = [92,56,139]
+            self.mask_color_list_lower = [92, 56, 139]
             self.mask_color_list_upper = [102, 255, 255]
         elif mask_color == 'orange':
             self.mask_color_list_lower = [11, 43, 46]
@@ -627,10 +634,12 @@ class Img(basicImg):
         mask = cv2.erode(mask, None, iterations=2)
         # 膨胀操作，其实先腐蚀再膨胀的效果是开运算，去除噪点
         self.mask_img = cv2.dilate(mask, None, iterations=2)
-        cv2.imshow('mask',self.mask_img)
+        self.mask_img = cv2.resize(self.mask_img, dsize=None, fx=2, fy=2,
+                                   interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+        cv2.imshow('mask', self.mask_img)
         cv2.waitKey(3)
 
-    def circle_detect(self,img):
+    def circle_detect(self, img):
         gaussian = cv2.GaussianBlur(img, (3, 3), 0)
         circles1 = cv2.HoughCircles(gaussian, cv2.HOUGH_GRADIENT, 1, 110, param1=200, param2=35, minRadius=0,
                                     maxRadius=0)
@@ -646,7 +655,7 @@ class Img(basicImg):
             cv2.circle(self.img, self.circle_center, self.radium, (48, 48, 255), 2)
         else:
             self.shape_type = 'None'
-            self.circle_center = [0,0]
+            self.circle_center = [0, 0]
             self.radium = 0
 
     def polygon_detect(self):
@@ -679,16 +688,16 @@ class Img(basicImg):
                 self.area = cv2.contourArea(c)
             else:
                 self.radium = 0
-                self.circle_center = [0,0]
+                self.circle_center = [0, 0]
 
-    def shape_detect(self,shape):
+    def shape_detect(self, shape):
         self.color_mask()
         if shape == 'circle':
             mask = self.mask_img
             # gaussian = cv2.GaussianBlur(mask, (3, 3), 0)
             edge = cv2.Canny(mask, 30, 100, apertureSize=3)
             self.circle_detect(edge)
-        if shape in ['triangle','rectangle','polygon']:
+        if shape in ['triangle', 'rectangle', 'polygon']:
             self.polygon_detect()
             if self.polygon_corners == 3 and shape == 'triangle':
                 self.shape_type = "triangle"
@@ -705,24 +714,24 @@ class Img(basicImg):
         self.shape_position()
 
     def shape_analysis(self):
-            self.polygon_detect()
-            if self.polygon_corners == 3:
-                self.shape_type = "triangle"
-            elif 4 <= self.polygon_corners <= 9:
-                self.shape_type = "rectangle"
-            elif self.polygon_corners >= 10:
-                self.shape_type = "polygon"
-            else:
-                self.shape_type = 'None'
+        self.polygon_detect()
+        if self.polygon_corners == 3:
+            self.shape_type = "triangle"
+        elif 4 <= self.polygon_corners <= 9:
+            self.shape_type = "rectangle"
+        elif self.polygon_corners >= 10:
+            self.shape_type = "polygon"
+        else:
+            self.shape_type = 'None'
 
     def shape_position(self):
         center = self.circle_center
         b, a, channels = self.img.shape
-        if 0 < center[0] <= a/3:
+        if 0 < center[0] <= a / 3:
             self.shape_direction_p = 'left'
-        elif a/3 < center[0] < 2*a/3:
+        elif a / 3 < center[0] < 2 * a / 3:
             self.shape_direction_p = 'middle'
-        elif 2*a/3 < center[0] < a:
+        elif 2 * a / 3 < center[0] < a:
             self.shape_direction_p = 'right'
 
         if 0 < center[1] <= b / 3:
@@ -735,6 +744,7 @@ class Img(basicImg):
     """
     以下为mediapipe的人体姿态交互功能的函数，为保证最大自由度，函数可返回读取的人体关键点数值，其中有些部分的函数的返回值用户可以自行选择。
     """
+
     def finger_init(self):
         self.mpHands = mp.solutions.hands
         self.hands = self.mpHands.Hands()
@@ -747,30 +757,39 @@ class Img(basicImg):
         results = self.hands.process(imgRGB)
         if results.multi_hand_landmarks:
             for id, handlms in enumerate(results.multi_hand_landmarks):
-                self.fingertip["big_finger"+(str(id) if id!=0 else '')]=(int(handlms.landmark[4].x*w),int(handlms.landmark[4].y*h))
-                self.fingertip["fore_finger"+(str(id) if id!=0 else '')] = (int(handlms.landmark[8].x * w), int(handlms.landmark[8].y * h))
-                self.fingertip["middle_finger"+(str(id) if id!=0 else '')] = (int(handlms.landmark[12].x * w), int(handlms.landmark[12].y * h))
-                self.fingertip["ring_finger"+(str(id) if id!=0 else '')] = (int(handlms.landmark[16].x * w), int(handlms.landmark[16].y * h))
-                self.fingertip["little_finger"+(str(id) if id!=0 else '')] = (int(handlms.landmark[20].x * w), int(handlms.landmark[20].y * h))
+                self.fingertip["big_finger" + (str(id) if id != 0 else '')] = (
+                int(handlms.landmark[4].x * w), int(handlms.landmark[4].y * h))
+                self.fingertip["fore_finger" + (str(id) if id != 0 else '')] = (
+                int(handlms.landmark[8].x * w), int(handlms.landmark[8].y * h))
+                self.fingertip["middle_finger" + (str(id) if id != 0 else '')] = (
+                int(handlms.landmark[12].x * w), int(handlms.landmark[12].y * h))
+                self.fingertip["ring_finger" + (str(id) if id != 0 else '')] = (
+                int(handlms.landmark[16].x * w), int(handlms.landmark[16].y * h))
+                self.fingertip["little_finger" + (str(id) if id != 0 else '')] = (
+                int(handlms.landmark[20].x * w), int(handlms.landmark[20].y * h))
             self.mpDraw.draw_landmarks(img_new, handlms, self.mpHands.HAND_CONNECTIONS)
         else:
-            self.fingertip={}
+            self.fingertip = {}
+        img_new = cv2.resize(img_new, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
         cv2.imshow('finger_detect', img_new)
 
     '''
     手指检测
     '''
+
     def finger_distance(self, tip1='big_finger', tip2='fore_finger'):  # 返回用户选定的两个手骨关键点的距离
         if not bool(self.fingertip):
             return '没有检测到手指'
-        if tip2==tip1:
+        if tip2 == tip1:
             return 0
         else:
-            return math.pow(math.pow(self.fingertip[tip1][0]-self.fingertip[tip2][0],2)+math.pow(self.fingertip[tip1][1]-self.fingertip[tip2][1], 2), 0.5)
+            return math.pow(math.pow(self.fingertip[tip1][0] - self.fingertip[tip2][0], 2) + math.pow(
+                self.fingertip[tip1][1] - self.fingertip[tip2][1], 2), 0.5)
 
     '''
     身体部位检测
     '''
+
     def body_init(self):
         self.mp_pose = mp.solutions.pose
         self.pose = self.mp_pose.Pose()
@@ -784,36 +803,42 @@ class Img(basicImg):
         results = self.pose.process(imgRGB)
         if results.pose_landmarks:
             poselms = results.pose_landmarks.landmark
-            for tur in (('left_wrist',15), ('right_wrist', 16),( 'left_elbow', 13),( 'right_elbow', 14), ('left_ankle', 27), ('right_ankle', 28), ('left_shoulder', 11), ('right_shoulder', 12)):
+            for tur in (
+            ('left_wrist', 15), ('right_wrist', 16), ('left_elbow', 13), ('right_elbow', 14), ('left_ankle', 27),
+            ('right_ankle', 28), ('left_shoulder', 11), ('right_shoulder', 12)):
                 self.body_menu[tur[0]] = (int(poselms[tur[1]].x * w), int(poselms[tur[1]].y * h))
             self.mpDraw.draw_landmarks(img_new, results.pose_landmarks, self.mp_pose.POSE_CONNECTIONS)
+        img_new = cv2.resize(img_new, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
         cv2.imshow('body_detect', img_new)
 
-    def wrist_mark(self, wrist='left_wrist', mark = 'x'):
+    def wrist_mark(self, wrist='left_wrist', mark='x'):
         if not bool(self.body_menu):
             return '没有检测到人'
-        return self.body_menu[wrist][0 if mark=='x' else 1]
+        return self.body_menu[wrist][0 if mark == 'x' else 1]
 
     def wrist_distance(self, wrist1='left_wrist', wrist2='right_wrist'):
         if not bool(self.body_menu):
             return '没有检测到人'
-        if wrist1==wrist2:
+        if wrist1 == wrist2:
             return 0
-        return math.pow(math.pow(self.body_menu[wrist1][0]-self.body_menu[wrist2][0],2)+math.pow(self.body_menu[wrist1][1]-self.body_menu[wrist2][1], 2), 0.5)
+        return math.pow(math.pow(self.body_menu[wrist1][0] - self.body_menu[wrist2][0], 2) + math.pow(
+            self.body_menu[wrist1][1] - self.body_menu[wrist2][1], 2), 0.5)
 
     '''
     背景切换
     '''
+
     def backCroundChange_init(self):
         self.segmentor = SelfiSegmentation()
 
     def backGroundChange(self, backGroundImageSrc="1.png"):
-        backGroundImageSrc = picture_path+backGroundImageSrc
+        backGroundImageSrc = picture_path + backGroundImageSrc
         img_new = self.img.copy()
         h, w, _ = img_new.shape
         backGroundImage = cv2.resize(cv2.imread(backGroundImageSrc), (w, h), cv2.INTER_AREA)
 
         img_new = self.segmentor.removeBG(img_new, backGroundImage, threshold=0.5)
+        img_new = cv2.resize(img_new, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
         cv2.imshow('backGroundChange', img_new)
 
     def faceMeshDetect_init(self):
@@ -828,7 +853,9 @@ class Img(basicImg):
         results = self.FaceMesh.process(imgRGB)
         if results.multi_face_landmarks:
             for faceLms in results.multi_face_landmarks:
-                self.mpDraw.draw_landmarks(img_new, faceLms, self.mpFaceMesh.FACEMESH_FACE_OVAL, landmark_drawing_spec=self.drawSpec)
+                self.mpDraw.draw_landmarks(img_new, faceLms, self.mpFaceMesh.FACEMESH_FACE_OVAL,
+                                           landmark_drawing_spec=self.drawSpec)
+        img_new = cv2.resize(img_new, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
         cv2.imshow('faceMesh', img_new)
 
     def get_shape(self, parameter='width'):
@@ -839,12 +866,14 @@ class Img(basicImg):
         self.parameter = str(parameter)
         shape = {'height': h, 'width': w, 'channel': c}
         return shape[self.parameter]
+
     '''
     模版匹配
     '''
+
     def match_template_init(self):
         self.template = None
-        self.min_val, self.max_val, self.min_loc, self.max_loc = None,None,None,None
+        self.min_val, self.max_val, self.min_loc, self.max_loc = None, None, None, None
         self.isshow = False
         templist = []
         for i in range(0, 9):
@@ -852,11 +881,11 @@ class Img(basicImg):
             im3 = cv2.resize(im3, dsize=(99, 116))
             templist.append(im3)
 
-    def match_template(self,template_name):
+    def match_template(self, template_name):
         self.isshow = False
         self.template = cv2.imread(picture_path + template_name)
         # print(self.template.shape)
-        self.template = cv2.resize(self.template, (99,116))
+        self.template = cv2.resize(self.template, (99, 116))
         result = cv2.matchTemplate(self.img, self.template, cv2.TM_CCOEFF_NORMED)
         self.min_val, self.max_val, self.min_loc, self.max_loc = cv2.minMaxLoc(result)
 
@@ -867,14 +896,17 @@ class Img(basicImg):
         self.max_loc_topleft = list(self.max_loc)
         self.max_loc_bottomright = [top_left[0] + w, top_left[1] + h]
         bottom_right = [top_left[0] + w, top_left[1] + h]
-        self.cut_img = self.img[top_left[1]:top_left[1] + h, top_left[0] : top_left[0]+ w]
+        self.cut_img = self.img[top_left[1]:top_left[1] + h, top_left[0]: top_left[0] + w]
+        self.cut_img = cv2.resize(self.cut_img, dsize=None, fx=2, fy=2,
+                                  interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
         if self.isshow:
-            cv2.imshow('cut',self.cut_img)
+            cv2.imshow('cut', self.cut_img)
             cv2.rectangle(self.img, top_left, bottom_right, 255, 2)
-
-    def predict_number_match(self,input):
+    '''
+    def predict_number_match(self, input,templist):
         for t in templist:
             res = cv2.matchTemplate(input, t, cv2.TM_CCOEFF_NORMED)
             min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
             score.append(max_val)
         self.predict = np.argmax(score)
+    '''

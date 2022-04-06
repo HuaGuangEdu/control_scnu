@@ -7,7 +7,6 @@ import numpy as np
 import pyzbar.pyzbar as pyzbar
 from collections import deque
 
-
 system_platform = sys.platform
 main_path = '/home/pi/class/'  # 读取和保存文件所用主文件夹
 if 'win' in system_platform:
@@ -63,8 +62,8 @@ class basicImg():
         '''
         这里的图像设置了是使用500*500像素，可以自己改，或者保留原来的树莓派版本的。
         '''
-        self.midle = [0,0]   #颜色检测框出的中心点
-        self.distance = 0    #与中心点的距离
+        self.midle = [0, 0]  # 颜色检测框出的中心点
+        self.distance = 0  # 与中心点的距离
 
     '''
         这是视觉专用的库
@@ -74,7 +73,10 @@ class basicImg():
 
     # 获取摄像头
     def camera(self, num=0):
-        self.cam = cv2.VideoCapture(num,cv2.CAP_DSHOW)
+        self.cam = cv2.VideoCapture(num, cv2.CAP_DSHOW)
+        # 下面两行设置了摄像头分辨率为320✖240，这样处理不会那么卡
+        self.cam.set(3, 320)
+        self.cam.set(4, 240)
 
     def close_camera(self):
         self.cam.release()
@@ -102,7 +104,7 @@ class basicImg():
 
     # name_windows 是用来命名图片展示窗口的
     def name_windows(self, name):
-        cv2.namedWindow(name, cv2.WINDOW_AUTOSIZE)
+        cv2.namedWindow(name, cv2.WINDOW_NORMAL)  # cv2.WINDOW_AUTOSIZE 窗口不可拉伸    cv2.WINDOW_NORMAL 窗口可以随意拉伸
 
     # close_windows 是用来关闭所有窗口的
     def close_windows(self):
@@ -111,8 +113,8 @@ class basicImg():
     # show_image是用来将图片展示在定义的某个窗口中的
     def show_image(self, windows_name, img=[]):
         if len(img) == 0:
-            img = self.img
-        # cv2.resizeWindow(windows_name, 640, 480)
+            img = cv2.resize(self.img, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+        #        cv2.resizeWindow(windows_name, 640, 480)
         cv2.imshow(windows_name, img)
 
     # write_image 是用来保存图片的函数，注意：pic_name中不能存在中文，包括路径和文件命名
@@ -152,20 +154,19 @@ class basicImg():
         _, self.img = cv2.threshold(self.img, 0, 255, cv2.THRESH_OTSU)
 
     def canny(self):
-        canny_img = cv2.Canny(self.img,30,100)
+        canny_img = cv2.Canny(self.img, 30, 100)
         cv2.imshow('canny', canny_img)
 
     def find_Contour(self):
-        if self.img.ndim==2:
+        if self.img.ndim == 2:
             raise ValueError('imgTypeError: 输入的图片必须是彩色图像')
-        gray =cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
         _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)
-        contours, _ = cv2.findContours(binary, cv2.RETR_CCOMP,  cv2.CHAIN_APPROX_NONE)
+        contours, _ = cv2.findContours(binary, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
         cv2.drawContours(self.img, contours, -1, (255, 0, 0), 3)
 
     def img_type(self):
         return 'RGB彩色图像' if self.img.ndim == 3 else '灰度图'
-
 
     '''
         以下 decodeDispaly、erweima_detect函数是用来实现扫描二维码功能的
@@ -205,7 +206,7 @@ class basicImg():
 
     '''
         beauty_face 函数是用来磨皮的
-        
+
     '''
 
     def beauty_face(self):
@@ -379,4 +380,3 @@ class basicImg():
         cx = int(M["m10"] / M["m00"])
         cy = int(M["m01"] / M["m00"])
         return [cx, cy]
-
