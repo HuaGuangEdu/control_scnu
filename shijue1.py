@@ -540,10 +540,16 @@ class Img(basicImg):
                     # self.img_new=frame_bgr
                     self.img_new = frame
                 else:
+<<<<<<< HEAD
                     self.img_new = frame[y + 5:y + h - 5, x + 5:x + w - 5]
 
                 self.img_new = cv2.resize(self.img_new, dsize=None, fx=2, fy=2,
                                           interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+=======
+                    self.img_new = frame[y + 5:y + h - 5, x + 5 :x + w - 5]
+
+                self.img_new = cv2.resize(self.img_new, dsize=None, fx=2, fy=2,interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+>>>>>>> 65e2d89bd446e5d79edcb18700e8aa52964dc004
                 cv2.imshow('result', self.img_new)
                 cv2.waitKey(3)
 
@@ -634,9 +640,14 @@ class Img(basicImg):
         mask = cv2.erode(mask, None, iterations=2)
         # 膨胀操作，其实先腐蚀再膨胀的效果是开运算，去除噪点
         self.mask_img = cv2.dilate(mask, None, iterations=2)
+<<<<<<< HEAD
         self.mask_img = cv2.resize(self.mask_img, dsize=None, fx=2, fy=2,
                                    interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
         cv2.imshow('mask', self.mask_img)
+=======
+        self.mask_img = cv2.resize(self.mask_img, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+        cv2.imshow('mask',self.mask_img)
+>>>>>>> 65e2d89bd446e5d79edcb18700e8aa52964dc004
         cv2.waitKey(3)
 
     def circle_detect(self, img):
@@ -769,7 +780,11 @@ class Img(basicImg):
                 int(handlms.landmark[20].x * w), int(handlms.landmark[20].y * h))
             self.mpDraw.draw_landmarks(img_new, handlms, self.mpHands.HAND_CONNECTIONS)
         else:
+<<<<<<< HEAD
             self.fingertip = {}
+=======
+            self.fingertip={}
+>>>>>>> 65e2d89bd446e5d79edcb18700e8aa52964dc004
         img_new = cv2.resize(img_new, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
         cv2.imshow('finger_detect', img_new)
 
@@ -853,8 +868,12 @@ class Img(basicImg):
         results = self.FaceMesh.process(imgRGB)
         if results.multi_face_landmarks:
             for faceLms in results.multi_face_landmarks:
+<<<<<<< HEAD
                 self.mpDraw.draw_landmarks(img_new, faceLms, self.mpFaceMesh.FACEMESH_FACE_OVAL,
                                            landmark_drawing_spec=self.drawSpec)
+=======
+                self.mpDraw.draw_landmarks(img_new, faceLms, self.mpFaceMesh.FACEMESH_FACE_OVAL, landmark_drawing_spec=self.drawSpec)
+>>>>>>> 65e2d89bd446e5d79edcb18700e8aa52964dc004
         img_new = cv2.resize(img_new, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
         cv2.imshow('faceMesh', img_new)
 
@@ -896,9 +915,14 @@ class Img(basicImg):
         self.max_loc_topleft = list(self.max_loc)
         self.max_loc_bottomright = [top_left[0] + w, top_left[1] + h]
         bottom_right = [top_left[0] + w, top_left[1] + h]
+<<<<<<< HEAD
         self.cut_img = self.img[top_left[1]:top_left[1] + h, top_left[0]: top_left[0] + w]
         self.cut_img = cv2.resize(self.cut_img, dsize=None, fx=2, fy=2,
                                   interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+=======
+        self.cut_img = self.img[top_left[1]:top_left[1] + h, top_left[0] : top_left[0]+ w]
+        self.cut_img = cv2.resize(self.cut_img, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+>>>>>>> 65e2d89bd446e5d79edcb18700e8aa52964dc004
         if self.isshow:
             cv2.imshow('cut', self.cut_img)
             cv2.rectangle(self.img, top_left, bottom_right, 255, 2)
@@ -909,4 +933,7 @@ class Img(basicImg):
             min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
             score.append(max_val)
         self.predict = np.argmax(score)
+<<<<<<< HEAD
     '''
+=======
+>>>>>>> 65e2d89bd446e5d79edcb18700e8aa52964dc004
