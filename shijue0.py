@@ -73,17 +73,10 @@ class basicImg():
 
     # 获取摄像头
     def camera(self, num=0):
-<<<<<<< HEAD
         self.cam = cv2.VideoCapture(num, cv2.CAP_DSHOW)
         # 下面两行设置了摄像头分辨率为320✖240，这样处理不会那么卡
         self.cam.set(3, 320)
         self.cam.set(4, 240)
-=======
-        self.cam = cv2.VideoCapture(num,cv2.CAP_DSHOW)
-        #下面两行设置了摄像头分辨率为320✖240，这样处理不会那么卡
-        self.cam.set(3,320)
-        self.cam.set(4,240)
->>>>>>> 65e2d89bd446e5d79edcb18700e8aa52964dc004
 
     def close_camera(self):
         self.cam.release()
@@ -111,11 +104,8 @@ class basicImg():
 
     # name_windows 是用来命名图片展示窗口的
     def name_windows(self, name):
-<<<<<<< HEAD
+        cv2.namedWindow(name, cv2.WINDOW_AUTOSIZE)
         cv2.namedWindow(name, cv2.WINDOW_NORMAL)  # cv2.WINDOW_AUTOSIZE 窗口不可拉伸    cv2.WINDOW_NORMAL 窗口可以随意拉伸
-=======
-        cv2.namedWindow(name,cv2.WINDOW_NORMAL)   #cv2.WINDOW_AUTOSIZE 窗口不可拉伸    cv2.WINDOW_NORMAL 窗口可以随意拉伸
->>>>>>> 65e2d89bd446e5d79edcb18700e8aa52964dc004
 
     # close_windows 是用来关闭所有窗口的
     def close_windows(self):
@@ -124,13 +114,10 @@ class basicImg():
     # show_image是用来将图片展示在定义的某个窗口中的
     def show_image(self, windows_name, img=[]):
         if len(img) == 0:
-<<<<<<< HEAD
+            img = self.img
+            # cv2.resizeWindow(windows_name, 640, 480)
             img = cv2.resize(self.img, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
         #        cv2.resizeWindow(windows_name, 640, 480)
-=======
-            img = cv2.resize(self.img,dsize=None,fx=2,fy=2,interpolation=cv2.INTER_LINEAR)  #这一行是放大图像变回 640✖480
-#        cv2.resizeWindow(windows_name, 640, 480)
->>>>>>> 65e2d89bd446e5d79edcb18700e8aa52964dc004
         cv2.imshow(windows_name, img)
 
     # write_image 是用来保存图片的函数，注意：pic_name中不能存在中文，包括路径和文件命名
@@ -315,7 +302,6 @@ class basicImg():
             return True
 
     # 彩色图寻迹
-
     def offset_calculate2(self):
         gray = cv2.cvtColor(self.img.copy(), cv2.COLOR_BGR2GRAY)
         retval, dst = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)
