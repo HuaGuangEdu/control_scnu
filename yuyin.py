@@ -322,6 +322,7 @@ class Yuyin():
         :return: None
         """
 
+        txt = str(txt)
         # 用时间戳和file_name作为文件名，时间戳保证文件的独特性
         self.timeTickStr_tts = str(round(time.time()))
         if len(txt) != 0:
@@ -414,6 +415,7 @@ class Yuyin():
         :param txt: 需要转换为音频的文本
         :return: None
         '''
+        txt = str(txt)
         tmp = None
         self.tts(txt, tmp)
         self.play_music(tmp)

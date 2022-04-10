@@ -20,7 +20,10 @@ system_platform = sys.platform
 if 'win' in system_platform:
     pass
 else:
-    from control.lcd import LCD_2inch4  # 屏幕的包
+    try:
+        from control.lcd import LCD_2inch4  # 屏幕的包
+    except:
+        raise '树莓派没有打开SPI接口！'
     import serial
     import Adafruit_DHT
     import RPi.GPIO as GPIO
@@ -29,7 +32,10 @@ else:
     try:
         from adafruit_servokit import ServoKit
     except ImportError:
-        os.system('sudo pip3 install adafruit-circuitpython-servokit')
+        try:
+            os.system('sudo pip3 install adafruit-circuitpython-servokit')
+        except:
+            raise '没有连接网络，无法安装相关库！'
 
     # 设置编码格式为BCM，关闭警告
     GPIO.setmode(GPIO.BCM)

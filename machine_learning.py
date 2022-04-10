@@ -33,6 +33,10 @@ class Datasets():
                 "diabetes": "糖尿病"
                 "boston": "房价"
             """
+
+    def __call__(self):
+        return self.dataset
+
     def __get_datasets(self): #加载数据集(作为私密成员，防止被多次调用)
         exec("self.dataset=DT.load_"+self.datasets_name+"()")
         self.feature = self.dataset.data
@@ -42,8 +46,7 @@ class Datasets():
         self.feature_train,  self.feature_test,  self.label_train,  self.label_test = train_test_split(self.feature, self.label, test_size=test_size/100)
         return (self.feature_train,  self.label_train),(self.feature_test,  self.label_test)
 
-    def __call__(self):
-        return self.dataset
+
 
 def feature_label(dataset):
     if callable(dataset): #传入了一个类对象
@@ -71,6 +74,9 @@ class Model():
         from sklearn.neural_network import  MLPClassifier
         self.myModel_name_list = findExisModel() #查找class文件夹下面存在的模型的名字
         self.classifier = self.__load_model()  # 调用模型
+
+    def __str__(self):
+        return self.model_name_dict[self.model_name][0]+"模型" if self.model_name else self.myModel_name+"模型"
 
     def __load_model(self):
         if not(self.model_name or self.myModel_name):
@@ -121,8 +127,7 @@ class Model():
             if value >=0:
                 exec("".join(["self.classifier.",key, "=", str(value)]))
 
-    def __str__(self):
-        return self.model_name_dict[self.model_name][0]+"模型" if self.model_name else self.myModel_name+"模型"
+
 
 
 
