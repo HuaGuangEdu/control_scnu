@@ -23,7 +23,7 @@ else:
     try:
         from control.lcd import LCD_2inch4  # 屏幕的包
     except:
-        raise '树莓派没有打开SPI接口！'
+        raise '树莓派没有打开SPI接口！点击左上角-首选项-Raspberry Pi Confuguration-Interfaces-SPI设置为Enabled'
     import serial
     import Adafruit_DHT
     import RPi.GPIO as GPIO
@@ -33,7 +33,9 @@ else:
         from adafruit_servokit import ServoKit
     except ImportError:
         try:
+            print('正在下载相关库......')
             os.system('sudo pip3 install adafruit-circuitpython-servokit')
+            from adafruit_servokit import ServoKit
         except:
             raise '没有连接网络，无法安装相关库！'
 

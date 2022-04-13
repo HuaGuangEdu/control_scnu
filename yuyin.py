@@ -19,7 +19,7 @@ import webbrowser
 import random
 from importlib import reload
 
-os.close(sys.stderr.fileno())
+# os.close(sys.stderr.fileno())
 
 system_platform = sys.platform
 
@@ -38,13 +38,13 @@ audio_path = main_path + 'speech\\'
 if not os.path.exists(audio_path):
     os.makedirs(audio_path)
 
-# 开始时删除所有合成音频--Nonexxxxxxx.mp3/wav(固定格式)
-for i in os.listdir(audio_path):
-    t = i.split('.')
-
-    # 因为软件创建变量时默认定义为None，所以从第5个字符开始判断
-    if t[0][4:].isdigit():
-        os.remove(audio_path + i)
+# # 开始时删除所有合成音频--Nonexxxxxxx.mp3/wav(固定格式)
+# for i in os.listdir(audio_path):
+#     t = i.split('.')
+#
+#     # 因为软件创建变量时默认定义为None，所以从第5个字符开始判断
+#     if t[0][4:].isdigit():
+#         os.remove(audio_path + i)
 
 # 百度API账号
 app_id = '19925995'
@@ -82,11 +82,13 @@ class Yuyin():
         AipSpeech:百度语音API中的方法，是语音识别的Python SDK客户端提供语音识别一系列交互方法
     """
 
-    def __init__(self):
+    def __init__(self, online=True):
         """
         初始化Yuyin类
         :param None
         """
+        self.online = online #这个参数是针对本地化语音转文字的，如果是True就是调用百度在线的，否则调用本地化的
+
         self.app_id = app_id
         self.api_key = app_key
         self.secret_key = app_secret_key
@@ -223,6 +225,7 @@ class Yuyin():
             return False
         return True
 
+
     def my_record(self, TIME, file_name):
         """
         机器人录音，并将录音保存到.wav文件
@@ -230,23 +233,26 @@ class Yuyin():
         :param file_name: 录音file_name路径文件名
         :return: None
         """
-        CHUNK = 2000  # 采样点
         FORMAT = pyaudio.paInt16
         CHANNELS = 1  # 声道
-        RATE = 48000  # 采样率
+        if self.online:
+            CHUNK = 2000  # 采样点
+            RATE = 48000  # 采样率
         # RECORD_SECONDS = 2                        # 采样宽度2bytes
+        else:
+            CHUNK = 1024
+            RATE = 16000
+
 
         # 用时间戳和file_name作为文件名，时间戳保证文件的独特性
-        self.timeTickStr_record = str(round(time.time()))
-        file_name = audio_path + str(file_name) + self.timeTickStr_record + '.wav'
-
+        file_name = audio_path + str(file_name) +  '.wav'
         stream = self.p.open(format=FORMAT,
                              channels=CHANNELS,
                              rate=RATE,
                              input=True,
                              frames_per_buffer=CHUNK)
 
-        print("开始录音,请说话......")
+        print("开始录音,请说话,持续", TIME, "秒......")
 
         frames = []
         t = time.time()
@@ -269,16 +275,17 @@ class Yuyin():
         wf.writeframes(b''.join(frames))
         wf.close()
 
-        file_new_name = audio_path + 'new.wav'
 
-        # 通过downsampleWav（）函数对录音的音频文件进行修改
-        self.downsampleWav(file_name, file_new_name)
+        if self.online:
+            file_new_name = audio_path + 'new.wav'
+            # 通过downsampleWav（）函数对录音的音频文件进行修改
+            self.downsampleWav(file_name, file_new_name)
 
-        # 删除原来的录音文件
-        os.remove(file_name)
+            # 删除原来的录音文件
+            os.remove(file_name)
 
-        # 把file_name这个文件名给到修改后的文件
-        os.rename(file_new_name, file_name)
+            # 把file_name这个文件名给到修改后的文件
+            os.rename(file_new_name, file_name)
 
     def stt(self, filename):
         """
@@ -286,32 +293,38 @@ class Yuyin():
         :param filename: 要进行转换的文本文件
         :return: None
         """
-        try:
-            filename = audio_path + str(filename) + self.timeTickStr_record + '.wav'
-            fp = open(filename, 'rb')
-            FilePath = fp.read()
-            fp.close()
-        except:
-            print(filename + "音频文件不存在或格式错误")
-        finally:
+        if self.online:
             try:
-                # 识别本地文件
-                result = self.client.asr(FilePath,
-                                         'wav',
-                                         16000,
-                                         {'dev_pid': 1537, }     # dev_pid参数表示识别的语言类型，1536表示普通话
-                                         )
-
-                # 解析返回值，打印语音识别的结果
-                if result['err_msg'] == 'success.':
-                    word = result['result'][0]                    # utf-8编码
-                    return word                                   # 返回识别结果值
-                else:
-                    print("语音识别失败:" + filename)
-                    return "语音识别失败"
+                filename = audio_path + str(filename) + '.wav'
+                fp = open(filename, 'rb')
+                FilePath = fp.read()
+                fp.close()
             except:
-                print("没有连接网络")
-                return "没有连接网络"
+                print(filename + "音频文件不存在或格式错误")
+            finally:
+                try:
+                    # 识别本地文件
+                    result = self.client.asr(FilePath,
+                                             'wav',
+                                             16000,
+                                             {'dev_pid': 1537, }     # dev_pid参数表示识别的语言类型，1536表示普通话
+                                             )
+
+                    # 解析返回值，打印语音识别的结果
+                    if result['err_msg'] == 'success.':
+                        word = result['result'][0]                    # utf-8编码
+                        return word                                   # 返回识别结果值
+                    else:
+                        print("语音识别失败:" + filename)
+                        return "语音识别失败"
+                except:
+                    print("没有连接网络")
+                    return "没有连接网络"
+        else:
+            res = os.popen(f"{audio_path}decoder_main.exe  --chunk_size -1  --wav_path {audio_path+'None'+'.wav'}  \
+                    --model_path {audio_path}final.zip --dict_path {audio_path}words.txt")
+            tempstream = res._stream
+            return tempstream.buffer.read().decode(encoding='utf-8', errors='ignore').split(' ')[1].split('\r\n')[0]
 
     def tts(self, txt, filename, tmp=2):
         """
@@ -324,7 +337,6 @@ class Yuyin():
 
         txt = str(txt)
         # 用时间戳和file_name作为文件名，时间戳保证文件的独特性
-        self.timeTickStr_tts = str(round(time.time()))
         if len(txt) != 0:
             if tmp == 1:
                 word = txt
@@ -340,7 +352,7 @@ class Yuyin():
 
                 # 合成正确返回audio.mp3，错误则返回dict
                 if not isinstance(result, dict):
-                    with open(audio_path + str(filename) + self.timeTickStr_tts + '.mp3', 'wb') as f:
+                    with open(audio_path + str(filename) + '.mp3', 'wb') as f:
                         f.write(result)
                         print('文字转音频成功:' + txt)
                 else:
@@ -354,7 +366,7 @@ class Yuyin():
                 r = requests.get(url)
                 result = r.content
 
-                filename = str(filename) + self.timeTickStr_tts + '.mp3'
+                filename = str(filename) + '.mp3'
                 file = audio_path + filename
                 with open(file, 'wb') as f:
                     f.write(result)
@@ -386,7 +398,7 @@ class Yuyin():
         :return: None
         """
         pygame.mixer.init(frequency=16000, size=-16, channels=1, buffer=2000)
-        filename = str(filename) + self.timeTickStr_tts + type
+        filename = str(filename)  + type
         if type == '.wav':
             track = pygame.mixer.Sound(audio_path + filename)
             track.play()

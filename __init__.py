@@ -3,10 +3,18 @@
 """
 
 """
+
+control_version:0.5.5
+blcoklyFile_version:0.2.4
+blockly_version:2.3.0
+更新内容：
+本地化语音转文字库和编程块
+"""
+"""
 2020/4/4
 control_version:0.5.4
 blcoklyFile_version:0.2.3
-blockly_version:2.2.1
+blockly_version:2.3.0
 更新内容：
 修改了视觉部分，将摄像头分辨率降低到320✖240。但是最后的输出还是放大回了640✖480
 修改了舵机的块
