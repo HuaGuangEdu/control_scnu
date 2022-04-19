@@ -5,7 +5,7 @@
 """
 
 from aip.speech import AipSpeech
-import os
+import os,re
 import wave
 import time
 import pyaudio
@@ -18,7 +18,6 @@ import sys
 import webbrowser
 import random
 from importlib import reload
-
 os.close(sys.stderr.fileno())
 
 system_platform = sys.platform
@@ -37,14 +36,13 @@ txt_path = main_path + 'txt\\'
 audio_path = main_path + 'speech\\'
 if not os.path.exists(audio_path):
     os.makedirs(audio_path)
-
-# 开始时删除所有合成音频--Nonexxxxxxx.mp3/wav(固定格式)
-for i in os.listdir(audio_path):
-    t = i.split('.')
-
-    # 因为软件创建变量时默认定义为None，所以从第5个字符开始判断
-    if t[0][4:].isdigit():
-        os.remove(audio_path + i)
+# # 开始时删除所有合成音频--Nonexxxxxxx.mp3/wav(固定格式)
+# for i in os.listdir(audio_path):
+#     t = i.split('.')
+#
+#     # 因为软件创建变量时默认定义为None，所以从第5个字符开始判断
+#     if t[0][4:].isdigit():
+#         os.remove(audio_path + i)
 
 # 百度API账号
 app_id = '19925995'
@@ -82,11 +80,13 @@ class Yuyin():
         AipSpeech:百度语音API中的方法，是语音识别的Python SDK客户端提供语音识别一系列交互方法
     """
 
-    def __init__(self):
+    def __init__(self, online=False):
         """
         初始化Yuyin类
         :param None
         """
+        self.online = online #这个参数是针对本地化语音转文字的，如果是True就是调用百度在线的，否则调用本地化的
+
         self.app_id = app_id
         self.api_key = app_key
         self.secret_key = app_secret_key
@@ -104,6 +104,8 @@ class Yuyin():
         self.vol_DUI = 100
         self.spd_DUI = 1
         self.gender = "xijunma"
+
+        self.NumConverter = Number_Convert()
 
     def change_vol_spd_gender(self, vol, spd, per):
         """
@@ -223,6 +225,7 @@ class Yuyin():
             return False
         return True
 
+
     def my_record(self, TIME, file_name):
         """
         机器人录音，并将录音保存到.wav文件
@@ -230,32 +233,32 @@ class Yuyin():
         :param file_name: 录音file_name路径文件名
         :return: None
         """
-        CHUNK = 2000  # 采样点
         FORMAT = pyaudio.paInt16
         CHANNELS = 1  # 声道
-        RATE = 48000  # 采样率
+        if self.online:
+            CHUNK = 2000  # 采样点
+            RATE = 48000  # 采样率
         # RECORD_SECONDS = 2                        # 采样宽度2bytes
+        else:
+            CHUNK = 1024
+            RATE = 16000
+
 
         # 用时间戳和file_name作为文件名，时间戳保证文件的独特性
-        self.timeTickStr_record = str(round(time.time()))
-        file_name = audio_path + str(file_name) + self.timeTickStr_record + '.wav'
-
+        file_name = audio_path + str(file_name) +  '.wav'
         stream = self.p.open(format=FORMAT,
                              channels=CHANNELS,
                              rate=RATE,
                              input=True,
                              frames_per_buffer=CHUNK)
 
-        print("开始录音,请说话......")
-
+        print("开始录音,请说话,持续", TIME, "秒......")
         frames = []
         t = time.time()
         while time.time() < t + TIME:
             data = stream.read(CHUNK)
             frames.append(data)
-
         print("录音结束!")
-
         # 停止音频流并关闭
         stream.stop_stream()
         stream.close()
@@ -268,17 +271,16 @@ class Yuyin():
         wf.setframerate(RATE)
         wf.writeframes(b''.join(frames))
         wf.close()
+        if self.online:
+            file_new_name = audio_path + 'new.wav'
+            # 通过downsampleWav（）函数对录音的音频文件进行修改
+            self.downsampleWav(file_name, file_new_name)
 
-        file_new_name = audio_path + 'new.wav'
+            # 删除原来的录音文件
+            os.remove(file_name)
 
-        # 通过downsampleWav（）函数对录音的音频文件进行修改
-        self.downsampleWav(file_name, file_new_name)
-
-        # 删除原来的录音文件
-        os.remove(file_name)
-
-        # 把file_name这个文件名给到修改后的文件
-        os.rename(file_new_name, file_name)
+            # 把file_name这个文件名给到修改后的文件
+            os.rename(file_new_name, file_name)
 
     def stt(self, filename):
         """
@@ -286,32 +288,49 @@ class Yuyin():
         :param filename: 要进行转换的文本文件
         :return: None
         """
-        try:
-            filename = audio_path + str(filename) + self.timeTickStr_record + '.wav'
-            fp = open(filename, 'rb')
-            FilePath = fp.read()
-            fp.close()
-        except:
-            print(filename + "音频文件不存在或格式错误")
-        finally:
+        if self.online:
             try:
-                # 识别本地文件
-                result = self.client.asr(FilePath,
-                                         'wav',
-                                         16000,
-                                         {'dev_pid': 1537, }     # dev_pid参数表示识别的语言类型，1536表示普通话
-                                         )
-
-                # 解析返回值，打印语音识别的结果
-                if result['err_msg'] == 'success.':
-                    word = result['result'][0]                    # utf-8编码
-                    return word                                   # 返回识别结果值
-                else:
-                    print("语音识别失败:" + filename)
-                    return "语音识别失败"
+                filename = audio_path + str(filename) + '.wav'
+                fp = open(filename, 'rb')
+                FilePath = fp.read()
+                fp.close()
             except:
-                print("没有连接网络")
-                return "没有连接网络"
+                print(filename + "音频文件不存在或格式错误")
+            finally:
+                try:
+                    # 识别本地文件
+                    result = self.client.asr(FilePath,
+                                             'wav',
+                                             16000,
+                                             {'dev_pid': 1537, }     # dev_pid参数表示识别的语言类型，1536表示普通话
+                                             )
+
+                    # 解析返回值，打印语音识别的结果
+                    if result['err_msg'] == 'success.':
+                        word = result['result'][0]                    # utf-8编码
+                        numList = self.NumConverter.num_convert3(word)[1]
+                        self.recordNumberList = [num[0] for num in numList]
+                        return self.NumConverter.num_convert3(word)[0]                                   # 返回识别结果值
+                    else:
+                        print("语音识别失败:" + filename)
+                        return "语音识别失败"
+                except:
+                    print("没有连接网络")
+                    return "没有连接网络"
+        else:
+
+            res = os.popen(f"{audio_path}decoder_main.exe  --chunk_size -1  --wav_path {audio_path+'None'+'.wav'}  \
+                    --model_path {audio_path}final.zip --dict_path {audio_path}words.txt")
+
+            tempstream = res._stream
+            # return tempstream.buffer.read().decode(encoding='utf-8', errors='ignore').split(' ')[1].split('\r\n')[0]
+            numList = self.NumConverter.num_convert3(tempstream.buffer.read().decode(encoding='utf-8', errors='ignore').split(' ')[1].split('\r\n')[0])
+            word = [num[0] for num in numList]
+            self.recordNumberList = word[1]
+            return word[0]
+
+
+
 
     def tts(self, txt, filename, tmp=2):
         """
@@ -324,7 +343,6 @@ class Yuyin():
 
         txt = str(txt)
         # 用时间戳和file_name作为文件名，时间戳保证文件的独特性
-        self.timeTickStr_tts = str(round(time.time()))
         if len(txt) != 0:
             if tmp == 1:
                 word = txt
@@ -340,7 +358,7 @@ class Yuyin():
 
                 # 合成正确返回audio.mp3，错误则返回dict
                 if not isinstance(result, dict):
-                    with open(audio_path + str(filename) + self.timeTickStr_tts + '.mp3', 'wb') as f:
+                    with open(audio_path + str(filename) + '.mp3', 'wb') as f:
                         f.write(result)
                         print('文字转音频成功:' + txt)
                 else:
@@ -354,7 +372,7 @@ class Yuyin():
                 r = requests.get(url)
                 result = r.content
 
-                filename = str(filename) + self.timeTickStr_tts + '.mp3'
+                filename = str(filename) + '.mp3'
                 file = audio_path + filename
                 with open(file, 'wb') as f:
                     f.write(result)
@@ -386,7 +404,7 @@ class Yuyin():
         :return: None
         """
         pygame.mixer.init(frequency=16000, size=-16, channels=1, buffer=2000)
-        filename = str(filename) + self.timeTickStr_tts + type
+        filename = str(filename)  + type
         if type == '.wav':
             track = pygame.mixer.Sound(audio_path + filename)
             track.play()
@@ -420,6 +438,73 @@ class Yuyin():
         self.tts(txt, tmp)
         self.play_music(tmp)
 
+#用来转换数字
+class Number_Convert():
+    def __init__(self):
+        self.converted_strings = ''  # 转化后的字符串
+        self.number_map = {'零': 0, '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8,
+                           '九': 9}  # 1-9数字
+        self.unit_map = {'十': 10, '百': 100, '千': 1000, '万': 10000, '亿': 100000000}  # 数字单位
+        self.NumList = []
+
+    def __operate(self, num_str):  # 这个和下面呢个____operate1都是处理字符串的函数，别调用
+        Num = 0
+        unit = False
+        for index, i in enumerate(num_str[::-1]):
+            if i in self.number_map.keys():
+                Num += self.number_map[i] * (unit if unit else 1)
+            elif index != len(num_str) - 1:
+                unit = self.unit_map[i]
+            else:
+                Num += self.unit_map[i]
+        return Num
+
+    def __operate1(self, strings):  # 处理字符串的，分成了三种情况，有“亿”，无“亿”有“万”， 无“亿”无“万”
+
+        if '亿' in strings:
+            strings2 = strings.split('亿')
+            Num1 = 0
+            for index0, i in enumerate(strings2):
+                Num = 0
+                if len(i.split('万')) != 1:
+                    for index, j in enumerate(i.split('万')):
+                        Num += self.__operate(j) * (10000 if index == 0 else 1)
+                else:
+                    Num += self.__operate(i.split('万')[0])
+
+                Num1 += Num * (self.unit_map['亿'] if index0 == 0 else 1)
+            return Num1
+        elif '万' in strings:
+            Num = 0
+            for index, j in enumerate(strings.split('万')):
+                Num += self.__operate(j) * (self.unit_map['万'] if index == 0 else 1)
+            return Num
+        else:
+            return self.__operate(strings)
+
+    def num_convert3(self, test_strings):
+        self.test_strings = test_strings
+        for index0, Str in enumerate(self.test_strings):  # 遍历一下字符串
+
+            try:  # 如果已经遍历完一串数字，那我们要把当前的位置移动到这一串数字之后，再继续遍历下面的内容
+                if index0 < index1:
+                    continue
+            except:  # 如果报错了，表示还没有遍历过任何一串数字，所以j还没有定义
+                pass
+            if (Str.isnumeric() and not Str.isdigit()) or (
+                    Str == '两'):  # 如果遍历到的那个字符是中文数字，不是阿拉伯数字，那就从那个字符开始，遍历那个字符以及之后的字符串部分
+                for index1, Str2 in enumerate(self.test_strings[index0:]):
+                    if (not Str2.isnumeric()) and Str2 != '两':  # 如果遍历到不是数字的字符，表示这一串数字遍历完了，那就开始将这一串中文数字转化成阿拉伯数字
+                        Num = self.__operate1(self.test_strings[index0:index0 + index1])
+                        self.converted_strings += str(Num)
+                        self.NumList.append((Num, index0))
+                        index1 = index0 + index1  # 让index1表示当前遍历到的字符串的位置
+                        break
+            else:
+                self.converted_strings += Str  # 把当前遍历到的内容给Str
+        for num in re.compile('\d+').finditer(self.test_strings):
+            self.NumList.append((int(num.group()), num.span()[0]))
+        return [self.converted_strings, sorted(self.NumList, key=lambda x: x[1])]
 # 测试录音+语音识别
 # '''
 # s=Yuyin()
