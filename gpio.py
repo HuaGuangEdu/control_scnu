@@ -600,7 +600,6 @@ class Mecanum_wheel():
     '''
 
     def car_stop(self):
-        self.car_contr(10, 0, 0)  # 这里不知道为什么一定要给个参数才能停止（已经联调看过底层代码还是解决不了）单片机那边会没有受到数据
         self.car_contr(0, 0, 0)
 
     def car_go(self, speed):
@@ -690,47 +689,46 @@ class Mecanum_wheel():
         :param contr_tn: 控制小车旋转，协议中正数逆时针，负数顺时针，单位为°/s
         '''
         global old_fb, old_lr, old_tn
-        if (contr_fb != old_fb) or (contr_lr != old_lr) or (contr_tn != old_tn):
-            old_fb = contr_fb
-            old_lr = contr_lr
-            old_tn = contr_tn
-            # 当速度为负的，做数据处理，得到电机反转的速度
-            # fb 控制前后移动，lr控制左右平移，tn控制左右转向
-            # fb = -10表示前进，lr = -10 表示向左平移，tn = -500表示左转
-            if contr_fb < 0:
-                contr_fb = 65536 + contr_fb
-            if contr_lr < 0:
-                contr_lr = 65536 + contr_lr
-            if contr_tn < 0:
-                contr_tn = 65536 + contr_tn
-            byte_list = [0x55, 0x0E, 0x01, 0x01,
-                         int(contr_fb / 256), int(contr_fb % 256),
-                         int(contr_tn / 256), int(contr_tn % 256),
-                         int(contr_lr / 256), int(contr_lr % 256),
-                         0, 0, 1]
-            k = 0
-            for i in range(len(byte_list)):
-                k += byte_list[i]
-                k = k % 256
-            byte_list.append(k)
-            # 格式化要发送的数据帧
-            contr_law = b"%c%c%c%c%c%c%c%c%c%c%c%c%c%c" % (byte_list[0], byte_list[1], byte_list[2], byte_list[3],
-                                                           byte_list[4], byte_list[5], byte_list[6], byte_list[7],
-                                                           byte_list[8], byte_list[9], byte_list[10], byte_list[11],
-                                                           byte_list[12], byte_list[13])
-            '''
-            byte_list[0], byte_list[1], byte_list[2], byte_list[3]: 数据帧前四位， 协议中是 0x55, 0x0E, 0x01, 0x01
-            byte_list[4], byte_list[5]: 协议中控制前进速度高八位、低八位
-            byte_list[6], byte_list[7]: 协议中控制旋转速度高八位、低八位
-            byte_list[8], byte_list[9]: 协议中控制平移速度高八位、低八位
-            byte_list[10], byte_list[11]:保留位，默认为0，0
-            byte_list[12], byte_list[13]:帧ID，默认为1， 校验位，由前面13个数据叠加而成
-            '''
-            # 发送数据帧
-            self.ser.write(contr_law)
+        old_fb = contr_fb
+        old_lr = contr_lr
+        old_tn = contr_tn
+        # 当速度为负的，做数据处理，得到电机反转的速度
+        # fb 控制前后移动，lr控制左右平移，tn控制左右转向
+        # fb = -10表示前进，lr = -10 表示向左平移，tn = -500表示左转
+        if contr_fb < 0:
+            contr_fb = 65536 + contr_fb
+        if contr_lr < 0:
+            contr_lr = 65536 + contr_lr
+        if contr_tn < 0:
+            contr_tn = 65536 + contr_tn
+        byte_list = [0x55, 0x0E, 0x01, 0x01,
+                     int(contr_fb / 256), int(contr_fb % 256),
+                     int(contr_tn / 256), int(contr_tn % 256),
+                     int(contr_lr / 256), int(contr_lr % 256),
+                     0, 0, 1]
+        k = 0
+        for i in range(len(byte_list)):
+            k += byte_list[i]
+            k = k % 256
+        byte_list.append(k)
+        # 格式化要发送的数据帧
+        contr_law = b"%c%c%c%c%c%c%c%c%c%c%c%c%c%c" % (byte_list[0], byte_list[1], byte_list[2], byte_list[3],
+                                                       byte_list[4], byte_list[5], byte_list[6], byte_list[7],
+                                                       byte_list[8], byte_list[9], byte_list[10], byte_list[11],
+                                                       byte_list[12], byte_list[13])
+        '''
+        byte_list[0], byte_list[1], byte_list[2], byte_list[3]: 数据帧前四位， 协议中是 0x55, 0x0E, 0x01, 0x01
+        byte_list[4], byte_list[5]: 协议中控制前进速度高八位、低八位
+        byte_list[6], byte_list[7]: 协议中控制旋转速度高八位、低八位
+        byte_list[8], byte_list[9]: 协议中控制平移速度高八位、低八位
+        byte_list[10], byte_list[11]:保留位，默认为0，0
+        byte_list[12], byte_list[13]:帧ID，默认为1， 校验位，由前面13个数据叠加而成
+        '''
+        # 发送数据帧
+        self.ser.write(contr_law)
 
-            # 防止连续快速发送数据导致出错
-            time.sleep(0.005)
+        # 防止连续快速发送数据导致出错
+        time.sleep(0.005)
 
     def xunxian(self, io_l, io_r):  # 该函数是红外巡线，遇到白线跳出程序
         # 设置红外的io口
