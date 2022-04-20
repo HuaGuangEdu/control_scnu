@@ -3,6 +3,15 @@
 """
 
 """
+2020/4/5
+control_version:0.5.5
+blcoklyFile_version:0.2.3
+blockly_version:2.2.1
+更新内容：
+修复gpio无法直接使车辆停止的bug
+修复m.stop（）必须要加一个小前进速度的bug
+"""
+"""
 2020/4/4
 control_version:0.5.4
 blcoklyFile_version:0.2.3
