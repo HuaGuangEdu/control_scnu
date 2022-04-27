@@ -5,7 +5,7 @@
 """
 
 from aip.speech import AipSpeech
-import os,re
+import os, re
 import wave
 import time
 import pyaudio
@@ -18,7 +18,7 @@ import sys
 import webbrowser
 import random
 from importlib import reload
-os.close(sys.stderr.fileno())
+#os.close(sys.stderr.fileno())
 
 system_platform = sys.platform
 
@@ -71,7 +71,6 @@ class Yuyin():
     """
     Introduction:
         Yuyin类是用来为机器人提供一系列语音操作的，如播放语音，文字转语音，人机语音交互等
-
     Attributes:
         app_id:百度API登录ID
         app_key:在百度API中用户的标志
@@ -374,9 +373,13 @@ class Yuyin():
 
                 filename = str(filename) + '.mp3'
                 file = audio_path + filename
-                with open(file, 'wb') as f:
-                    f.write(result)
-
+                try:
+                    with open(file, 'wb') as f:
+                        f.write(result)
+                except:
+                    file = file+'1'
+                    with open(file, 'wb') as f:
+                        f.write(result)
     #         except:
     #             print('没有连接网络')
 
