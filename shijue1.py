@@ -831,7 +831,11 @@ class Img(basicImg):
 
     def get_shape(self, parameter='width'):
         # 用于获取图像的尺寸，并根据用户的选择来返回对应的或长或高或是通道数
-        h, w, c = self.img.shape
+        try:
+            h, w, c = self.img.shape
+        except(ValueError):
+            h,w = self.img.shape
+            c = 1
         self.parameter = str(parameter)
         shape = {'height': h, 'width': w, 'channel': c}
         return shape[self.parameter]
