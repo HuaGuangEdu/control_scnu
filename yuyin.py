@@ -4,6 +4,7 @@
 这是用来实现机器人语音的源码程序
 """
 
+
 from aip.speech import AipSpeech
 import os, re
 import wave
@@ -79,7 +80,7 @@ class Yuyin():
         AipSpeech:百度语音API中的方法，是语音识别的Python SDK客户端提供语音识别一系列交互方法
     """
 
-    def __init__(self, online=False):
+    def __init__(self, online=True):
         """
         初始化Yuyin类
         :param None
@@ -310,6 +311,7 @@ class Yuyin():
                         numList = self.NumConverter.num_convert3(word)[1]
                         self.recordNumberList = [num[0] for num in numList]
                         return self.NumConverter.num_convert3(word)[0]                                   # 返回识别结果值
+
                     else:
                         print("语音识别失败:" + filename)
                         return "语音识别失败"
@@ -441,14 +443,16 @@ class Yuyin():
         self.tts(txt, tmp)
         self.play_music(tmp)
 
+
+
 #用来转换数字
 class Number_Convert():
     def __init__(self):
-        self.converted_strings = ''  # 转化后的字符串
+
         self.number_map = {'零': 0, '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8,
                            '九': 9}  # 1-9数字
         self.unit_map = {'十': 10, '百': 100, '千': 1000, '万': 10000, '亿': 100000000}  # 数字单位
-        self.NumList = []
+
 
     def __operate(self, num_str):  # 这个和下面呢个____operate1都是处理字符串的函数，别调用
         Num = 0
@@ -486,6 +490,8 @@ class Number_Convert():
             return self.__operate(strings)
 
     def num_convert3(self, test_strings):
+        self.NumList = [] #装数字的列表
+        self.converted_strings = ''  # 转化后的字符串
         self.test_strings = test_strings
         for index0, Str in enumerate(self.test_strings):  # 遍历一下字符串
 
@@ -508,6 +514,8 @@ class Number_Convert():
         for num in re.compile('\d+').finditer(self.test_strings):
             self.NumList.append((int(num.group()), num.span()[0]))
         return [self.converted_strings, sorted(self.NumList, key=lambda x: x[1])]
+
+
 # 测试录音+语音识别
 # '''
 # s=Yuyin()
