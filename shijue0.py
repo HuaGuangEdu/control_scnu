@@ -76,9 +76,13 @@ class basicImg():
     # 获取摄像头
     def camera(self, num=0):
         self.cam = cv2.VideoCapture(num, cv2.CAP_DSHOW)
-        # 下面两行设置了摄像头分辨率为320✖240，这样处理不会那么卡
-        self.cam.set(3, 320)
-        self.cam.set(4, 240)
+        #如果是在Windows就不改变摄像头分辨率（PC算力足够）
+        if 'win' in system_platform:
+            pass
+        else:
+            # 下面两行设置了摄像头分辨率为320✖240，这样处理不会那么卡
+            self.cam.set(3, 320)
+            self.cam.set(4, 240)
 
     def close_camera(self):
         self.cam.release()
@@ -123,7 +127,7 @@ class basicImg():
                 cv2.waitKey(0)
             else:
                 # cv2.resizeWindow(windows_name, 640, 480)
-                img = cv2.resize(self.img, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+                img = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
             #        cv2.resizeWindow(windows_name, 640, 480)
                 cv2.imshow(windows_name, img)
 
