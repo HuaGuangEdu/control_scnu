@@ -10,17 +10,17 @@ blockly_version:2.2.2
 更新内容
 1.加入摄像头判定语句，若为Win系统则不进行缩放（电脑算力足够）
 2.修改显示图像resize逻辑，直接写为640，320大小。（之前是放大两倍存在逻辑问题）
-"""
-
-"""
-2022/4/21
-control_version:0.5.6
-blcoklyFile_version:0.2.5
-blockly_version:2.2.2
-更新内容
 更改了了blockly读取图片逻辑奇怪的问题
 contro对应加入了一个self.picture参数判断
+"""
 
+"""
+2022/4/29
+control_version:0.5.6
+blcoklyFile_version:0.2.4
+blockly_version:2.3.0
+更新内容：
+修复了语音的若干个bug
 """
 
 """
@@ -35,7 +35,7 @@ blockly_version:2.2.2
 """
 
 """
-2022/4/4
+2020/4/4
 control_version:0.5.4
 blcoklyFile_version:0.2.3
 blockly_version:2.2.1
