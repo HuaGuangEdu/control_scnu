@@ -75,14 +75,16 @@ class basicImg():
 
     # 获取摄像头
     def camera(self, num=0):
-        self.cam = cv2.VideoCapture(num, cv2.CAP_DSHOW)
-        #如果是在Windows就不改变摄像头分辨率（PC算力足够）
         if 'win' in system_platform:
-            pass
+            self.cam = cv2.VideoCapture(num, cv2.CAP_DSHOW)
         else:
+            self.cam = cv2.VideoCapture(num)
             # 下面两行设置了摄像头分辨率为320✖240，这样处理不会那么卡
             self.cam.set(3, 320)
             self.cam.set(4, 240)
+        #如果是在Windows就不改变摄像头分辨率（PC算力足够）
+            
+            
 
     def close_camera(self):
         self.cam.release()
