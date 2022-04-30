@@ -521,8 +521,7 @@ class Img(basicImg):
                 else:
                     self.img_new = frame[y + 5:y + h - 5, x + 5:x + w - 5]
 
-                self.img_new = cv2.resize(self.img_new, dsize=None, fx=2, fy=2,
-                                          interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+                self.img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
                 cv2.imshow('result', self.img_new)
                 cv2.waitKey(3)
 
@@ -610,8 +609,7 @@ class Img(basicImg):
         mask = cv2.erode(mask, None, iterations=2)
         # 膨胀操作，其实先腐蚀再膨胀的效果是开运算，去除噪点
         self.mask_img = cv2.dilate(mask, None, iterations=2)
-        self.mask_img = cv2.resize(self.mask_img, dsize=None, fx=2, fy=2,
-                                   interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+        self.mask_img = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         cv2.imshow('mask', self.mask_img)
         cv2.waitKey(3)
 
@@ -741,7 +739,7 @@ class Img(basicImg):
             self.mpDraw.draw_landmarks(img_new, handlms, self.mpHands.HAND_CONNECTIONS)
         else:
             self.fingertip = {}
-        img_new = cv2.resize(img_new, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+        img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         cv2.imshow('finger_detect', img_new)
 
     '''
@@ -779,7 +777,7 @@ class Img(basicImg):
             ('right_ankle', 28), ('left_shoulder', 11), ('right_shoulder', 12)):
                 self.body_menu[tur[0]] = (int(poselms[tur[1]].x * w), int(poselms[tur[1]].y * h))
             self.mpDraw.draw_landmarks(img_new, results.pose_landmarks, self.mp_pose.POSE_CONNECTIONS)
-        img_new = cv2.resize(img_new, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+        img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         cv2.imshow('body_detect', img_new)
 
     def wrist_mark(self, wrist='left_wrist', mark='x'):
@@ -809,7 +807,7 @@ class Img(basicImg):
         backGroundImage = cv2.resize(cv2.imread(backGroundImageSrc), (w, h), cv2.INTER_AREA)
 
         img_new = self.segmentor.removeBG(img_new, backGroundImage, threshold=0.5)
-        img_new = cv2.resize(img_new, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+        img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         cv2.imshow('backGroundChange', img_new)
 
     def faceMeshDetect_init(self):
@@ -826,7 +824,7 @@ class Img(basicImg):
             for faceLms in results.multi_face_landmarks:
                 self.mpDraw.draw_landmarks(img_new, faceLms, self.mpFaceMesh.FACEMESH_FACE_OVAL,
                                            landmark_drawing_spec=self.drawSpec)
-        img_new = cv2.resize(img_new, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+        img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         cv2.imshow('faceMesh', img_new)
 
     def get_shape(self, parameter='width'):
@@ -870,8 +868,7 @@ class Img(basicImg):
         self.max_loc_bottomright = [top_left[0] + w, top_left[1] + h]
         bottom_right = [top_left[0] + w, top_left[1] + h]
         self.cut_img = self.img[top_left[1]:top_left[1] + h, top_left[0]: top_left[0] + w]
-        self.cut_img = cv2.resize(self.cut_img, dsize=None, fx=2, fy=2,
-                                  interpolation=cv2.INTER_LINEAR)  # 这一行是放大图像变回 640✖480
+        self.cut_img = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         if self.isshow:
             cv2.imshow('cut', self.cut_img)
             cv2.rectangle(self.img, top_left, bottom_right, 255, 2)
