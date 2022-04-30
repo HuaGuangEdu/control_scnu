@@ -15,7 +15,11 @@ system_platform = sys.platform
 main_path = '/home/pi/class/'  # 读取和保存文件所用主文件夹
 
 if 'win' in system_platform:
-    import mediapipe as mp
+    try:
+        import mediapipe as mp
+    except ImportError:
+        print("没有安装mediapipe，正在安装......")
+        os.system('pip install mediapipe')
     file_path = os.getcwd()
     # 获取当前文件的位置
     main_path = file_path + '/resources/assets/class/'
@@ -23,6 +27,7 @@ else:
     try:
         import mediapipe as mp
     except ImportError:
+        print("没有安装mediapipe，正在安装......")
         os.system('sudo pip3 install mediapipe-rpi4')
 
 picture_path = main_path + 'picture/'  # 图片文件夹

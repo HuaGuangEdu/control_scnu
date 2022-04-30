@@ -4,8 +4,9 @@
 这是用来实现机器人语音的源码程序
 """
 
+
 from aip.speech import AipSpeech
-import os
+import os, re
 import wave
 import time
 import pyaudio
@@ -18,8 +19,7 @@ import sys
 import webbrowser
 import random
 from importlib import reload
-
-# os.close(sys.stderr.fileno())
+#os.close(sys.stderr.fileno())
 
 system_platform = sys.platform
 
@@ -37,7 +37,6 @@ txt_path = main_path + 'txt\\'
 audio_path = main_path + 'speech\\'
 if not os.path.exists(audio_path):
     os.makedirs(audio_path)
-
 # # 开始时删除所有合成音频--Nonexxxxxxx.mp3/wav(固定格式)
 # for i in os.listdir(audio_path):
 #     t = i.split('.')
@@ -73,7 +72,6 @@ class Yuyin():
     """
     Introduction:
         Yuyin类是用来为机器人提供一系列语音操作的，如播放语音，文字转语音，人机语音交互等
-
     Attributes:
         app_id:百度API登录ID
         app_key:在百度API中用户的标志
@@ -106,6 +104,8 @@ class Yuyin():
         self.vol_DUI = 100
         self.spd_DUI = 1
         self.gender = "xijunma"
+
+        self.NumConverter = Number_Convert()
 
     def change_vol_spd_gender(self, vol, spd, per):
         """
@@ -253,15 +253,12 @@ class Yuyin():
                              frames_per_buffer=CHUNK)
 
         print("开始录音,请说话,持续", TIME, "秒......")
-
         frames = []
         t = time.time()
         while time.time() < t + TIME:
             data = stream.read(CHUNK)
             frames.append(data)
-
         print("录音结束!")
-
         # 停止音频流并关闭
         stream.stop_stream()
         stream.close()
@@ -274,8 +271,6 @@ class Yuyin():
         wf.setframerate(RATE)
         wf.writeframes(b''.join(frames))
         wf.close()
-
-
         if self.online:
             file_new_name = audio_path + 'new.wav'
             # 通过downsampleWav（）函数对录音的音频文件进行修改
@@ -313,7 +308,10 @@ class Yuyin():
                     # 解析返回值，打印语音识别的结果
                     if result['err_msg'] == 'success.':
                         word = result['result'][0]                    # utf-8编码
-                        return word                                   # 返回识别结果值
+                        numList = self.NumConverter.num_convert3(word)[1]
+                        self.recordNumberList = [num[0] for num in numList]
+                        return self.NumConverter.num_convert3(word)[0]                                   # 返回识别结果值
+
                     else:
                         print("语音识别失败:" + filename)
                         return "语音识别失败"
@@ -321,10 +319,19 @@ class Yuyin():
                     print("没有连接网络")
                     return "没有连接网络"
         else:
+
             res = os.popen(f"{audio_path}decoder_main.exe  --chunk_size -1  --wav_path {audio_path+'None'+'.wav'}  \
                     --model_path {audio_path}final.zip --dict_path {audio_path}words.txt")
+
             tempstream = res._stream
-            return tempstream.buffer.read().decode(encoding='utf-8', errors='ignore').split(' ')[1].split('\r\n')[0]
+            # return tempstream.buffer.read().decode(encoding='utf-8', errors='ignore').split(' ')[1].split('\r\n')[0]
+            numList = self.NumConverter.num_convert3(tempstream.buffer.read().decode(encoding='utf-8', errors='ignore').split(' ')[1].split('\r\n')[0])
+            word = [num[0] for num in numList]
+            self.recordNumberList = word[1]
+            return word[0]
+
+
+
 
     def tts(self, txt, filename, tmp=2):
         """
@@ -368,9 +375,13 @@ class Yuyin():
 
                 filename = str(filename) + '.mp3'
                 file = audio_path + filename
-                with open(file, 'wb') as f:
-                    f.write(result)
-
+                try:
+                    with open(file, 'wb') as f:
+                        f.write(result)
+                except:
+                    file = file+'1'
+                    with open(file, 'wb') as f:
+                        f.write(result)
     #         except:
     #             print('没有连接网络')
 
@@ -432,6 +443,79 @@ class Yuyin():
         self.tts(txt, tmp)
         self.play_music(tmp)
 
+
+
+#用来转换数字
+class Number_Convert():
+    def __init__(self):
+
+        self.number_map = {'零': 0, '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8,
+                           '九': 9}  # 1-9数字
+        self.unit_map = {'十': 10, '百': 100, '千': 1000, '万': 10000, '亿': 100000000}  # 数字单位
+
+
+    def __operate(self, num_str):  # 这个和下面呢个____operate1都是处理字符串的函数，别调用
+        Num = 0
+        unit = False
+        for index, i in enumerate(num_str[::-1]):
+            if i in self.number_map.keys():
+                Num += self.number_map[i] * (unit if unit else 1)
+            elif index != len(num_str) - 1:
+                unit = self.unit_map[i]
+            else:
+                Num += self.unit_map[i]
+        return Num
+
+    def __operate1(self, strings):  # 处理字符串的，分成了三种情况，有“亿”，无“亿”有“万”， 无“亿”无“万”
+
+        if '亿' in strings:
+            strings2 = strings.split('亿')
+            Num1 = 0
+            for index0, i in enumerate(strings2):
+                Num = 0
+                if len(i.split('万')) != 1:
+                    for index, j in enumerate(i.split('万')):
+                        Num += self.__operate(j) * (10000 if index == 0 else 1)
+                else:
+                    Num += self.__operate(i.split('万')[0])
+
+                Num1 += Num * (self.unit_map['亿'] if index0 == 0 else 1)
+            return Num1
+        elif '万' in strings:
+            Num = 0
+            for index, j in enumerate(strings.split('万')):
+                Num += self.__operate(j) * (self.unit_map['万'] if index == 0 else 1)
+            return Num
+        else:
+            return self.__operate(strings)
+
+    def num_convert3(self, test_strings):
+        self.NumList = [] #装数字的列表
+        self.converted_strings = ''  # 转化后的字符串
+        self.test_strings = test_strings
+        for index0, Str in enumerate(self.test_strings):  # 遍历一下字符串
+
+            try:  # 如果已经遍历完一串数字，那我们要把当前的位置移动到这一串数字之后，再继续遍历下面的内容
+                if index0 < index1:
+                    continue
+            except:  # 如果报错了，表示还没有遍历过任何一串数字，所以j还没有定义
+                pass
+            if (Str.isnumeric() and not Str.isdigit()) or (
+                    Str == '两'):  # 如果遍历到的那个字符是中文数字，不是阿拉伯数字，那就从那个字符开始，遍历那个字符以及之后的字符串部分
+                for index1, Str2 in enumerate(self.test_strings[index0:]):
+                    if (not Str2.isnumeric()) and Str2 != '两':  # 如果遍历到不是数字的字符，表示这一串数字遍历完了，那就开始将这一串中文数字转化成阿拉伯数字
+                        Num = self.__operate1(self.test_strings[index0:index0 + index1])
+                        self.converted_strings += str(Num)
+                        self.NumList.append((Num, index0))
+                        index1 = index0 + index1  # 让index1表示当前遍历到的字符串的位置
+                        break
+            else:
+                self.converted_strings += Str  # 把当前遍历到的内容给Str
+        for num in re.compile('\d+').finditer(self.test_strings):
+            self.NumList.append((int(num.group()), num.span()[0]))
+        return [self.converted_strings, sorted(self.NumList, key=lambda x: x[1])]
+
+
 # 测试录音+语音识别
 # '''
 # s=Yuyin()
@@ -449,69 +533,3 @@ class Yuyin():
 # s=Yuyin()
 # s.play_music("Build a temporary bridge.mp3")
 # '''
-
-# if __name__ == "__main__":
-#     # # 聊天机器人示例
-#     # audio = None
-#     # audio2 = None
-#     # a = 0
-#     # s = Yuyin()
-#     # while True:
-#     #     a += 1
-#     #     s.my_record(1, audio)
-#     #     txt = s.stt(audio)
-#     #     s.chat("你好" + str(a))
-#     #     s.tts(s.chat_ret, audio2)
-#     #     s.play_music(audio2)
-#
-#     # # 循环播报
-#     # # s = Yuyin()
-#     # audio = None
-#     # c4 = None
-#     # while True:
-#     #     s = Yuyin()
-#     #     s.my_record(1, c4)
-#     #     a = random.randint(1, 20)
-#     #     b = random.randint(1, 20)
-#     #     ab = ''.join([str(x) for x in [a, '加', b, '等于']])
-#     #     print(ab)
-#     #     s.tts(ab, audio)
-#     #     s.play_music(audio)
-#
-#     # # 测试文本转语音
-#     # c4 = None
-#     # s = Yuyin()
-#     # s.tts('你好个头', c4)  #tts保存为mp3格式
-#     # s.play_music(c4)
-#
-#     # 测试录音+语音识别
-#     # c4 = None
-#     # s = Yuyin()
-#     # s.my_record(3, c4)
-#     # txt = s.stt(c4)
-#     # print(txt)
-#     # s.play_txt_DUI(txt)
-#
-#     # # 改变语音的语速音量音高
-#     # c4 = None
-#     # s = Yuyin()
-#     # s.change_vol_spd_gender(3, 3, '3')
-#     # s.tts('你好个头', c4)  #tts保存为mp3格式
-#     # s.play_music(c4)
-#
-#     # # 播放文本
-#     # s = Yuyin()
-#     # s.play_txt('干净又卫生')
-#
-#     # DUI
-#     s = Yuyin()
-#     c4 = None
-#     txt = '东方之珠'
-#     s.change_vol_spd_gender_DUI(150, 0.5, '粤语女声何春')
-#     s.tts(txt, c4)
-#     s.play_music(c4)
-
-# # 播放文本
-# s = Yuyin()
-# s.change_vol_spd_gender(5, 3, 'woman')
-# s.play_txt('雷猴啊哈哈哈')

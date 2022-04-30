@@ -4,12 +4,22 @@
 
 """
 
+control_version:0.5.6
+blcoklyFile_version:0.2.4
+blockly_version:2.3.0
+更新内容：
+修复了语音的若干个bug
+"""
+
+"""
+
 control_version:0.5.5
 blcoklyFile_version:0.2.4
 blockly_version:2.3.0
 更新内容：
 本地化语音转文字库和编程块
 """
+
 """
 2020/4/4
 control_version:0.5.4
