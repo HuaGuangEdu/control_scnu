@@ -108,6 +108,8 @@ class basicImg():
 
     # get_frame 是从某个路径中获取图片
     def get_frame(self, path, mode=cv2.IMREAD_COLOR):
+        if os.path.isabs(path)==False:
+            path = picture_path+path
         self.img = pic_read(path, mode)
         self.picture = 1    #如果有运行从路径读取图片，赋值这个参数为 1
 
@@ -135,9 +137,9 @@ class basicImg():
 
     # write_image 是用来保存图片的函数，注意：pic_name中不能存在中文，包括路径和文件命名
     def write_image(self, pic_name, jpg_png=False):
-        mode = '.png'
-        if jpg_png:
-            mode = '.jpg'
+        if pic_name.split(".")[-1] not in ["jpg","png"]:
+            raise NameError( "图片名字缺少后缀jpg或者png或者后缀不对,请使用xx.jpg或xx.png这种名字来保存")
+        path = picture_path if os.path.isabs(pic_name)==False else '' + pic_name
         path = picture_path + pic_name + mode
         cv2.imwrite(path, self.img)
         print('图片已保存到：', path)
