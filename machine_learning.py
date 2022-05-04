@@ -85,8 +85,9 @@ class Model():
             exec("".join(["from sklearn.", self.model_name_dict[self.model_name][1],
                           " import ",self.model_name_dict[self.model_name][2]]))
             return eval(self.model_name_dict[self.model_name][2])()
-        if self.myModel_name in self.myModel_name_list:
-            return joblib.load("".join([model_path, self.myModel_name, ".pkl"]))
+        if self.myModel_name in self.myModel_name_list or os.path.isabs(self.myModel_name):
+            return joblib.load(model_path if os.path.isabs(self.myModel_name)==False else ""+ \
+                                        self.myModel_name+ (".pkl" if self.myModel_name.split(".")[-1] != "pkl" else ""))
         else:
             exis_model = "".join(["-"*10,"\n","\n".join(self.myModel_name_list),"\n","-"*10])
             err = f"\n没有找到名字为'{self.myModel_name}'的模型，文件夹存在的模型文件只有这些：\n{exis_model}"
@@ -115,8 +116,11 @@ class Model():
             self.pred = self.classifier.predict(feature)
 
     def save(self, name):
+        if name.split(".")[-1] != "pkl":
+            raise NameError("名字格式错误！保存的名字必须有个.pkl后缀比如myFirstModel.pkl")
         try:
-            joblib.dump(self.classifier, "".join([model_path, name, ".pkl"])) #模型后缀名统一为.pkl
+            joblib.dump(self.classifier, (model_path if os.path.isabs(name)==False else "")+ name) #模型后缀名统一为.pkl
+            print("保存模型成功！")
         except:
             print('保存模型失败！')
 
@@ -126,8 +130,3 @@ class Model():
                 continue
             if value >=0:
                 exec("".join(["self.classifier.",key, "=", str(value)]))
-
-
-
-
-
