@@ -25,7 +25,9 @@ class Common_file:
         if mode == 'w':
             print('警告：使用写入模式会清除原文件所有内容！')
             input('请输入任意字符继续：')
-        self.file_name = main_path + f_path + file_name
+
+        self.file_name = ((main_path + f_path) if os.path.isabs(file_name)==False else "") + file_name
+
         self.file = open(self.file_name, mode, encoding='utf-8')
 
     # 关闭文件（f）
