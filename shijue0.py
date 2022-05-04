@@ -64,8 +64,8 @@ class basicImg():
         '''
         self.midle = [0, 0]  # 颜色检测框出的中心点
         self.distance = 0  # 与中心点的距离
-        self.picture = 0    #用来判断是否是图像，用于后面显示图像自动加入waitKey并且让图像不放大两倍
-        #self.picture_img = 0  #用来防止同时使用摄像头读取图像与从路径读取图片，如果等于了2就会print无法使用。考虑到运行速度问题，取消这个参数，不要过多的if判断了
+        self.picture = 0  # 用来判断是否是图像，用于后面显示图像自动加入waitKey并且让图像不放大两倍
+        # self.picture_img = 0  #用来防止同时使用摄像头读取图像与从路径读取图片，如果等于了2就会print无法使用。考虑到运行速度问题，取消这个参数，不要过多的if判断了
 
     '''
         这是视觉专用的库
@@ -82,9 +82,7 @@ class basicImg():
             # 下面两行设置了摄像头分辨率为320✖240，这样处理不会那么卡
             self.cam.set(3, 320)
             self.cam.set(4, 240)
-        #如果是在Windows就不改变摄像头分辨率（PC算力足够）
-            
-            
+        # 如果是在Windows就不改变摄像头分辨率（PC算力足够）
 
     def close_camera(self):
         self.cam.release()
@@ -108,10 +106,10 @@ class basicImg():
 
     # get_frame 是从某个路径中获取图片
     def get_frame(self, path, mode=cv2.IMREAD_COLOR):
-        if os.path.isabs(path)==False:
-            path = picture_path+path
+        if os.path.isabs(path) == False:
+            path = picture_path + path
         self.img = pic_read(path, mode)
-        self.picture = 1    #如果有运行从路径读取图片，赋值这个参数为 1
+        self.picture = 1  # 如果有运行从路径读取图片，赋值这个参数为 1
 
     # name_windows 是用来命名图片展示窗口的
     def name_windows(self, name):
@@ -126,20 +124,20 @@ class basicImg():
     def show_image(self, windows_name, img=[]):
         if len(img) == 0:
             img = self.img
-            if self.picture == 1:    #如果是读取了图片，接下来使用的显示默认就有waitKye(0)并且不会放大图像   不清楚具体是否会对运行速度存在影响（指树莓派）
+            if self.picture == 1:  # 如果是读取了图片，接下来使用的显示默认就有waitKye(0)并且不会放大图像   不清楚具体是否会对运行速度存在影响（指树莓派）
                 cv2.imshow(windows_name, img)
                 cv2.waitKey(0)
             else:
                 # cv2.resizeWindow(windows_name, 640, 480)
-                img = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
-            #        cv2.resizeWindow(windows_name, 640, 480)
+                img = cv2.resize(self.img, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
+                #        cv2.resizeWindow(windows_name, 640, 480)
                 cv2.imshow(windows_name, img)
 
     # write_image 是用来保存图片的函数，注意：pic_name中不能存在中文，包括路径和文件命名
     def write_image(self, pic_name, jpg_png=False):
-        if pic_name.split(".")[-1] not in ["jpg","png"]:
-            raise NameError( "图片名字缺少后缀jpg或者png或者后缀不对,请使用xx.jpg或xx.png这种名字来保存")
-        path = picture_path if os.path.isabs(pic_name)==False else '' + pic_name
+        if pic_name.split(".")[-1] not in ["jpg", "png"]:
+            raise NameError("图片名字缺少后缀jpg或者png或者后缀不对,请使用xx.jpg或xx.png这种名字来保存")
+        path = picture_path if os.path.isabs(pic_name) == False else '' + pic_name
         path = picture_path + pic_name + mode
         cv2.imwrite(path, self.img)
         print('图片已保存到：', path)
@@ -214,14 +212,7 @@ class basicImg():
             self.QR_code_data = self.er_data
         self.name_windows('Result of QRcode')
         self.
-        
-        
-        
-        
-        
-        
-        
-        
+
         _image('Result of QRcode', img)
 
     def erweima_detect(self):
