@@ -326,7 +326,7 @@ class Img(basicImg):
         '''
 
     def model_(self, model_name='lxy1007.proto'):
-        self.model = cv2.dnn.readNetFromONNX(model_path + model_name)  # 如'finally.proto'
+        self.model = cv2.dnn.readNetFromONNX((model_path if  os.path.isabs(model_name)==False else '')+ model_name)  # 如'finally.proto'
         f = model_name.split(".")
         self.item = f[0]
         self.pro = 0
@@ -801,7 +801,7 @@ class Img(basicImg):
         self.segmentor = SelfiSegmentation()
 
     def backGroundChange(self, backGroundImageSrc="1.png"):
-        backGroundImageSrc = picture_path + backGroundImageSrc
+        backGroundImageSrc = (picture_path if os.path.isabs(backGroundImageSrc)==False else '')+ backGroundImageSrc
         img_new = self.img.copy()
         h, w, _ = img_new.shape
         backGroundImage = cv2.resize(cv2.imread(backGroundImageSrc), (w, h), cv2.INTER_AREA)
@@ -854,7 +854,7 @@ class Img(basicImg):
 
     def match_template(self, template_name):
         self.isshow = False
-        self.template = cv2.imread(picture_path + template_name)
+        self.template = cv2.imread((picture_path if  os.path.isabs(template_name)==False else '') + template_name)
         # print(self.template.shape)
         self.template = cv2.resize(self.template, (99, 116))
         result = cv2.matchTemplate(self.img, self.template, cv2.TM_CCOEFF_NORMED)
