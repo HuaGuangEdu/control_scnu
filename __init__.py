@@ -3,6 +3,18 @@
 """
 
 """
+2022/5/5
+control_version:0.5.8
+blcoklyFile_version:0.2.6
+blockly_version:2.2.2
+更新内容
+1、增加了兼容绝对路径和相对路径（适用于所有库）
+2、yuyin库大幅度修改
+3、unique库移植进了修改后的playsound库
+"""
+
+
+"""
 2022/4/30
 control_version:0.5.7
 blcoklyFile_version:0.2.5
