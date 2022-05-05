@@ -5,7 +5,7 @@
 """
 import warnings
 warnings.filterwarnings("ignore")
-from control.unique import  Number_Convert
+from control.unique import  Number_Convert,playsound
 from aip.speech import AipSpeech
 import os, re
 import wave
@@ -20,9 +20,7 @@ import sys
 import webbrowser
 import random
 from importlib import reload
-from pydub import  AudioSegment #用于mp3和wav格式的互转
-from pydub.playback import play
-
+# from unique import playsound
 # os.close(sys.stderr.fileno())
 
 system_platform = sys.platform
@@ -195,6 +193,7 @@ class Yuyin():
         :param file_name: 录音file_name路径文件名
         :return: None
         """
+
         FORMAT = pyaudio.paInt16
         CHANNELS = 1  # 声道
         if self.online:
@@ -212,7 +211,6 @@ class Yuyin():
                              rate=RATE,
                              input=True,
                              frames_per_buffer=CHUNK)
-
         print("开始录音,请说话,持续", TIME, "秒......")
         frames = []
         t = time.time()
@@ -293,11 +291,12 @@ class Yuyin():
         :param tmp: 1使用百度api，2使用DUI，暂时使用，默认2
         :return: None
         """
+
         if not isinstance(txt,str):
             print("请输入字符串类型")
 
         if len(txt) != 0:
-                # try:
+                try:
                     url = "https://dds.dui.ai/runtime/v1/synthesize?voiceId=" + self.gender + \
                           "&speed=" + str(self.spd_DUI) + \
                           "&volume=" + str(self.vol_DUI) + \
@@ -305,26 +304,18 @@ class Yuyin():
 
                     r = requests.get(url)
                     result = r.content
+                except:
+                    raise BaseError('没有连接网络')
 
-                    filename = str(filename)
-                    file = audio_path + "new"+filename + '.mp3'
-                    # try:
-                    with open(file, 'wb') as f:
-                        f.write(result)
-                    precwd = os.getcwd()
-                    os.chdir(audio_path)
-                    audio = AudioSegment.from_mp3(file)
-                    audio.export(audio_path + filename+".wav", format="wav")
+                filename = str(filename)
+                file = audio_path + filename + '.mp3'
 
+                if os.path.exists(file):
                     os.remove(file)
-                    os.chdir(precwd)
-                    del precwd
-                    # except:
-                    #     file = file+'1'
-                    #     with open(file, 'wb') as f:
-                    #         f.write(result)
-                # except:
-                #     print('没有连接网络')
+                with open(file, 'wb') as f:
+                    f.write(result)
+
+
 
     def play_bufen(self, filename, play_time):
         """
@@ -350,23 +341,21 @@ class Yuyin():
         :param time: 音乐播放部分时候的播放时间
         :return: None
         """
+        # filename = audio_path+str(filename)
 
-
-        filename = audio_path+str(filename)
-
-        if os.path.exists (filename+".mp3"):
-            os.remove(filename+".mp3")
-        if os.path.exists (filename+".wav")==False:
-            raise FileNotFoundError("找不到该音频文件，是不是还没录制呢？")
+        if os.path.exists (audio_path+filename+".mp3"):
+            filename += ".mp3"
+        elif os.path.exists (audio_path+filename+".wav"):
+            filename += ".wav"
         else:
-            precwd = os.getcwd()
-            os.chdir(audio_path)
-            audio = AudioSegment.from_wav(filename+".wav")
-            audio.export(filename+".mp3",format="mp3")
-            play(audio) #播放音频
-            os.chdir(precwd)
-            del precwd
-        os.remove(filename+".mp3")
+            raise FileNotFoundError("找不到该音频文件，是不是还没录制呢？")
+        precwd = os.getcwd()
+        os.chdir(audio_path)
+        playsound(filename)
+        os.chdir(precwd)
+
+
+
 
     def play_txt(self, txt):
         '''
@@ -375,7 +364,7 @@ class Yuyin():
         :return: None
         '''
         txt = str(txt)
-        tmp = None
+        tmp = 'None'
         self.tts(txt, tmp)
         self.play_music(tmp)
 
