@@ -211,9 +211,7 @@ class basicImg():
             self.er_data = barcodeData
             self.QR_code_data = self.er_data
         self.name_windows('Result of QRcode')
-        self.
-
-        _image('Result of QRcode', img)
+        self._image('Result of QRcode', img)
 
     def erweima_detect(self):
         img = self.img
