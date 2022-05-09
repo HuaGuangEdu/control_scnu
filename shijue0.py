@@ -127,11 +127,11 @@ class basicImg():
             if self.picture == 1:  # 如果是读取了图片，接下来使用的显示默认就有waitKye(0)并且不会放大图像   不清楚具体是否会对运行速度存在影响（指树莓派）
                 cv2.imshow(windows_name, img)
                 cv2.waitKey(0)
-        else:
-            # cv2.resizeWindow(windows_name, 640, 480)
-            img = cv2.resize(img, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
-            #        cv2.resizeWindow(windows_name, 640, 480)
-            cv2.imshow(windows_name, img)
+            else:
+                # cv2.resizeWindow(windows_name, 640, 480)
+                img = cv2.resize(self.img, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
+                #        cv2.resizeWindow(windows_name, 640, 480)
+                cv2.imshow(windows_name, img)
 
     # write_image 是用来保存图片的函数，注意：pic_name中不能存在中文，包括路径和文件命名
     def write_image(self, pic_name, jpg_png=False):
