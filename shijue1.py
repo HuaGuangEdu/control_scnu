@@ -294,8 +294,7 @@ class Img(basicImg):
                         cv2.line(img_new, (x1, y1), (x1, y1 - 30), (255, 0, 255), 5)
                     else:
                         cv2.rectangle(img_new, bbox, (255, 0, 255), 3)
-        self.name_windows('face detect result')
-        self.show_image('face detect result', img_new)
+        cv2.imshow('face detect result',img_new)
 
     def face_cap(self, path):
         self.pht = d_path + path + '.jpg'
