@@ -85,8 +85,8 @@ class Model():
             exec("".join(["from sklearn.", self.model_name_dict[self.model_name][1],
                           " import ",self.model_name_dict[self.model_name][2]]))
             return eval(self.model_name_dict[self.model_name][2])()
-        if self.myModel_name in self.myModel_name_list or os.path.isabs(self.myModel_name):
-            return joblib.load(model_path if os.path.isabs(self.myModel_name)==False else ""+ \
+        if (self.myModel_name[:-4] in self.myModel_name_list) or os.path.isabs(self.myModel_name):
+            return joblib.load((model_path if os.path.isabs(self.myModel_name)==False else "")+ \
                                         self.myModel_name+ (".pkl" if self.myModel_name.split(".")[-1] != "pkl" else ""))
         else:
             exis_model = "".join(["-"*10,"\n","\n".join(self.myModel_name_list),"\n","-"*10])
