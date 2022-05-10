@@ -294,7 +294,9 @@ class Img(basicImg):
                         cv2.line(img_new, (x1, y1), (x1, y1 - 30), (255, 0, 255), 5)
                     else:
                         cv2.rectangle(img_new, bbox, (255, 0, 255), 3)
-        cv2.imshow('face detect result',img_new)
+        # self.name_windows('face detect result')
+        # self.show_image('face detect result', img_new)
+        cv2.imshow('face detect result', img_new)
 
     def face_cap(self, path):
         self.pht = d_path + path + '.jpg'
@@ -520,7 +522,7 @@ class Img(basicImg):
                 else:
                     self.img_new = frame[y + 5:y + h - 5, x + 5:x + w - 5]
 
-                self.img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
+                # self.img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
                 cv2.imshow('result', self.img_new)
                 cv2.waitKey(3)
 
@@ -738,7 +740,7 @@ class Img(basicImg):
             self.mpDraw.draw_landmarks(img_new, handlms, self.mpHands.HAND_CONNECTIONS)
         else:
             self.fingertip = {}
-        img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
+        # img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         cv2.imshow('finger_detect', img_new)
 
     '''
@@ -776,7 +778,7 @@ class Img(basicImg):
             ('right_ankle', 28), ('left_shoulder', 11), ('right_shoulder', 12)):
                 self.body_menu[tur[0]] = (int(poselms[tur[1]].x * w), int(poselms[tur[1]].y * h))
             self.mpDraw.draw_landmarks(img_new, results.pose_landmarks, self.mp_pose.POSE_CONNECTIONS)
-        img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
+        # img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         cv2.imshow('body_detect', img_new)
 
     def wrist_mark(self, wrist='left_wrist', mark='x'):
@@ -806,7 +808,7 @@ class Img(basicImg):
         backGroundImage = cv2.resize(cv2.imread(backGroundImageSrc), (w, h), cv2.INTER_AREA)
 
         img_new = self.segmentor.removeBG(img_new, backGroundImage, threshold=0.5)
-        img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
+        # img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         cv2.imshow('backGroundChange', img_new)
 
     def faceMeshDetect_init(self):
@@ -823,7 +825,7 @@ class Img(basicImg):
             for faceLms in results.multi_face_landmarks:
                 self.mpDraw.draw_landmarks(img_new, faceLms, self.mpFaceMesh.FACEMESH_FACE_OVAL,
                                            landmark_drawing_spec=self.drawSpec)
-        img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
+        # img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         cv2.imshow('faceMesh', img_new)
 
     def get_shape(self, parameter='width'):
