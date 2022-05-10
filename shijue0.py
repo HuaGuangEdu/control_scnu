@@ -138,7 +138,7 @@ class basicImg():
         if pic_name.split(".")[-1] not in ["jpg", "png"]:
             raise NameError("图片名字缺少后缀jpg或者png或者后缀不对,请使用xx.jpg或xx.png这种名字来保存")
         path = picture_path if os.path.isabs(pic_name) == False else '' + pic_name
-        path = picture_path + pic_name + mode
+        # path = picture_path + pic_name + mode
         cv2.imwrite(path, self.img)
         print('图片已保存到：', path)
 
@@ -210,8 +210,9 @@ class basicImg():
             barcodeData = barcode.data.decode("utf-8")
             self.er_data = barcodeData
             self.QR_code_data = self.er_data
-        self.name_windows('Result of QRcode')
-        self._image('Result of QRcode', img)
+        # self.name_windows('Result of QRcode')
+        # self.show_image('Result of QRcode', img)
+        cv2.imshow('Result of QRcode', img)
 
     def erweima_detect(self):
         img = self.img
