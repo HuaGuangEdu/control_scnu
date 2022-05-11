@@ -344,7 +344,7 @@ class CSB(object):
         pulse_len = finish - start
         distance_cm = pulse_len / 0.000058
         distance_cm = round(distance_cm, 2)  # 保留两位小数  使用round内置函数
-        self.dis = int(distance_cm)
+        self.dis = distance_cm   #直接返回带两位小数的数值
 
 
 # 普通io口的蜂鸣器,有源蜂鸣器
