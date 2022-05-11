@@ -36,7 +36,7 @@ if 'win' in system_platform:
 txt_path = main_path + 'txt\\'
 
 # 音频文件夹
-audio_path = main_path + 'speech\\'
+audio_path = main_path + 'speech/'
 if not os.path.exists(audio_path):
     os.makedirs(audio_path)
 # # 开始时删除所有合成音频--Nonexxxxxxx.mp3/wav(固定格式)
