@@ -2,10 +2,26 @@
 更新内容一览
 """
 
+
+"""
+2022/5/10
+control_version:0.5.10
+blcoklyFile_version:2.2.6
+blockly_version:2.2.2
+修改视觉和机器学习
+"""
+
+"""
+2022/5/9
+control_version:0.5.9
+blcoklyFile_version:2.2.6
+blockly_version:2.2.2
+修改舵机
+"""
 """
 2022/5/5
 control_version:0.5.8
-blcoklyFile_version:0.2.6
+blcoklyFile_version:2.2.6
 blockly_version:2.2.2
 更新内容
 1、增加了兼容绝对路径和相对路径（适用于所有库）
@@ -17,7 +33,7 @@ blockly_version:2.2.2
 """
 2022/4/30
 control_version:0.5.7
-blcoklyFile_version:0.2.5
+blcoklyFile_version:2.2.5
 blockly_version:2.2.2
 更新内容
 1.加入摄像头判定语句，若为Win系统则不进行缩放（电脑算力足够）
