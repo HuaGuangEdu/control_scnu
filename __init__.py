@@ -9,7 +9,7 @@ control_version:0.5.12
 blcoklyFile_version:2.2.6
 blockly_version:2.2.2
 1.GPIO超声波返回值为两位小数的值，单位为cm
-
+2.改了语音的路径
 """
 
 """
