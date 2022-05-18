@@ -36,7 +36,7 @@ if 'win' in system_platform:
 txt_path = main_path + 'txt\\'
 
 # 音频文件夹
-audio_path = main_path + 'speech/'
+audio_path = main_path + 'speech\\'
 if not os.path.exists(audio_path):
     os.makedirs(audio_path)
 # # 开始时删除所有合成音频--Nonexxxxxxx.mp3/wav(固定格式)
@@ -100,7 +100,7 @@ class Yuyin():
 
         self.NumConverter = Number_Convert() #把百度的语音转文字中的中文数字转化成阿拉伯数字
 
-    def change_vol_spd_gender_DUI(self, vol, spd, gender):
+    def change_vol_spd_gender_DUI(self, vol:int, spd:int, gender:str):
         """
         选择机器人播放时候的音量，播放速度以及声线（DUI版）
         网站：https://www.duiopen.com/docs/ct_cloud_TTS_Voice
@@ -117,7 +117,7 @@ class Yuyin():
         if not self.gender:
             raise KeyError("没有这个音色！")
 
-    def chat(self, my_text):
+    def chat(self, my_text:str):
         """
         在百度API获取聊天机器人，将聊天机器人的语句通过self.chat_ret返回
         :param my_text: 对机器人说的话，以str类型输入
@@ -128,7 +128,7 @@ class Yuyin():
         html = requests.get(url)
         self.chat_ret = html.json()["content"]
 
-    def downsampleWav(self, src, dst, inrate=48000, outrate=16000, inchannels=1, outchannels=1):
+    def downsampleWav(self, src:str, dst:str, inrate:int=48000, outrate:int=16000, inchannels:int=1, outchannels:int=1):
         """
         修改成语音文件格式到适合百度语音api
         :param src: 原来的录音文件
@@ -186,7 +186,7 @@ class Yuyin():
         return True
 
 
-    def my_record(self, TIME, file_name):
+    def my_record(self, TIME:int, file_name:str):
         """
         机器人录音，并将录音保存到.wav文件
         :param TIME: 录音时间长度
@@ -241,7 +241,7 @@ class Yuyin():
             # 把file_name这个文件名给到修改后的文件
             os.rename(file_new_name, file_name)
 
-    def stt(self, filename):
+    def stt(self, filename:str):
         """
         语音识别返回识别结果字符串, 识别.wav文件中的语音,  中文普通话识别的免费次数为50000次。
         :param filename: 要进行转换的文本文件
@@ -283,7 +283,7 @@ class Yuyin():
             return word[0]
 
 
-    def tts(self, txt,filename):
+    def tts(self, txt:str,filename:str):
         """
         将文本转为音频  语音合成免费额度只有5000次（未认证），认证之后有50000次，在180天内有效
         :param txt: 转语音的文本
@@ -317,7 +317,7 @@ class Yuyin():
 
 
 
-    def play_bufen(self, filename, play_time):
+    def play_bufen(self, filename:str, play_time:int):
         """
         用于加载音频文件并播放
         :param filename: 音频文件
@@ -330,7 +330,7 @@ class Yuyin():
         time.sleep(play_time)
         pygame.mixer.music.stop()
 
-    def play_music(self, filename):
+    def play_music(self, filename:str):
 
         """
         播放音频及音乐,只能播放.mp3文件
@@ -357,7 +357,7 @@ class Yuyin():
 
 
 
-    def play_txt(self, txt):
+    def play_txt(self, txt:str):
         '''
         将文本转换为语音并播放
         :param txt: 需要转换为音频的文本
