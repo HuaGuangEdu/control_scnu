@@ -10,7 +10,7 @@ class Number_Convert():
         self.unit_map = {'十': 10, '百': 100, '千': 1000, '万': 10000, '亿': 100000000}  # 数字单位
 
 
-    def __operate(self, num_str):  # 这个和下面呢个____operate1都是处理字符串的函数，别调用
+    def __operate(self, num_str:str):  # 这个和下面呢个____operate1都是处理字符串的函数，别调用
         Num = 0
         unit = False
         print(num_str)
@@ -23,7 +23,7 @@ class Number_Convert():
                 Num += self.unit_map[i]
         return Num
 
-    def __operate1(self, strings):  # 处理字符串的，分成了三种情况，有“亿”，无“亿”有“万”， 无“亿”无“万”
+    def __operate1(self, strings:str):  # 处理字符串的，分成了三种情况，有“亿”，无“亿”有“万”， 无“亿”无“万”
 
         if '亿' in strings:
             strings2 = strings.split('亿')
@@ -46,7 +46,7 @@ class Number_Convert():
         else:
             return self.__operate(strings)
 
-    def num_convert3(self, test_strings):
+    def num_convert3(self, test_strings:str):
         self.NumList = [] #装数字的列表
         self.converted_strings = ''  # 转化后的字符串
         self.test_strings = test_strings.replace("什","【·&……】")
