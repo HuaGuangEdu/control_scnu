@@ -3,7 +3,7 @@ import pandas as pd
 import json
 import sys
 import re
-
+from typing import Any
 system_platform = sys.platform
 main_path = '/home/pi/class/'  # 读取和保存文件所用主文件夹
 if 'win' in system_platform:
@@ -16,7 +16,7 @@ if not os.path.exists(main_path+f_path):
 
 
 class Common_file:
-    def __init__(self, file_name, mode):
+    def __init__(self, file_name:str, mode:str):
         '''
 
         :param file_name: 需要打开的文件名称。目前支持txt,json
@@ -56,7 +56,7 @@ class Common_file:
         return self.file.readline()
 
     # 文件（f）中的第（num）行 
-    def read_random_line(self, num):
+    def read_random_line(self, num:int):
         '''
         返回文件中第某行的内容
         :param num: 选择的第几行，数据类型：int
@@ -83,7 +83,7 @@ class Common_file:
         self.file.seek(0)
 
     # 向文件（f）写入内容（message）
-    def write(self, message):
+    def write(self, message:str):
         '''
         向文件（f）写入内容（message）
         :param message: 向文件写入的内容
@@ -92,7 +92,7 @@ class Common_file:
         self.file.write(message)
 
     # 向文件（f）写入序列（line）
-    def write_lines(self, lines):
+    def write_lines(self, lines:list):
         '''
         向文件（f）写入序列（line）
         :param lines: 向文件写入的序列
@@ -103,18 +103,36 @@ class Common_file:
 
 # 赋值（f）为json文件（example.json），打开方式为【那三个】
 class Json(Common_file):
-    # json文件（f）中所有内容
+    '''
+    初始化json文件类用于处理json文件
+    '''
     def load(self):
+        '''
+        加载json文件
+        Returns:
+
+        '''
         return json.load(self.file)
 
-    # 向json文件（f）中写入内容（message）
-    def dump(self, message):
+
+    def dump(self, message:str):
+        '''
+        向json文件（f）中写入内容（message）
+        Args:
+            message:
+
+        Returns:
+
+        '''
         json.dump(message, self.file)
 
 
 class CSV():
-    # 赋值（f）为csv文件（example.csv)
-    def __init__(self, file_name):
+    '''
+    赋值（f）为csv文件（example.csv)
+    '''
+
+    def __init__(self, file_name:str):
         '''
 
         :param file_name: csv文件的名称，通常放置在 ../resources/assets/class/file_operation/内
@@ -125,16 +143,16 @@ class CSV():
         self.shape = self.csv.shape()
 
     # 打印csv文件（f）中前（数字head，默认5）行
-    def print_head(self, head):
+    def print_head(self, head:int):
         '''
-        # 打印csv文件（f）中前（数字head，默认5）行
+        打印csv文件（f）中前（数字head，默认5）行
         :param head: 打开文件中前面的行数，默认为5行。数据类型：int
         :return:
         '''
         print(self.csv.head(head))
 
     # 打印csv文件（f）中后（数字tail，默认5）行
-    def print_tail(self, tail):
+    def print_tail(self, tail:int):
         '''
         打印csv文件（f）中后（数字tail，默认5）行
         :param tail: 打开文件中后面的行数，默认为5行。数据类型：int
@@ -151,7 +169,7 @@ class CSV():
         print(self.csv.describe())
 
     # csv文件（f）中第（数字row，默认1，下同）行
-    def get_a_row(self, row):
+    def get_a_row(self, row:int):
         '''
         获取csv文件（f）中第（数字row，默认1，下同）行
         :param row: 想要获取行的行数。数据类型：int
@@ -161,7 +179,7 @@ class CSV():
         return self.csv.iloc[row, :]
 
     # csv文件（f）中第（数字column）列
-    def get_a_column(self, column):
+    def get_a_column(self, column:int):
         '''
         csv文件（f）中第（数字column）列
         :param column: 想要获取列的列数。数据类型：int
@@ -171,7 +189,7 @@ class CSV():
         return self.csv.iloc[:, column]
 
     # csv文件（f）中第（数字row）行、第（数字column）列的元素
-    def get_directory(self, row, column):
+    def get_directory(self, row:int, column:int):
         '''
         csv文件（f）中第（数字row）行、第（数字column）列的元素
         :param row: 第几行。数据类型：int
@@ -191,7 +209,7 @@ class CSV():
         self.csv.dropna()
 
     # 用（x）替换csv文件（f）中的所有空白值
-    def fillna(self, x):
+    def fillna(self, x:Any):
         '''
         用（x）替换csv文件（f）中的所有空白值
         :param x: 用x来替代csv中所有的空白值
