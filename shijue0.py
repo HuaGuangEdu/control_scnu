@@ -38,15 +38,12 @@ def new_file(path:str):
 
 
 def pic_read(filename:str, mode:int):
-<<<<<<< HEAD
     '''
         读取图片。
     :param filename:  图片的路径包括名称
     :param mode:  读取的模式，彩色还是灰度
     :return: 返回读取的图片
     '''
-=======
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
     '''
         其实严格来说，不是imread不支持中文路径，而是不支持non-ascii。
         所以不论路径如何转换编码格式，应该都不能解决问题。
@@ -145,7 +142,6 @@ class basicImg():
             self.img = cv2.flip(self.img, -1)
 
     # get_frame 是从某个路径中获取图片
-<<<<<<< HEAD
     def get_frame(self, path:str,file_dir:str):
         '''
         从某个路径中获取图片
@@ -161,19 +157,6 @@ class basicImg():
                 path = os.path.join(picture_path , path)
             elif os.path.exists(os.path.join(file_dir , path)):
                 path = os.path.join(file_dir , path)
-=======
-    def get_frame(self, path:str):
-        '''
-        从某个路径中获取图片
-        Args:
-            path:
-
-        Returns:
-
-        '''
-        if os.path.isabs(path) == False:
-            path = picture_path + path
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
         self.img = pic_read(path, cv2.IMREAD_COLOR)
         self.picture = 1  # 如果有运行从路径读取图片，赋值这个参数为 1
 
@@ -234,7 +217,6 @@ class basicImg():
         '''
         if pic_name.split(".")[-1] not in ["jpg", "png"]:
             raise NameError("图片名字缺少后缀jpg或者png或者后缀不对,请使用xx.jpg或xx.png这种名字来保存")
-<<<<<<< HEAD
 
         if os.path.isabs(pic_name): #如果是绝对路径，那就不修改
             path = pic_name
@@ -242,9 +224,6 @@ class basicImg():
             path = os.path.join((file_dir),pic_name)
 
 
-=======
-        path = picture_path if os.path.isabs(pic_name) == False else '' + pic_name
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
         # path = picture_path + pic_name + mode
         cv2.imwrite(path, self.img)
         print('图片已保存到：', path)

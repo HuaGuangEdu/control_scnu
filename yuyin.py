@@ -5,15 +5,9 @@
 """
 import warnings
 warnings.filterwarnings("ignore")
-<<<<<<< HEAD
 from control.unique import  Number_Convert,playsound,Yuyin_local
 from aip.speech import AipSpeech
 import os, re,json,threading,subprocess
-=======
-from control.unique import  Number_Convert,playsound
-from aip.speech import AipSpeech
-import os, re
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
 import wave
 import time
 import pyaudio
@@ -80,15 +74,9 @@ class Yuyin():
         :param None
         """
         self.online = True # 这个参数是针对本地化语音转文字的，如果是True就是调用百度在线的，否则调用本地化的
-<<<<<<< HEAD
         for key,value in kwargs.items():
             if key=="online":
                 self.online = value and ('win' in system_platform)
-=======
-        for key,value in kwargs:
-            if key=="online":
-                self.online = value
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
 
         #下面这三个是写死的
         self.app_id = app_id
@@ -111,13 +99,10 @@ class Yuyin():
 
         self.NumConverter = Number_Convert() #把百度的语音转文字中的中文数字转化成阿拉伯数字
 
-<<<<<<< HEAD
 
 
 
 
-=======
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
     def change_vol_spd_gender_DUI(self, vol:int, spd:int, gender:str):
         """
         选择机器人播放时候的音量，播放速度以及声线（DUI版）
@@ -223,7 +208,6 @@ class Yuyin():
             RATE = 16000
 
         # 用时间戳和file_name作为文件名，时间戳保证文件的独特性
-<<<<<<< HEAD
         try:
             file_name = audio_path + str(file_name) +  '.wav'
             stream = self.p.open(format=FORMAT,
@@ -244,25 +228,6 @@ class Yuyin():
         except:
             print("打开电脑音频失败，请重新尝试")
             exit()
-=======
-        file_name = audio_path + str(file_name) +  '.wav'
-        stream = self.p.open(format=FORMAT,
-                             channels=CHANNELS,
-                             rate=RATE,
-                             input=True,
-                             frames_per_buffer=CHUNK)
-        print("开始录音,请说话,持续", TIME, "秒......")
-        frames = []
-        t = time.time()
-        while time.time() < t + TIME:
-            data = stream.read(CHUNK)
-            frames.append(data)
-        print("录音结束!")
-        # 停止音频流并关闭
-        stream.stop_stream()
-        stream.close()
-        # p.terminate()
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
 
         # 打开WAV文件，以二进制写模式，并对WAV文件进行一系列操作
         wf = wave.open(file_name, 'wb')
@@ -281,11 +246,8 @@ class Yuyin():
 
             # 把file_name这个文件名给到修改后的文件
             os.rename(file_new_name, file_name)
-<<<<<<< HEAD
         else:
             pass
-=======
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
 
     def stt(self, filename:str):
         """
@@ -293,15 +255,9 @@ class Yuyin():
         :param filename: 要进行转换的文本文件
         :return: None
         """
-<<<<<<< HEAD
         filename = audio_path + str(filename) + '.wav'
         if self.online:
             try:
-=======
-        if self.online:
-            # try:
-                filename = audio_path + str(filename) + '.wav'
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
                 if os.path.exists(filename):
 
                     fp = open(filename, 'rb')
@@ -313,7 +269,6 @@ class Yuyin():
                                              16000,
                                              {'dev_pid': 1537, }  # dev_pid参数表示识别的语言类型，1536表示普通话
                                              )
-<<<<<<< HEAD
 
                     # 解析返回值，打印语音识别的结果
                     if result['err_msg'] == 'success.':
@@ -335,28 +290,6 @@ class Yuyin():
             local_yuyin.run()
             os.chdir(preWorkDir) #将工作路径切换回去
             return local_yuyin.total_sentance
-=======
-
-                    # 解析返回值，打印语音识别的结果
-                    if result['err_msg'] == 'success.':
-                        word = result['result'][0] # utf-8编码
-                        numList = self.NumConverter.num_convert3(word)[1]
-                        self.recordNumberList = [num[0] for num in numList]
-                        return self.NumConverter.num_convert3(word)[0] # 返回识别结果值
-                    else:
-                        return "语音识别失败:" + filename
-            # except:
-            #     return "没有连接网络"
-
-        else: #本地化语音转文字
-            res = os.popen(f"{audio_path}decoder_main.exe  --chunk_size -1  --wav_path {audio_path+'None'+'.wav'}  \
-                    --model_path {audio_path}final.zip --dict_path {audio_path}words.txt")
-            tempstream = res._stream
-            numList = self.NumConverter.num_convert3(tempstream.buffer.read().decode(encoding='utf-8', errors='ignore').split(' ')[1].split('\r\n')[0])
-            word = [num[0] for num in numList]
-            self.recordNumberList = word[1]
-            return word[0]
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
 
 
     def tts(self, txt:str,filename:str):
@@ -391,7 +324,6 @@ class Yuyin():
                 with open(file, 'wb') as f:
                     f.write(result)
 
-<<<<<<< HEAD
     def asyn_speech2text(self,record_time_s:int):
         '''
         一边说话一边识别
@@ -409,8 +341,6 @@ class Yuyin():
             local_yuyin.run()
             os.chdir(preWorkDir)
             return local_yuyin.total_sentance
-=======
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
 
 
     def play_bufen(self, filename:str, play_time:int):

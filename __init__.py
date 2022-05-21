@@ -7,20 +7,6 @@
 control_version:0.5.12
 blcoklyFile_version:2.2.6
 blockly_version:2.2.2
-<<<<<<< HEAD
-=======
-改了库中的路径，将本地化语音嵌入进control库语音库里面
-增加、修改了语音库里面的几个块
-增加了LCD的块，在硬件的传感器部分那里
-解决了视觉中美颜显示黑窗口问题
-"""
-
-"""
-2022/5/18
-control_version:0.5.12
-blcoklyFile_version:2.2.6
-blockly_version:2.2.2
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
 改了所有库的注释以及参数的类型注解
 """
 

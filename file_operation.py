@@ -16,11 +16,7 @@ if not os.path.exists(main_path+f_path):
 
 
 class Common_file:
-<<<<<<< HEAD
     def __init__(self, file_name:str, mode:str,file_dir:str):
-=======
-    def __init__(self, file_name:str, mode:str):
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
         '''
 
         :param file_name: 需要打开的文件名称。目前支持txt,json
@@ -34,7 +30,6 @@ class Common_file:
             print('警告：使用写入模式会清除原文件所有内容！')
             input('请输入任意字符继续：')
 
-<<<<<<< HEAD
         if mode=='r': #如果是读的方式打开
             if os.path.isabs(file_name)==False: #如果不是绝对路径
                 if os.path.exists(os.path.join(main_path , f_path, file_name)):#先在class文件夹下面找
@@ -52,9 +47,6 @@ class Common_file:
             else: #是绝对路径的话
                 self.file_name = file_name
 
-=======
-        self.file_name = ((main_path + f_path) if os.path.isabs(file_name)==False else "") + file_name
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
 
         self.file = open(self.file_name, mode, encoding='utf-8')
 
@@ -83,11 +75,7 @@ class Common_file:
         '''
         return self.file.readline()
 
-<<<<<<< HEAD
     # 文件（f）中的第（num）行
-=======
-    # 文件（f）中的第（num）行 
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
     def read_random_line(self, num:int):
         '''
         返回文件中第某行的内容
@@ -144,10 +132,7 @@ class Json(Common_file):
         Returns:
 
         '''
-<<<<<<< HEAD
 
-=======
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
         return json.load(self.file)
 
 
@@ -168,11 +153,7 @@ class CSV():
     赋值（f）为csv文件（example.csv)
     '''
 
-<<<<<<< HEAD
     def __init__(self, file_name:str,file_dir:str):
-=======
-    def __init__(self, file_name:str):
->>>>>>> 2df45ec215a314e7914e70633650ef9ed5fc88a5
         '''
 
         :param file_name: csv文件的名称，通常放置在 ../resources/assets/class/file_operation/内
