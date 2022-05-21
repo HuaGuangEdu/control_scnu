@@ -2,9 +2,9 @@ from control import yuyin
 from control import gpio
 from control import shijue1
 import time
+from typing import Any
 
-
-def case_line_patrol(m):  #单圈单白线语音巡线高集成度函数
+def case_line_patrol(m:Any):  #单圈单白线语音巡线高集成度函数
     s=yuyin.Yuyin()
     condition = 0  #判断是否进入巡线，防止一次语音没回答到
 

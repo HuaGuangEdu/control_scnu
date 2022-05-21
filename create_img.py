@@ -20,6 +20,11 @@ fontsize = 50
 
 # 随机选取颜色
 def getRandomColor():
+    '''
+    随机选取颜色
+    Returns:
+
+    '''
     c1 = random.randint(0, 255)
     c2 = random.randint(0, 255)
     c3 = random.randint(0, 255)
@@ -28,6 +33,11 @@ def getRandomColor():
 
 # 随机选取字体
 def getfont():
+    '''
+    随机获取字体
+    Returns:
+
+    '''
     font = random.sample(font_type, 1)
     fontpath='../class/fonts/'+font[0]+'.ttf'
     # print(fontpath)
@@ -36,6 +46,11 @@ def getfont():
 
 # 随机选取旋转角度
 def getangle():
+    '''
+    随机获取旋转角度
+    Returns:
+
+    '''
     angle = random.sample(angle_type, 1)
     # print(angle[0])
     return angle[0]
@@ -43,13 +58,27 @@ def getangle():
 
 # 随机位置
 def getlocation():
+    '''
+    获取随机位置
+    Returns:
+
+    '''
     location = (random.randint(0, image_size-fontsize),
                 random.randint(0, image_size-fontsize))
     # print(location)
     return (location)
 
 
-def creat_number_img(num, path):
+def creat_number_img(num:int, path:str):
+    '''
+    生成数字图像
+    Args:
+        num: 生成的数字
+        path: 生成的位置
+
+    Returns:
+
+    '''
     for j in range(num):
         for i in number:
             path_ = path+'/'+i

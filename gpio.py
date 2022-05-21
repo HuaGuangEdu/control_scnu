@@ -23,7 +23,7 @@ else:
     try:
         from control.lcd import LCD_2inch4  # 屏幕的包
     except:
-        raise '树莓派没有打开SPI接口！点击左上角-首选项-Raspberry Pi Confuguration-Interfaces-SPI设置为Enabled'
+        raise '树莓派没有打开SPI接口！'
     import serial
     import Adafruit_DHT
     import RPi.GPIO as GPIO
@@ -33,9 +33,7 @@ else:
         from adafruit_servokit import ServoKit
     except ImportError:
         try:
-            print('正在下载相关库......')
             os.system('sudo pip3 install adafruit-circuitpython-servokit')
-            from adafruit_servokit import ServoKit
         except:
             raise '没有连接网络，无法安装相关库！'
 
@@ -325,7 +323,7 @@ class CSB(object):
     def __wait_for_e(self, value: bool, timeout: int):
         '''
         必要的时延
-        :param value:
+        :param value
         :param timeout: 毫秒级时延
         :return:
         '''
@@ -471,7 +469,7 @@ class HongWai(object):
     Example:
     '''
     # 红外检测模块
-    def __init__(self, ir_io):
+    def __init__(self, ir_io:int):
         '''
         初始化HongWai类
         :param ir_io:红外传感器调用的IO口，整数类型
@@ -505,10 +503,13 @@ class HongWai(object):
             time.sleep(0.01)
 
 
-class Servo():  # 采用PCA9685芯片提供稳定的PWM波，弃用树莓派的模拟PWM波
-    def __init__(self, pin):
+class Servo():
+    '''
+    采用PCA9685芯片提供稳定的PWM波，弃用树莓派的模拟PWM波
+    '''
+    def __init__(self, pin:int):
         self.MIN_IMP = 500
-        self.MAX_IMP = 2500
+        self.MAX_IMP = 2460
         self.servo_io = PWM2GPIO[pin]
         GPIO.cleanup(self.servo_io)  # 清空PWM口
         self.pca = ServoKit(channels=16)
@@ -517,13 +518,28 @@ class Servo():  # 采用PCA9685芯片提供稳定的PWM波，弃用树莓派的�
         self.dic = {'True': '已经打开到', 'False': '当前角度为'}
 
     def init_servo(self):
+        '''
+        初始化舵机
+        Returns:
+
+        '''
         self.pca.servo[self.servo_io].set_pulse_width_range(self.MIN_IMP, self.MAX_IMP)  # 设置PWM口电平宽度
-        self.pca.servo[self.servo_io].angle = 0
+        self.pca.servo[self.servo_io].angle = 180
         time.sleep(0.01)
         self.angle = 0
         print("已完成舵机初始化")
 
-    def turn(self, flage, angle1, delta):
+    def turn(self, flage:str, angle1:int, delta:int):
+        '''
+        舵机旋转
+        Args:
+            flage: 模式
+            angle1: 角度
+            delta: 每次旋转的角度
+
+        Returns:
+
+        '''
         if 180 < angle1 or angle1 < 0:
             print("输入错误")
             return False
@@ -549,7 +565,7 @@ class Servo():  # 采用PCA9685芯片提供稳定的PWM波，弃用树莓派的�
                 else:
                     self.fa = 'True'
                     curr_angle -= delta
-            self.pca.servo[self.servo_io].angle = curr_angle
+            self.pca.servo[self.servo_io].angle = 180-curr_angle
             time.sleep(0.05)
             diff_angle = abs(curr_angle - angle1)
         self.angle = curr_angle
@@ -560,6 +576,9 @@ class Servo():  # 采用PCA9685芯片提供稳定的PWM波，弃用树莓派的�
 
 
 class Mecanum_wheel():
+    '''
+    初始化麦轮
+    '''
     def __init__(self):
         self.ser = serial.Serial('/dev/ttyAMA0', 115200)
         self.dec = 'none'
@@ -573,10 +592,20 @@ class Mecanum_wheel():
         GPIO.setup(1, GPIO.IN)  # 设置引脚1（BCM编号）为输入通道
 
     def uart_init(self):
+        '''
+        初始化串口
+        Returns:
+
+        '''
         if self.ser.isOpen == False:
             self.ser.open()  # 打开串口
 
     def uart_receive(self):
+        '''
+        串口接收数据
+        Returns:
+
+        '''
         try:
             # 打开串口
             if self.ser.is_open == False:
@@ -602,19 +631,55 @@ class Mecanum_wheel():
     '''
 
     def car_stop(self):
-        self.car_contr(10, 0, 0)  # 这里不知道为什么一定要给个参数才能停止（已经联调看过底层代码还是解决不了）单片机那边会没有受到数据
+        '''
+        小车停止
+        Returns:
+
+        '''
         self.car_contr(0, 0, 0)
 
-    def car_go(self, speed):
+    def car_go(self, speed:int):
+        '''
+        小车前进
+        Args:
+            speed: 速度
+
+        Returns:
+
+        '''
         self.car_contr(speed, 0, 0)
 
-    def car_back(self, speed):
+    def car_back(self, speed:int):
+        '''
+               小车后退
+               Args:
+                   speed: 速度
+
+               Returns:
+
+               '''
         self.car_contr(-speed, 0, 0)
 
-    def car_across_l(self, speed):
+    def car_across_l(self, speed:int):
+        '''
+               小车左平移
+               Args:
+                   speed: 速度
+
+               Returns:
+
+               '''
         self.car_contr(0, -speed, 0)
 
-    def car_across_r(self, speed):
+    def car_across_r(self, speed:int):
+        '''
+        小车右平移
+        Args:
+            speed: 速度
+
+        Returns:
+
+        '''
         self.car_contr(0, speed, 0)
 
     '''
@@ -630,13 +695,27 @@ class Mecanum_wheel():
     注意：速度单位都是mm！！！
     '''
 
-    def car_turn_l(self, speed):
-        #和马哥探讨后决定还是角度每秒比较好，不转换了——3_26
-        #speed = speed / 12  # 这里就是转化，下面也同理
+    def car_turn_l(self, speed:int):
+        '''
+               小车左转
+               Args:
+                   speed: 速度
+
+               Returns:
+
+            '''
+
         self.car_contr(0, 0, speed)
 
-    def car_turn_r(self, speed):
-        #speed = speed / 12
+    def car_turn_r(self, speed:int):
+        '''
+               小车右转
+               Args:
+                   speed: 速度
+
+               Returns:
+
+        '''
         self.car_contr(0, 0, -speed)
 
     '''
@@ -647,16 +726,48 @@ class Mecanum_wheel():
     目前是给的两个参数一样，即45度角的平移
     '''
 
-    def car_parallel_L_F(self, speed):
+    def car_parallel_L_F(self, speed:int):
+        '''
+        左平移+前进
+        Args:
+            speed:
+
+        Returns:
+
+        '''
         self.car_contr(speed, -speed, 0)
 
-    def car_parallel_R_F(self, speed):
+    def car_parallel_R_F(self, speed:int):
+        '''
+        右平移+前进
+        Args:
+            speed:
+
+        Returns:
+
+        '''
         self.car_contr(speed, speed, 0)
 
-    def car_parallel_L_B(self, speed):
+    def car_parallel_L_B(self, speed:int):
+        '''
+        左平移+后退
+        Args:
+            speed:
+
+        Returns:
+
+        '''
         self.car_contr(-speed, -speed, 0)
 
-    def car_parallel_R_B(self, speed):
+    def car_parallel_R_B(self, speed:int):
+        '''
+        右平移+后退
+        Args:
+            speed:
+
+        Returns:
+
+        '''
         self.car_contr(-speed, speed, 0)
 
     '''
@@ -672,19 +783,37 @@ class Mecanum_wheel():
     如果半径单位也是mm没注意当成cm输入会造成半径很小，即旋转速度给到很大很大（单位待考究,目前是统一mm）
     '''
 
-    def car_circle_L(self, speed, radius):  # 左传（后面不做解释了）
+    def car_circle_L(self, speed:int, radius:int):  # 左传（后面不做解释了）
+        '''
+        左旋转+前后
+        Args:
+            speed:
+            radius:
+
+        Returns:
+
+        '''
         w = 110 * speed / radius
         w = w / 12  # 转换为角速度
         # print(speed, w)  # 这行是看参数的，注释掉方便以后调试
         self.car_contr(speed, 0, w)
 
-    def car_circle_R(self, speed, radius):
+    def car_circle_R(self, speed:int, radius:int):
+        '''
+        右旋转+前后
+        Args:
+            speed:
+            radius:
+
+        Returns:
+
+        '''
         w = 110 * speed / radius
         w = - w / 12  # 这两行一定要分开来写，不然数据帧会出现问题（符号问题看上面注释）
         self.car_contr(speed, 0, w)
 
     # 小车控制函数
-    def car_contr(self, contr_fb=0, contr_lr=0, contr_tn=0):
+    def car_contr(self, contr_fb:int=0, contr_lr:int=0, contr_tn:int=0):
         '''
         目前所用协议为 V1.0 ChenZuHong 2021-10-9
         :param contr_fb: 控制小车前进，协议中正数前进，负数后退，单位为mm/s
@@ -692,50 +821,57 @@ class Mecanum_wheel():
         :param contr_tn: 控制小车旋转，协议中正数逆时针，负数顺时针，单位为°/s
         '''
         global old_fb, old_lr, old_tn
-        if (contr_fb != old_fb) or (contr_lr != old_lr) or (contr_tn != old_tn):
-            old_fb = contr_fb
-            old_lr = contr_lr
-            old_tn = contr_tn
-            # 当速度为负的，做数据处理，得到电机反转的速度
-            # fb 控制前后移动，lr控制左右平移，tn控制左右转向
-            # fb = -10表示前进，lr = -10 表示向左平移，tn = -500表示左转
-            if contr_fb < 0:
-                contr_fb = 65536 + contr_fb
-            if contr_lr < 0:
-                contr_lr = 65536 + contr_lr
-            if contr_tn < 0:
-                contr_tn = 65536 + contr_tn
-            byte_list = [0x55, 0x0E, 0x01, 0x01,
-                         int(contr_fb / 256), int(contr_fb % 256),
-                         int(contr_tn / 256), int(contr_tn % 256),
-                         int(contr_lr / 256), int(contr_lr % 256),
-                         0, 0, 1]
-            k = 0
-            for i in range(len(byte_list)):
-                k += byte_list[i]
-                k = k % 256
-            byte_list.append(k)
-            # 格式化要发送的数据帧
-            contr_law = b"%c%c%c%c%c%c%c%c%c%c%c%c%c%c" % (byte_list[0], byte_list[1], byte_list[2], byte_list[3],
-                                                           byte_list[4], byte_list[5], byte_list[6], byte_list[7],
-                                                           byte_list[8], byte_list[9], byte_list[10], byte_list[11],
-                                                           byte_list[12], byte_list[13])
-            '''
-            byte_list[0], byte_list[1], byte_list[2], byte_list[3]: 数据帧前四位， 协议中是 0x55, 0x0E, 0x01, 0x01
-            byte_list[4], byte_list[5]: 协议中控制前进速度高八位、低八位
-            byte_list[6], byte_list[7]: 协议中控制旋转速度高八位、低八位
-            byte_list[8], byte_list[9]: 协议中控制平移速度高八位、低八位
-            byte_list[10], byte_list[11]:保留位，默认为0，0
-            byte_list[12], byte_list[13]:帧ID，默认为1， 校验位，由前面13个数据叠加而成
-            '''
-            # 发送数据帧
-            self.ser.write(contr_law)
+        old_fb = contr_fb
+        old_lr = contr_lr
+        old_tn = contr_tn
+        # 当速度为负的，做数据处理，得到电机反转的速度
+        # fb 控制前后移动，lr控制左右平移，tn控制左右转向
+        # fb = -10表示前进，lr = -10 表示向左平移，tn = -500表示左转
+        if contr_fb < 0:
+            contr_fb = 65536 + contr_fb
+        if contr_lr < 0:
+            contr_lr = 65536 + contr_lr
+        if contr_tn < 0:
+            contr_tn = 65536 + contr_tn
+        byte_list = [0x55, 0x0E, 0x01, 0x01,
+                     int(contr_fb / 256), int(contr_fb % 256),
+                     int(contr_tn / 256), int(contr_tn % 256),
+                     int(contr_lr / 256), int(contr_lr % 256),
+                     0, 0, 1]
+        k = 0
+        for i in range(len(byte_list)):
+            k += byte_list[i]
+            k = k % 256
+        byte_list.append(k)
+        # 格式化要发送的数据帧
+        contr_law = b"%c%c%c%c%c%c%c%c%c%c%c%c%c%c" % (byte_list[0], byte_list[1], byte_list[2], byte_list[3],
+                                                       byte_list[4], byte_list[5], byte_list[6], byte_list[7],
+                                                       byte_list[8], byte_list[9], byte_list[10], byte_list[11],
+                                                       byte_list[12], byte_list[13])
+        '''
+        byte_list[0], byte_list[1], byte_list[2], byte_list[3]: 数据帧前四位， 协议中是 0x55, 0x0E, 0x01, 0x01
+        byte_list[4], byte_list[5]: 协议中控制前进速度高八位、低八位
+        byte_list[6], byte_list[7]: 协议中控制旋转速度高八位、低八位
+        byte_list[8], byte_list[9]: 协议中控制平移速度高八位、低八位
+        byte_list[10], byte_list[11]:保留位，默认为0，0
+        byte_list[12], byte_list[13]:帧ID，默认为1， 校验位，由前面13个数据叠加而成
+        '''
+        # 发送数据帧
+        self.ser.write(contr_law)
 
-            # 防止连续快速发送数据导致出错
-            time.sleep(0.005)
+        # 防止连续快速发送数据导致出错
+        time.sleep(0.005)
 
-    def xunxian(self, io_l, io_r):  # 该函数是红外巡线，遇到白线跳出程序
-        # 设置红外的io口
+    def xunxian(self, io_l:int, io_r:int):  # 该函数是红外巡线，遇到白线跳出程序
+        '''
+        设置红外的io口
+        Args:
+            io_l:
+            io_r:
+
+        Returns:
+
+        '''
         self.hw_l = HongWai(io_l)
         self.hw_r = HongWai(io_r)
 
@@ -760,10 +896,27 @@ class Mecanum_wheel():
 
 
 class Screen():
+    '''
+    初始化LCD屏幕
+    '''
     def __init__(self):
         pass
 
-    def screen_display(self, string, background_color='white', font_color='black', font_size=20, Font=1, a=0, b=0):
+    def screen_display(self, string:str, background_color:str='white', font_color:str='black', font_size:int=20, Font:int=1, a:int=0, b:int=0):
+        '''
+        LCD屏幕显示
+        Args:
+            string:
+            background_color:
+            font_color:
+            font_size:
+            Font:
+            a:
+            b:
+
+        Returns:
+
+        '''
         # 屏幕大小为240*320，background_color为背景颜色，font_color字体颜色，font_size字体大小，a,b坐标
 
         # display with hardware SPI:
@@ -804,7 +957,15 @@ class Screen():
         image1 = image1.rotate(0)
         disp.ShowImage(image1)
 
-    def screen_display_picture(self, image_path):
+    def screen_display_picture(self, image_path:str):
+        '''
+        显示图片
+        Args:
+            image_path:
+
+        Returns:
+
+        '''
         disp = LCD_2inch4.LCD_2inch4()
         disp.Init()
         disp.clear()
@@ -813,8 +974,16 @@ class Screen():
 
         disp.ShowImage(image)
 
-    def video_show(self, video_path):
-        # 视频文件位置
+    def video_show(self, video_path:str):
+        '''
+
+        Args:
+            video_path: 视频文件位置
+
+        Returns:
+
+        '''
+
         cap = cv2.VideoCapture(video_path)
         disp = LCD_2inch4.LCD_2inch4()
         disp.Init()
@@ -835,6 +1004,11 @@ class Screen():
         cap.release()
 
     def live_view_camera(self):
+        '''
+        实时显示摄像头得到的图像
+        Returns:
+
+        '''
         disp = LCD_2inch4.LCD_2inch4()
         disp.Init()
         disp.clear()
