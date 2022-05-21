@@ -3,6 +3,16 @@
 """
 
 """
+2022/5/20
+control_version:0.5.12
+blcoklyFile_version:2.2.6
+blockly_version:2.2.2
+1、解决了路径问题。
+2、部署了本地化语音到语音库。
+3、显示窗口放大回640 x 320分辨率。
+"""
+
+"""
 2022/5/18
 control_version:0.5.12
 blcoklyFile_version:2.2.6
