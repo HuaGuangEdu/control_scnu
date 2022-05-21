@@ -399,6 +399,7 @@ class basicImg():
         img = cv2.add(dst, (10, 10, 10, 255))
         self.name_windows('after_beauty')
         # self.show_image('after_beauty', img)
+        img = cv2.resize(self.img, dsize=(640, 480))
         cv2.imshow('after_beauty', img)
 
     '''
