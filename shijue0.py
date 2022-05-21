@@ -357,6 +357,7 @@ class basicImg():
             self.QR_code_data = self.er_data
         # self.name_windows('Result of QRcode')
         # self.show_image('Result of QRcode', img)
+        img = cv2.resize(self.img, dsize=(640, 480))
         cv2.imshow('Result of QRcode', img)
 
     def erweima_detect(self):
