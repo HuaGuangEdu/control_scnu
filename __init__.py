@@ -2,6 +2,16 @@
 更新内容一览
 """
 
+
+"""
+2022/5/22
+control_version:0.5.12
+blcoklyFile_version:2.2.6
+blockly_version:2.2.2
+解决了树莓派上不能用语音的问题，树莓派上将使用mplayer来播放音频，win上使用playsound
+"""
+        
+
 """
 2022/5/20
 control_version:0.5.12
