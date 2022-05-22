@@ -377,7 +377,13 @@ class Yuyin():
             raise FileNotFoundError("找不到该音频文件，是不是还没录制呢？")
         precwd = os.getcwd()
         os.chdir(audio_path)
-        playsound(filename)
+        if 'win' in system_platform:
+            playsound(filename)
+        else:
+            result = os.system("mplayer "+filename)
+            if result != 0:
+                os.system("sudo apt install mplayer")
+                os.system("mplayer "+filename)
         os.chdir(precwd)
 
 
