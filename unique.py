@@ -12,7 +12,6 @@ class Number_Convert():
     def __operate(self, num_str:str):  # 这个和下面呢个____operate1都是处理字符串的函数，别调用
         Num = 0
         unit = False
-        print(num_str)
         for index, i in enumerate(num_str[::-1]):
             if i in self.number_map.keys():
                 Num += self.number_map[i] * (unit if unit else 1)
