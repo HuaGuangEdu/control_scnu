@@ -8,7 +8,8 @@
 control_version:0.5.12
 blcoklyFile_version:2.2.6
 blockly_version:2.2.2
-解决了树莓派上不能用语音的问题，树莓派上将使用mplayer来播放音频，win上使用playsound
+1、解决了树莓派上不能用语音的问题，树莓派上将使用mplayer来播放音频，win上使用playsound
+2、语音转文字中，删掉了文字中的中文数字转成阿拉伯数字时的print(numStr)
 """
         
 
