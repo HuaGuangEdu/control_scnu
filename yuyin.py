@@ -30,12 +30,15 @@ main_path = '/home/pi/class/'
 if 'win' in system_platform:
     # 获取当前文件的位置
     file_path = os.path.join(os.getcwd().split('blockly-electron')[0],'blockly-electron')
-    main_path = file_path + '\\resources\\assets\\class\\'
+    if not os.path.exists(file_path):
+        if os.path.join(os.getcwd(),"resources"):
+            file_path = os.getcwd()
+    main_path = os.path.join(file_path + 'resources','assets','class').replace("\\","/")
 # 文本文件夹
-txt_path = main_path + 'txt\\'
+txt_path = os.path.join(main_path , 'txt/').replace("\\","/")
 
 # 音频文件夹
-audio_path = main_path + 'speech\\'
+audio_path = os.path.join(main_path , 'speech/').replace("\\","/")
 if not os.path.exists(audio_path):
     os.makedirs(audio_path)
 # # 开始时删除所有合成音频--Nonexxxxxxx.mp3/wav(固定格式)
@@ -77,7 +80,9 @@ class Yuyin():
         for key,value in kwargs.items():
             if key=="online":
                 self.online = value and ('win' in system_platform)
-
+        if 'win' not in system_platform:
+            print("树莓派上暂不支持本地模式，已为你切换成在线模式")
+            self.online=True
         #下面这三个是写死的
         self.app_id = app_id
         self.api_key = app_key
@@ -277,7 +282,11 @@ class Yuyin():
                         self.recordNumberList = [num[0] for num in numList]
                         return self.NumConverter.num_convert3(word)[0] # 返回识别结果值
                     else:
-                        return "语音识别失败:" + filename
+                        if 'win' not in system_platform:
+                            addStr = "是不是没装麦克风？文件名是:"
+                        else:
+                            addStr = "文件名是:"
+                        return "语音识别失败"+addStr + filename
             except:
                 return "没有连接网络"
 
@@ -377,7 +386,14 @@ class Yuyin():
             raise FileNotFoundError("找不到该音频文件，是不是还没录制呢？")
         precwd = os.getcwd()
         os.chdir(audio_path)
-        playsound(filename)
+        if 'win' in system_platform:
+            playsound(filename)
+        else:
+            result = os.system("mplayer "+filename)
+            if result != 0:
+                print("这台树莓派上好像没有装mplayer(用于播放音频)，下面开始安装...")
+                os.system("sudo apt install mplayer")
+                os.system("mplayer "+filename)
         os.chdir(precwd)
 
 
