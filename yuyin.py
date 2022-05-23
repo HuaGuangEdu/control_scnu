@@ -30,12 +30,15 @@ main_path = '/home/pi/class/'
 if 'win' in system_platform:
     # 获取当前文件的位置
     file_path = os.path.join(os.getcwd().split('blockly-electron')[0],'blockly-electron')
-    main_path = file_path + '\\resources\\assets\\class\\'
+    if not os.path.exists(file_path):
+        if os.path.join(os.getcwd(),"resources"):
+            file_path = os.getcwd()
+    main_path = file_path + '/resources/assets/class/'
 # 文本文件夹
-txt_path = main_path + 'txt\\'
+txt_path = main_path + 'txt/'
 
 # 音频文件夹
-audio_path = main_path + 'speech\\'
+audio_path = main_path + 'speech/'
 if not os.path.exists(audio_path):
     os.makedirs(audio_path)
 # # 开始时删除所有合成音频--Nonexxxxxxx.mp3/wav(固定格式)
