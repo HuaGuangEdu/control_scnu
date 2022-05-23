@@ -33,12 +33,12 @@ if 'win' in system_platform:
     if not os.path.exists(file_path):
         if os.path.join(os.getcwd(),"resources"):
             file_path = os.getcwd()
-    main_path = file_path + '/resources/assets/class/'
+    main_path = os.path.join(file_path + 'resources','assets','class').replace("\\","/")
 # 文本文件夹
-txt_path = main_path + 'txt/'
+txt_path = os.path.join(main_path , 'txt/').replace("\\","/")
 
 # 音频文件夹
-audio_path = main_path + 'speech/'
+audio_path = os.path.join(main_path , 'speech/').replace("\\","/")
 if not os.path.exists(audio_path):
     os.makedirs(audio_path)
 # # 开始时删除所有合成音频--Nonexxxxxxx.mp3/wav(固定格式)
