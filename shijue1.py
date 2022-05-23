@@ -61,7 +61,7 @@ class Img(basicImg,AdvancedImg):
     '''
     def __init__(self):
         super(Img, self).__init__()
-        AdvancedImg.__init__()
+        AdvancedImg.__init__(self)
         '''
         人脸识别属性
         '''
