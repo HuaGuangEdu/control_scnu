@@ -3,6 +3,15 @@
 """
 
 
+
+"""
+2022/5/23
+control_version:0.5.12
+blcoklyFile_version:2.2.6
+blockly_version:2.2.2
+禁用了树莓派上使用本地化语音转文字
+"""
+
 """
 2022/5/22
 control_version:0.5.12
