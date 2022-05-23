@@ -77,7 +77,9 @@ class Yuyin():
         for key,value in kwargs.items():
             if key=="online":
                 self.online = value and ('win' in system_platform)
-
+        if 'win' not in system_platform:
+            print("树莓派上暂不支持本地模式，已为你切换成在线模式")
+            self.online=True
         #下面这三个是写死的
         self.app_id = app_id
         self.api_key = app_key
@@ -277,7 +279,11 @@ class Yuyin():
                         self.recordNumberList = [num[0] for num in numList]
                         return self.NumConverter.num_convert3(word)[0] # 返回识别结果值
                     else:
-                        return "语音识别失败:" + filename
+                        if 'win' not in system_platform:
+                            addStr = "是不是没装麦克风？文件名是:"
+                        else:
+                            addStr = "文件名是:"
+                        return "语音识别失败"+addStr + filename
             except:
                 return "没有连接网络"
 
@@ -382,6 +388,7 @@ class Yuyin():
         else:
             result = os.system("mplayer "+filename)
             if result != 0:
+                print("这台树莓派上好像没有装mplayer(用于播放音频)，下面开始安装...")
                 os.system("sudo apt install mplayer")
                 os.system("mplayer "+filename)
         os.chdir(precwd)
