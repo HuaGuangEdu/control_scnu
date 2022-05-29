@@ -13,7 +13,6 @@ import time
 import pyaudio
 import audioop
 import pygame
-import websocket
 import requests
 import urllib
 import sys
@@ -29,6 +28,7 @@ system_platform = sys.platform
 main_path = '/home/pi/class/'
 if 'win' in system_platform:
     # 获取当前文件的位置
+
     file_path = os.path.join(os.getcwd().split('blockly-electron')[0],'blockly-electron')
     if not os.path.exists(file_path):
         if os.path.exists(os.path.join(os.getcwd(),"resources")):
