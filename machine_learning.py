@@ -10,8 +10,11 @@ system_platform = sys.platform
 main_path = '/home/pi/class/'  # 读取和保存文件所用主文件夹
 if 'win' in system_platform:
     # 获取当前文件的位置
-    file_path = os.path.join(os.getcwd().split('blockly-electron')[0],'blockly-electron')
-    main_path = file_path + '\\resources\\assets\\class\\'
+    file_path = os.path.join(os.getcwd().split('blockly-electron')[0], 'blockly-electron')
+    if not os.path.exists(file_path):
+        if os.path.exists(os.path.join(os.getcwd(), "resources")):
+            file_path = os.getcwd()
+    main_path = os.path.join(file_path, 'resources', 'assets', 'class').replace("\\", "/")
 picture_path = main_path + 'picture/'  # 图片文件夹
 model_path = main_path + 'model/'  # 识别模型文件夹
 #查找文件夹下存在的pkl模型的名字（没有pkl后缀）

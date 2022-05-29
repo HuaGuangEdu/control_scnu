@@ -31,9 +31,9 @@ if 'win' in system_platform:
     # 获取当前文件的位置
     file_path = os.path.join(os.getcwd().split('blockly-electron')[0],'blockly-electron')
     if not os.path.exists(file_path):
-        if os.path.join(os.getcwd(),"resources"):
+        if os.path.exists(os.path.join(os.getcwd(),"resources")):
             file_path = os.getcwd()
-    main_path = os.path.join(file_path + 'resources','assets','class').replace("\\","/")
+    main_path = os.path.join(file_path , 'resources','assets','class').replace("\\","/")
 # 文本文件夹
 txt_path = os.path.join(main_path , 'txt/').replace("\\","/")
 

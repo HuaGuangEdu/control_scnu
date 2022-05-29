@@ -18,8 +18,11 @@ main_path = '/home/pi/class/'  # 读取和保存文件所用主文件夹
 if 'win' in system_platform:
     import mediapipe as mp
     # 获取当前文件的位置
-    file_path = os.path.join(os.getcwd().split('blockly-electron')[0],'blockly-electron')
-    main_path = file_path + '\\resources\\assets\\class\\'
+    file_path = os.path.join(os.getcwd().split('blockly-electron')[0], 'blockly-electron')
+    if not os.path.exists(file_path):
+        if os.path.exists(os.path.join(os.getcwd(), "resources")):
+            file_path = os.getcwd()
+    main_path = os.path.join(file_path, 'resources', 'assets', 'class').replace("\\", "/")
 else:
     try:
         import mediapipe as mp
