@@ -165,7 +165,7 @@ class Yuyin_local():
                     time.sleep(chunk_ms / 1000.0)  # ws.send 也有点耗时，这里没有计算
                     last_time = round(total_time_s-time.time(),1)
                     print('\r',"识别中，预计还差",last_time if last_time>0 else 0.00,"秒",end='',flush=True)
-            print("\n识别结束")
+            
             #避免时间过短导致句子还没结束，函数就结束了
             if self.Dict:
                 if self.Dict["type"] == "partial_result":
@@ -179,11 +179,11 @@ class Yuyin_local():
         threading.Thread(target=run).start()
 
     def on_error(self,ws,error,c,d):
-        print("出现了错误")
+        print("\n出现了错误")
         # print(error,c,d)
 
     def on_close(self,we,c,d):
-        pass
+        print("\n识别结束")
 
     def on_data(self,we,message,message_len,isSend):
         pass
