@@ -3,6 +3,17 @@
 """
 
 """
+2022/5/30
+control_version:0.6.2
+blcoklyFile_version:2.2.6
+blockly_version:2.2.2
+似乎解决了本地化语音不稳定的问题
+
+"""
+
+
+
+"""
 2022/5/29
 control_version:0.6.2
 blcoklyFile_version:2.2.6
