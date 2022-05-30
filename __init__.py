@@ -3,6 +3,15 @@
 """
 
 """
+2022/5/30
+control_version:0.6.3
+blcoklyFile_version:2.2.6
+blockly_version:2.2.2
+基本稳定了本地化语音
+
+"""
+
+"""
 2022/5/29
 control_version:0.6.2
 blcoklyFile_version:2.2.6
