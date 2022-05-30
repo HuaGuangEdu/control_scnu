@@ -79,7 +79,14 @@ class Yuyin_local():
         self.ws_app = websocket.WebSocketApp("ws://127.0.0.1:10086",
                                         on_open=lambda ws: self.on_open(ws, record_time_s),  # 连接建立后的回调
                                         on_message=self.on_message,  # 接收消息的回调
+                                        on_error=self.on_error,
+                                        on_close=self.on_close,
+                                        on_data=self.on_data,
+                                        on_ping=self.on_ping,
+                                        on_pong=self.on_pong,
+                                        on_cont_message=self.on_cont_message
                                         )
+
         self.total_sentance = '' #存放语音识别的内容
         self.asyn = asyn
         self.filename = filename
@@ -103,7 +110,6 @@ class Yuyin_local():
         :param message: json格式，自行解析
         :return:
         """
-
         self.Dict = json.loads(message)
         #如果判断一段话结束了，就把这段话存储到self.total_sentance里面，下一段话就可以在这一段话之后继续拼接
         if self.Dict['type']=="final_result"  and self.asyn:
@@ -118,7 +124,6 @@ class Yuyin_local():
         :param  websocket.WebSocket ws:
         :return:
         """
-
         def run(*args):
             """
             主程序
@@ -166,17 +171,31 @@ class Yuyin_local():
                 if self.Dict["type"] == "partial_result":
                     self.total_sentance += json.loads(self.Dict['nbest'])[0]['sentence']
             # 发送结束帧，写死的，不要动
-            endData = '{ signal: "end" }'
+            endData = '{"signal": "end"}'
             ws.send(endData, websocket.ABNF.OPCODE_TEXT)
             self.ws_app.close()
 
+
         threading.Thread(target=run).start()
 
+    def on_error(self,ws,error,c,d):
+        print("出现了错误")
+        # print(error,c,d)
 
+    def on_close(self,we,c,d):
+        pass
 
+    def on_data(self,we,message,message_len,isSend):
+        pass
 
+    def on_ping(self):
+        pass
 
+    def on_pong(self):
+        pass
 
+    def on_cont_message(self):
+        pass
 
 
 
