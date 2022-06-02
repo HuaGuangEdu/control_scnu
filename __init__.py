@@ -3,6 +3,16 @@
 """
 
 """
+2022/6/2
+control_version:0.6.4
+blcoklyFile_version:2.2.6
+blockly_version:2.2.2
+路径问题（最终）
+
+"""
+
+
+"""
 2022/5/30
 control_version:0.6.3
 blcoklyFile_version:2.2.6
