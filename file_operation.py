@@ -14,8 +14,8 @@ if 'win' in system_platform:
             file_path = os.getcwd()
     main_path = os.path.join(file_path, 'resources', 'assets', 'class').replace("\\", "/")
 f_path = 'file_operation/'
-if not os.path.exists(main_path+f_path):
-    os.makedirs(main_path+f_path)
+if not os.path.exists(os.path.join(main_path,f_path)):
+    os.makedirs(os.path.join(main_path,f_path))
 
 
 class Common_file:
