@@ -28,11 +28,10 @@ else:
         import mediapipe as mp
     except ImportError:
         os.system('sudo pip3 install mediapipe-rpi4')
-
-picture_path = main_path + 'picture/'  # 图片文件夹
-model_path = main_path + 'model/'  # 识别模型文件夹
-d_path = main_path + 'camera_pos/'
-dat_path = main_path + 'data/face_recognize/'
+picture_path =os.path.join( main_path , 'picture/')  # 图片文件夹
+model_path = os.path.join(main_path , 'model/')  # 识别模型文件夹
+d_path = os.path.join(main_path , 'camera_pos/')
+dat_path = os.path.join(main_path , 'data/face_recognize/')
 
 items_num = {0: '0', 1: '1', 2: '2', 3: '3',
              4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9'}  # 方向数字指示牌
