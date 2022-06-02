@@ -15,8 +15,8 @@ if 'win' in system_platform:
         if os.path.exists(os.path.join(os.getcwd(), "resources")):
             file_path = os.getcwd()
     main_path = os.path.join(file_path, 'resources', 'assets', 'class').replace("\\", "/")
-picture_path = main_path + 'picture/'  # 图片文件夹
-model_path = main_path + 'model/'  # 识别模型文件夹
+picture_path = os.path.join(main_path , 'picture/')  # 图片文件夹
+model_path = os.path.join(main_path , 'model/')  # 识别模型文件夹
 #查找文件夹下存在的pkl模型的名字（没有pkl后缀）
 def findExisModel():
     '''
@@ -24,6 +24,7 @@ def findExisModel():
     Returns:
 
     '''
+    print(model_path)
     if os.path.exists(model_path):
         return [model_name[:-4] for model_name in os.listdir(model_path) if
                                   model_name.endswith(".pkl")]  # model文件夹下面存在的pkl模型文件名的列表
