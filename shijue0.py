@@ -16,10 +16,10 @@ if 'win' in system_platform:
         if os.path.exists(os.path.join(os.getcwd(), "resources")):
             file_path = os.getcwd()
     main_path = os.path.join(file_path, 'resources', 'assets', 'class').replace("\\", "/")
-picture_path = main_path + 'picture/'  # 图片文件夹
-model_path = main_path + 'model/'  # 识别模型文件夹
-d_path = main_path + 'camera_pos/'
-dat_path = main_path + 'data/face_recognize/'
+picture_path =os.path.join( main_path , 'picture/')  # 图片文件夹
+model_path = os.path.join(main_path , 'model/')  # 识别模型文件夹
+d_path = os.path.join(main_path , 'camera_pos/')
+dat_path = os.path.join(main_path , 'data/face_recognize/')
 
 
 
