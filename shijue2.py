@@ -22,8 +22,8 @@ else:
         raise ImportError('没有安装paddlelite。请到官网下载树莓派镜像源，并按说明书操作')
 
 
-picture_path = main_path + 'picture/'  # 图片文件夹
-model_path = main_path + 'model/'  # 识别模型文件夹
+picture_path =os.path.join( main_path , 'picture/')  # 图片文件夹
+model_path = os.path.join(main_path, 'model/')  # 识别模型文件夹
 
 
 def check_model(model):
