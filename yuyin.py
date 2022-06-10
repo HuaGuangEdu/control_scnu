@@ -323,7 +323,7 @@ class Yuyin():
                     r = requests.get(url)
                     result = r.content
                 except:
-                    raise BaseError('没有连接网络')
+                    raise FileNotFoundError('没有连接网络')
 
                 filename = str(filename)
                 file = audio_path + filename + '.mp3'

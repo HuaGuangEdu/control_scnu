@@ -224,7 +224,7 @@ class basicImg():
         if os.path.isabs(pic_name): #如果是绝对路径，那就不修改
             path = pic_name
         else: #如果是相对路径，那就补成绝对路径
-            path = os.path.join((file_dir),pic_name)
+            path = os.path.join((file_path),pic_name)
 
 
         # path = picture_path + pic_name + mode
@@ -570,11 +570,11 @@ class basicImg():
         area = cv2.contourArea(cnt)
         return area
 
-    def detect(self, cAny, Shape:str):
+    def detect(self, c:Any, Shape:str):
         '''
         定义形状名称和判断近似形状
         Args:
-            cAny:
+            c:
             Shape:
 
         Returns:

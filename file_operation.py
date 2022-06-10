@@ -156,7 +156,7 @@ class CSV():
     赋值（f）为csv文件（example.csv)
     '''
 
-    def __init__(self, file_name:str,file_dir:str):
+    def __init__(self, file_name:str,file_dir:str,mode:str='r'):
         '''
 
         :param file_name: csv文件的名称，通常放置在 ../resources/assets/class/file_operation/内
