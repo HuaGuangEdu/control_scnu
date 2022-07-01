@@ -673,7 +673,7 @@ class Img(basicImg,AdvancedImg):
                 else:
                     self.img_new = frame[y + 5:y + h - 5, x + 5:x + w - 5]
 
-                self.img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
+                self.img_new = cv2.resize(self.img_new, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
                 cv2.imshow('result', self.img_new)
                 cv2.waitKey(3)
 
@@ -849,8 +849,7 @@ class Img(basicImg,AdvancedImg):
         if shape == 'circle':
             mask = self.mask_img
             # gaussian = cv2.GaussianBlur(mask, (3, 3), 0)
-            edge = cv2.Canny(mask, 30, 100, apertu
-                             =3)
+            edge = cv2.Canny(mask, 30, 100)
             self.circle_detect(edge)
         if shape in ['triangle', 'rectangle', 'polygon']:
             self.polygon_detect()
