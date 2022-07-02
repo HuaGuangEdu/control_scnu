@@ -3,13 +3,14 @@
 """
 
 
-
 """
 2022/7/2
 control_version:0.6.5
 blcoklyFile_version:2.2.6
 blockly_version:2.2.2
 修复图像resize错对象问题，原有会不显示处理后图像。
+修复paddlelite问题。
+修复依赖bug。
 
 """
 
