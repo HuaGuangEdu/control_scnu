@@ -39,9 +39,7 @@ class AdvancedImg:
         self.img_std = [0.229, 0.224, 0.225]
 
     def process_image(self, image_data, shape=64, standard=True, black=False):
-        if 'win' in system_platform:
-            pass
-        else:
+        if not is_windows:
             try:
                 import paddlelite.lite
             except:
@@ -60,6 +58,34 @@ class AdvancedImg:
                 (3, 1, 1))) / np.array(self.img_std).reshape((3, 1, 1))
         image_data = image_data.reshape([1, 3, shape,shape]).astype('float32')
         return image_data
+
+    def classify_number_init(self):
+        if is_windows:
+            model = 'numbers.onnx'
+            paddle_model = model_path + model
+            self.predictor = cv2.dnn.readNetFromONNX(paddle_model)
+        else:
+            model = 'numbers.nb'
+            paddle_model = model_path + model
+            config = paddlelite.lite.MobileConfig()
+            config.set_model_from_file(paddle_model)
+            self.predictor = paddlelite.lite.create_paddle_predictor(config)
+            self.input_tensor0 = self.predictor.get_input(0)
+
+    def detect_pingpong_init(self):
+        if is_windows:
+            raise ImportError('windows下暂不支持目标检测，请充值VIP后再试')
+            model = 'pingpong.onnx'
+            paddle_model = model_path + model
+            self.predictor = cv2.dnn.readNetFromONNX(paddle_model)
+        else:
+            model = 'pingpong.nb'
+            paddle_model = model_path + model
+            config = paddlelite.lite.MobileConfig()
+            config.set_model_from_file(paddle_model)
+            self.predictor = paddlelite.lite.create_paddle_predictor(config)
+            self.input_tensor0 = self.predictor.get_input(0)
+            self.input_tensor1 = self.predictor.get_input(1)
 
     def classify_model_init(self, model='numbers.nb'):
         check_model(model)
@@ -86,7 +112,7 @@ class AdvancedImg:
 
     def infer_number(self):
         input_c, input_h, input_w = 3, 128, 128
-        temp = cv2.imread(picture_path + 'blue.jpg')
+        temp = cv2.imread(picture_path + 'temp_number.jpg')
         temp = cv2.resize(temp, (130,130))
         res = cv2.matchTemplate(self.img, temp, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
@@ -115,6 +141,7 @@ class AdvancedImg:
             self.m_data = -1
 
     def infer_pingpong(self):
+        label, x1, y1, x2, y2 = 'None',0,0,0,0
         datalist = []
         input_h, input_w, input_c = self.img.shape
         img2 = self.img.copy()
@@ -137,12 +164,11 @@ class AdvancedImg:
                 label = 'ball'
                 datalist.append([label,(x1,y1),(x2,y2)])
                 cv2.rectangle(self.img, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
-        self.m_data = datalist
+        self.m_data = label
+        self.datalist = datalist
 
+    def infer_classify(self):
+        raise ImportError('该功能暂未开放，请充值VIP后再试')
 
-
-
-
-
-
-
+    def infer_detect(self):
+        raise ImportError('该功能暂未开放，请充值VIP后再试')

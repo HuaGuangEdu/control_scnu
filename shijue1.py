@@ -417,7 +417,8 @@ class Img(basicImg,AdvancedImg):
         Returns:
 
         '''
-        self.model = cv2.dnn.readNetFromONNX((model_path if  os.path.isabs(model_name)==False else '')+ model_name)  # 如'finally.proto'
+        model_real_path = (model_path if  os.path.isabs(model_name)==False else '') + model_name
+        self.model = cv2.dnn.readNetFromONNX(model_real_path)  # 如'finally.proto'
         f = model_name.split(".")
         self.item = f[0]
         self.pro = 0

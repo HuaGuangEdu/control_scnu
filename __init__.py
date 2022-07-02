@@ -5,6 +5,16 @@
 
 """
 2022/7/2
+control_version:0.6.6
+blcoklyFile_version:2.2.7
+blockly_version:2.2.2
+增加深度学习的分支。
+增加“当前图像”这个块。
+
+"""
+
+"""
+2022/7/2
 control_version:0.6.5
 blcoklyFile_version:2.2.6
 blockly_version:2.2.2
