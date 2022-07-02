@@ -1088,7 +1088,7 @@ class Img(basicImg,AdvancedImg):
             for faceLms in results.multi_face_landmarks:
                 self.mpDraw.draw_landmarks(img_new, faceLms, self.mpFaceMesh.FACEMESH_FACE_OVAL,
                                            landmark_drawing_spec=self.drawSpec)
-        img_new = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
+        img_new = cv2.resize(self.img_new, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         cv2.imshow('faceMesh', img_new)
 
     def get_shape(self, parameter:str='width'):
