@@ -16,10 +16,7 @@ if 'win' in system_platform:
 else:
     is_windows = 0
     main_path = '/home/pi/class/'  # 读取和保存文件所用主文件夹
-    try:
-        import paddlelite.lite
-    except:
-        raise ImportError('没有安装paddlelite。请到官网下载树莓派镜像源，并按说明书操作')
+
 
 
 picture_path =os.path.join( main_path , 'picture/')  # 图片文件夹
@@ -42,6 +39,13 @@ class AdvancedImg:
         self.img_std = [0.229, 0.224, 0.225]
 
     def process_image(self, image_data, shape=64, standard=True, black=False):
+        if 'win' in system_platform:
+            pass
+        else:
+            try:
+                import paddlelite.lite
+            except:
+                raise ImportError('没有安装paddlelite。请到官网下载树莓派镜像源，并按说明书操作')
         image_data = cv2.cvtColor(image_data, cv2.COLOR_BGR2RGB)
         if black:
             gray = cv2.cvtColor(image_data, cv2.COLOR_BGR2GRAY)
