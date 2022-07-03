@@ -56,6 +56,30 @@ def new_file(path:str):
         print('未找到该文件夹。开始创建文件夹')
         os.makedirs(path)
 
+        
+def zeros_like(img:np.ndarray):
+    '''
+    创建一个与img图像等尺寸的全零图像
+    Args:
+        img: 输入图像
+
+    Returns:输出全零图像
+
+    '''
+    return np.zeros_like(img)
+
+def line(img:np.ndarray,point1:tuple,point2:tuple):
+    '''
+    在图片的某两点之间画线
+    Args:
+        img: 
+        point1: 
+        point2: 
+
+    Returns:
+
+    '''
+    cv2.line(img, point1, point2, (255, 0, 0))
 
 class Img(basicImg,AdvancedImg):
     '''
