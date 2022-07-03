@@ -4,6 +4,16 @@
 
 
 """
+2022/7/3
+control_version:0.6.7
+blcoklyFile_version:2.2.7
+blockly_version:2.2.2
+shijue1增加了两个函数
+1、创建一个与输入图像相同尺寸的全零图像
+2、输入图像和两点，在图像的这两点之间画线
+"""
+
+"""
 2022/7/2
 control_version:0.6.6
 blcoklyFile_version:2.2.7
