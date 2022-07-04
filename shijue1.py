@@ -773,7 +773,7 @@ class Img(basicImg,AdvancedImg):
         mask = cv2.erode(mask, None, iterations=2)
         # 膨胀操作，其实先腐蚀再膨胀的效果是开运算，去除噪点
         self.mask_img = cv2.dilate(mask, None, iterations=2)
-        self.mask_img = cv2.resize(self.img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
+        self.mask_img = cv2.resize(self.mask_img, dsize= (640,480) )  # 这一行是放大图像变回 640✖480
         cv2.imshow('mask', self.mask_img)
         cv2.waitKey(3)
 
