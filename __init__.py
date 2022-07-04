@@ -4,6 +4,22 @@
 
 
 """
+2022/7/3
+control_version:0.6.7
+blcoklyFile_version:2.2.7
+blockly_version:2.2.2
+shijue1增加了两个函数
+1、创建一个与输入图像相同尺寸的全零图像
+2、输入图像和两点，在图像的这两点之间画线
+
+unique增加了一个函数和一个类，用于词云案例
+
+blocklyFiles
+1、在视觉的基本操作那里加入了四个块，用于蓝线挑战案例
+2、在画图里面加入了一个块，用于词云案例
+"""
+
+"""
 2022/7/2
 control_version:0.6.6
 blcoklyFile_version:2.2.7
