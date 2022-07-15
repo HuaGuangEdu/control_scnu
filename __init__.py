@@ -2,6 +2,18 @@
 更新内容一览
 """
 
+"""
+2022/7/15
+control_version:0.6.7
+blcoklyFile_version:2.2.7
+blockly_version:2.2.2
+blockly_version:2.2.2
+control库增加了一个maths模块
+
+blocklyFiles
+重写了数学和逻辑两个分支内的部分编程块
+"""
+
 
 """
 2022/7/3
