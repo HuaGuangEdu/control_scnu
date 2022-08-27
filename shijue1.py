@@ -986,7 +986,7 @@ class Img(basicImg,AdvancedImg):
 
         '''
         if not bool(self.fingertip):
-            return '没有检测到手指'
+            return -1
         if tip2 == tip1:
             return 0
         else:
@@ -1053,7 +1053,7 @@ class Img(basicImg,AdvancedImg):
 
         '''
         if not bool(self.body_menu):
-            return '-1'
+            return -1
         if wrist1 == wrist2:
             return 0
         return math.pow(math.pow(self.body_menu[wrist1][0] - self.body_menu[wrist2][0], 2) + math.pow(

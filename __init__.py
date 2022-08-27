@@ -9,8 +9,19 @@ blcoklyFile_version:2.2.8
 blockly_version:2.2.2
 增加了语音的本地化文字转语音，并修改了语音的块
 
-"""
+2022/7/15
+control_version:0.6.7
+blcoklyFile_version:2.2.7
+blockly_version:2.2.2
+blockly_version:2.2.2
+control库增加了一个maths模块
 
+blocklyFiles
+1、重写了数学、逻辑、控制三个分支内的部分编程块
+2、删除了语音的js文件内重复出现的定义函数
+3、删除了输入/输出分支的js文件内无用的定义函数
+
+"""
 
 """
 2022/7/3
