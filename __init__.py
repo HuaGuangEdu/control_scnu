@@ -2,6 +2,15 @@
 更新内容一览
 """
 
+"""
+2022/8/27
+control_version:0.6.8
+blcoklyFile_version:2.2.8
+blockly_version:2.2.2
+增加了语音的本地化文字转语音，并修改了语音的块
+
+"""
+
 
 """
 2022/7/3

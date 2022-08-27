@@ -5,7 +5,7 @@
 """
 import warnings
 warnings.filterwarnings("ignore")
-from control.unique import  Number_Convert,playsound,Yuyin_local
+from control.unique import Number_Convert,playsound,Yuyin_local
 from aip.speech import AipSpeech
 import os, re,json,threading,subprocess
 import wave
@@ -19,6 +19,7 @@ import sys
 import webbrowser
 import random
 from importlib import reload
+import pyttsx3
 # from unique import playsound
 # os.close(sys.stderr.fileno())
 
@@ -103,10 +104,8 @@ class Yuyin():
         self.gender = "xijunma"
 
         self.NumConverter = Number_Convert() #把百度的语音转文字中的中文数字转化成阿拉伯数字
-
-
-
-
+        if not self.online:
+            self.engine = pyttsx3.init()
 
     def change_vol_spd_gender_DUI(self, vol:int, spd:int, gender:str):
         """
@@ -117,13 +116,17 @@ class Yuyin():
         :param gender: 语音播放的声线
         :return: None
         """
-        self.vol_DUI = vol
-        self.spd_DUI = spd
-        self.gender = ID.get(gender, None)
+        if self.online:
+            self.vol_DUI = vol
+            self.spd_DUI = spd
+            self.gender = ID.get(gender, None)
 
-        # 手动抛出异常，防止输入错误的self.gender而导致程序崩溃
-        if not self.gender:
-            raise KeyError("没有这个音色！")
+            # 手动抛出异常，防止输入错误的self.gender而导致程序崩溃
+            if not self.gender:
+                raise KeyError("没有这个音色！")
+        else:
+            self.engine.setProperty('rate', int(200*(1/spd)))  # 设置语速
+            self.engine.setProperty('volume', 0.6*0.01*vol)  # 设置音量
 
     def chat(self, my_text:str):
         """
@@ -333,6 +336,7 @@ class Yuyin():
                 with open(file, 'wb') as f:
                     f.write(result)
 
+
     def asyn_speech2text(self,record_time_s:int):
         '''
         一边说话一边识别
@@ -397,18 +401,21 @@ class Yuyin():
         os.chdir(precwd)
 
 
-
-
     def play_txt(self, txt:str):
         '''
         将文本转换为语音并播放
         :param txt: 需要转换为音频的文本
         :return: None
         '''
-        txt = str(txt)
-        tmp = 'None'
-        self.tts(txt, tmp)
-        self.play_music(tmp)
+        if self.online:
+            txt = str(txt)
+            tmp = 'audio'
+            self.tts(txt, tmp)
+            self.play_music(tmp)
+        else:
+            engine = pyttsx3.init()
+            engine.say(txt)
+            engine.runAndWait()
 
 
 
