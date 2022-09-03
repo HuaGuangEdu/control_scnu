@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b5cdc265-fe7d-4c9b-9028-0c68b35547ac" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/maths.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shijue1.py" beforeDir="false" afterPath="$PROJECT_DIR$/shijue1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yuyin.py" beforeDir="false" afterPath="$PROJECT_DIR$/yuyin.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +38,9 @@
       <workItem from="1654853927865" duration="1265000" />
       <workItem from="1656902133158" duration="1635000" />
       <workItem from="1661600409230" duration="60000" />
-      <workItem from="1661600663559" duration="44000" />
+      <workItem from="1661600663559" duration="803000" />
+      <workItem from="1661601706441" duration="28000" />
+      <workItem from="1661735582974" duration="606000" />
     </task>
     <servers />
   </component>

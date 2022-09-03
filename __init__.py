@@ -3,6 +3,12 @@
 """
 
 """
+2022/9/3
+control_version:0.6.9
+blcoklyFile_version:2.2.8
+blockly_version:2.2.2
+修复了已知bug
+
 2022/8/27
 control_version:0.6.8
 blcoklyFile_version:2.2.8

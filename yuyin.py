@@ -413,9 +413,9 @@ class Yuyin():
             self.tts(txt, tmp)
             self.play_music(tmp)
         else:
-            engine = pyttsx3.init()
-            engine.say(txt)
-            engine.runAndWait()
+            self.engine = pyttsx3.init()
+            self.engine.say(txt)
+            self.engine.runAndWait()
 
 
 
