@@ -9,6 +9,8 @@ from .shijue2 import AdvancedImg
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
 import os
 from typing import Any
+from .unique import cv2AddChineseText,draw_dotted_rect
+import shutil
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -27,18 +29,17 @@ else:
     try:
         import mediapipe as mp
     except ImportError:
+        print('你的树莓派没有安装mediapipe。现在安装……')
         os.system('sudo pip3 install mediapipe-rpi4')
-picture_path =os.path.join( main_path , 'picture/')  # 图片文件夹
+picture_path = os.path.join(main_path , 'picture/')  # 图片文件夹
 model_path = os.path.join(main_path , 'model/')  # 识别模型文件夹
 d_path = os.path.join(main_path , 'camera_pos/')
 dat_path = os.path.join(main_path , 'data/face_recognize/')
+color_cluster_path = os.path.join(main_path , 'data/color_cluster/')
 
 items_num = {0: '0', 1: '1', 2: '2', 3: '3',
              4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9'}  # 方向数字指示牌
 items_dir = {9: '左转', 10: '右转'}
-
-
-
 
 
 def new_file(path:str):
@@ -95,7 +96,7 @@ class Img(basicImg,AdvancedImg):
         self.model_ID = self.ID
         self.data_path = None
         self.save_model_name = None
-        self.face_model = model_path + 'face_0.xml'
+        self.face_model = model_path + 'face.xml'
         self.face_detector = cv2.CascadeClassifier(self.face_model)
         self.faces = None
         self.ids = None
@@ -229,6 +230,7 @@ class Img(basicImg,AdvancedImg):
                 # 将图像转换为数组，以黑白深浅
                 # PIL_img = cv2.resize(PIL_img, dsize=(400, 400))
                 img_numpy = np.array(PIL_img, 'uint8')
+                # print(img_numpy)
                 # 获取图片人脸特征
                 faces = self.face_detector.detectMultiScale(img_numpy)
                 # 获取每张图片的id和姓名
@@ -287,10 +289,11 @@ class Img(basicImg,AdvancedImg):
                 cv2.circle(img, center=(x + w // 2, y + h // 2), radius=w // 2, color=(0, 255, 0), thickness=1)
                 # 人脸识别
                 ids, confidence = self.recognizer.predict(gray[y:y + h, x:x + w])
+                print(len(self.names),ids)
                 print('名字', str(self.names[ids - 1]), '置信值：', confidence)
                 try:
                     if confidence > 80:
-                        cv2.putText(img, 'unkonw', (x + 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 1)
+                        cv2.putText(img, 'unknown', (x + 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 1)
                     else:
                         cv2.putText(img, str(self.names[ids - 1]), (x + 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75,
                                     (0, 255, 0), 1)
@@ -928,6 +931,84 @@ class Img(basicImg,AdvancedImg):
             self.shape_direction_s = 'middle'
         elif 2 * b / 3 < center[1] < b:
             self.shape_direction_s = 'right'
+    """
+    以下为颜色聚类,涉及到sklearn的聚类模型
+    """
+
+    def color_cluster_init(self):
+        self.color_cluster_data = []
+        self.is_break = False
+        self.is_recording = False
+        cv2.namedWindow('img')
+        cv2.setMouseCallback("img", self.mouse)
+        shutil.rmtree(color_cluster_path)
+        os.mkdir(color_cluster_path)
+
+    def color_cluster_get(self):
+        while True:
+            self.get_img()
+            copy_img = self.img.copy()
+            cv2.rectangle(self.img, (490, 5), (630, 50), (0, 255, 0), thickness=-1)
+            cv2.rectangle(self.img, (490, 430), (630, 475), (177, 177, 140), thickness=-1)
+            draw_dotted_rect(self.img, (192, 144), (448, 336), (255, 255, 0), 3)
+            num = len(self.color_cluster_data)
+            self.img = cv2AddChineseText(self.img, '请将物品覆盖整个方框', (10, 10), textSize=25)
+            self.img = cv2AddChineseText(self.img, '已采集图片:{}'.format(num), (300, 10), textColor=(0, 0, 255), textSize=25)
+            self.img = cv2AddChineseText(self.img, '完成', (530, 440), textColor=(255, 0, 0), textSize=25)
+            if self.is_recording:
+                self.img = cv2AddChineseText(self.img, '正在采集中……', (10, 50), textSize=25)
+                self.img = cv2AddChineseText(self.img, '停止采集图片', (502, 16), textColor=(0, 0, 0), textSize=20)
+                self.color_cluster_data.append(copy_img[144:336, 192:448])
+                #cv2.imwrite(os.path.join(color_cluster_path ,str(num + 1) ,'.jpg'), copy_img[144:336, 192:448])
+                cv2.waitKey(20)
+            else:
+                self.img = cv2AddChineseText(self.img, '开始采集数据', (502, 16), textColor=(0, 0, 0), textSize=20)
+            if self.is_break:
+                np.save(os.path.join(color_cluster_path, 'color_cluster.npy'), self.color_cluster_data)
+                print("数据采集成功！")
+                break
+            cv2.imshow('img', self.img)
+            cv2.waitKey(1)
+
+    def color_cluster_train(self, cluster_num, name):
+        from sklearn.model_selection import train_test_split
+        from sklearn.cluster import KMeans
+        import joblib
+        input_data = []
+        if not os.path.exists(os.path.join(color_cluster_path, 'color_cluster.npy')):
+            raise FileNotFoundError('你还没有收集足够的数据！')
+        data = np.load(os.path.join(color_cluster_path, 'color_cluster.npy'))
+        for i in data:
+            B = i[:, :, 0].flatten()
+            G = i[:, :, 1].flatten()
+            R = i[:, :, 2].flatten()
+            input_data.append(np.array([B.mean(),G.mean(),R.mean()]))
+        input_data = np.array(input_data)
+        print('开始训练……')
+        k_means = KMeans(n_clusters=cluster_num, max_iter=300)
+        k_means.fit(input_data)
+        joblib.dump(k_means, os.path.join(model_path, name + '.model'))
+        print('模型训练成功！')
+
+    def color_cluster_predict(self, name):
+        import joblib
+        if not os.path.exists(os.path.join(model_path, name+'.model')):
+            raise FileNotFoundError('你还没有开始训练名为'+name+'的模型！')
+        k_means = joblib.load(os.path.join(model_path, name + '.model'))
+        middle_part = self.img[144:336, 192:448]
+        B = middle_part[:, :, 0].flatten()
+        G = middle_part[:, :, 1].flatten()
+        R = middle_part[:, :, 2].flatten()
+        input_data = np.array([B.mean(), G.mean(), R.mean()]).reshape(1, 3)
+        self.color_cluster_result = k_means.predict(input_data)
+
+    def mouse(self, event, x, y, flags, param):
+        global is_recording, is_break
+        if event == cv2.EVENT_LBUTTONDOWN:
+            if 630 > x > 490 and 5 < y < 50:
+                self.is_recording = not self.is_recording
+            if 630 > x > 490 and 430 < y < 475:
+                self.is_break = True
 
     """
     以下为mediapipe的人体姿态交互功能的函数，为保证最大自由度，函数可返回读取的人体关键点数值，其中有些部分的函数的返回值用户可以自行选择。
@@ -1196,3 +1277,5 @@ class Img(basicImg,AdvancedImg):
         self.predict = np.argmax(score)
         self.predict = np.argmax(score)
         '''
+
+
