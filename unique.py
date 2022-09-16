@@ -1,6 +1,16 @@
-import websocket,json,threading,os,pyaudio,subprocess,time,re
+import websocket, json, threading, os, pyaudio, subprocess, time, re
+from sklearn.preprocessing import normalize
+from tkinter import Text, Frame, Tk, Button, END, messagebox, filedialog, INSERT, DISABLED
+from PIL import ImageTk, Image
+from wordcloud import WordCloud, ImageColorGenerator
+import jieba, sys
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
+import numpy as np
+from matplotlib.animation import FuncAnimation
+plt.rcParams['font.sans-serif'] = ['SimHei']
 
-#用来转换数字
+# 用来转换数字
 class Number_Convert():
     def __init__(self):
 
@@ -8,8 +18,7 @@ class Number_Convert():
                            '九': 9}  # 1-9数字
         self.unit_map = {'十': 10, '百': 100, '千': 1000, '万': 10000, '亿': 100000000}  # 数字单位
 
-
-    def __operate(self, num_str:str):  # 这个和下面呢个____operate1都是处理字符串的函数，别调用
+    def __operate(self, num_str: str):  # 这个和下面呢个____operate1都是处理字符串的函数，别调用
         Num = 0
         unit = False
         for index, i in enumerate(num_str[::-1]):
@@ -21,7 +30,7 @@ class Number_Convert():
                 Num += self.unit_map[i]
         return Num
 
-    def __operate1(self, strings:str):  # 处理字符串的，分成了三种情况，有“亿”，无“亿”有“万”， 无“亿”无“万”
+    def __operate1(self, strings: str):  # 处理字符串的，分成了三种情况，有“亿”，无“亿”有“万”， 无“亿”无“万”
 
         if '亿' in strings:
             strings2 = strings.split('亿')
@@ -44,10 +53,10 @@ class Number_Convert():
         else:
             return self.__operate(strings)
 
-    def num_convert3(self, test_strings:str):
-        self.NumList = [] #装数字的列表
+    def num_convert3(self, test_strings: str):
+        self.NumList = []  # 装数字的列表
         self.converted_strings = ''  # 转化后的字符串
-        self.test_strings = test_strings.replace("什","【·&……】")
+        self.test_strings = test_strings.replace("什", "【·&……】")
         for index0, Str in enumerate(self.test_strings):  # 遍历一下字符串
             try:  # 如果已经遍历完一串数字，那我们要把当前的位置移动到这一串数字之后，再继续遍历下面的内容
                 if index0 < index1:
@@ -67,43 +76,42 @@ class Number_Convert():
                 self.converted_strings += Str  # 把当前遍历到的内容给Str
         for num in re.compile('\d+').finditer(self.test_strings):
             self.NumList.append((int(num.group()), num.span()[0]))
-        return [self.converted_strings.replace("【·&……】","什"), sorted(self.NumList, key=lambda x: x[1])]
+        return [self.converted_strings.replace("【·&……】", "什"), sorted(self.NumList, key=lambda x: x[1])]
+
 
 ######################本地化语音########################
 
 class Yuyin_local():
-    def __init__(self,record_time_s,local_yuyinPath,asyn=True,filename=''):
-        os.system("chcp 65001") #切换语音为Unicode (UTF-8)
-        vbsPath = os.path.join(local_yuyinPath,"runbat.vbs")
+    def __init__(self, record_time_s, local_yuyinPath, asyn=True, filename=''):
+        os.system("chcp 65001")  # 切换语音为Unicode (UTF-8)
+        vbsPath = os.path.join(local_yuyinPath, "runbat.vbs")
         subprocess.call(f"cscript  {vbsPath}", stdout=None, stdin=None)
         self.ws_app = websocket.WebSocketApp("ws://127.0.0.1:10086",
-                                        on_open=lambda ws: self.on_open(ws, record_time_s),  # 连接建立后的回调
-                                        on_message=self.on_message,  # 接收消息的回调
-                                        on_error=self.on_error,
-                                        on_close=self.on_close,
-                                        on_data=self.on_data,
-                                        on_ping=self.on_ping,
-                                        on_pong=self.on_pong,
-                                        on_cont_message=self.on_cont_message
-                                        )
+                                             on_open=lambda ws: self.on_open(ws, record_time_s),  # 连接建立后的回调
+                                             on_message=self.on_message,  # 接收消息的回调
+                                             on_error=self.on_error,
+                                             on_close=self.on_close,
+                                             on_data=self.on_data,
+                                             on_ping=self.on_ping,
+                                             on_pong=self.on_pong,
+                                             on_cont_message=self.on_cont_message
+                                             )
 
-        self.total_sentance = '' #存放语音识别的内容
+        self.total_sentance = ''  # 存放语音识别的内容
         self.asyn = asyn
         self.filename = filename
         p = pyaudio.PyAudio()
         self.stream = p.open(format=pyaudio.paInt16,
-                        channels= 1,
-                        rate=16000,
-                        input=True,
-                        frames_per_buffer=1024,
-                        )
+                             channels=1,
+                             rate=16000,
+                             input=True,
+                             frames_per_buffer=1024,
+                             )
 
     def run(self):
         self.ws_app.run_forever()
 
-
-
-    def on_message(self,ws, message):
+    def on_message(self, ws, message):
         """
         接收服务端返回的消息
         :param ws:
@@ -111,19 +119,20 @@ class Yuyin_local():
         :return:
         """
         self.Dict = json.loads(message)
-        #如果判断一段话结束了，就把这段话存储到self.total_sentance里面，下一段话就可以在这一段话之后继续拼接
-        if self.Dict['type']=="final_result"  and self.asyn:
+        # 如果判断一段话结束了，就把这段话存储到self.total_sentance里面，下一段话就可以在这一段话之后继续拼接
+        if self.Dict['type'] == "final_result" and self.asyn:
             self.total_sentance += json.loads(self.Dict['nbest'])[0]['sentence']
-        #server_ready是我们发送开始帧的时候传回来的数据，我们不需要读取
+        # server_ready是我们发送开始帧的时候传回来的数据，我们不需要读取
         if self.Dict['type'] != "server_ready" and self.asyn:
-            print('\r',self.total_sentance+json.loads(self.Dict['nbest'])[0]['sentence'],end='', flush=True)
+            print('\r', self.total_sentance + json.loads(self.Dict['nbest'])[0]['sentence'], end='', flush=True)
 
-    def on_open(self,ws, record_time_s):
+    def on_open(self, ws, record_time_s):
         """
         连接后发送数据帧
         :param  websocket.WebSocket ws:
         :return:
         """
+
         def run(*args):
             """
             主程序
@@ -139,7 +148,7 @@ class Yuyin_local():
             # 开始参数帧,写死的，不要动
             startData = '{"signal":"start","nbest":1,"continuous_decoding":true}'
             ws.send(startData, websocket.ABNF.OPCODE_TEXT)
-            if self.asyn: #一边说一边识别
+            if self.asyn:  # 一边说一边识别
                 print(f'开始录音，持续{record_time_s}秒')
                 for i in range(0, int(16000 / 1024) * record_time_s):
                     data = self.stream.read(1024)
@@ -153,7 +162,7 @@ class Yuyin_local():
                 index = 0
                 total = len(pcm)
                 print("开始识别")
-                total_time_s = time.time()+total/32000
+                total_time_s = time.time() + total / 32000
                 while index < total:
                     end = index + chunk_len
                     if end >= total:
@@ -163,10 +172,10 @@ class Yuyin_local():
                     ws.send(body, websocket.ABNF.OPCODE_BINARY)
                     index = end
                     time.sleep(chunk_ms / 1000.0)  # ws.send 也有点耗时，这里没有计算
-                    last_time = round(total_time_s-time.time(),1)
-                    print('\r',"识别中，预计还差",last_time if last_time>0 else 0.00,"秒",end='',flush=True)
-            
-            #避免时间过短导致句子还没结束，函数就结束了
+                    last_time = round(total_time_s - time.time(), 1)
+                    print('\r', "识别中，预计还差", last_time if last_time > 0 else 0.00, "秒", end='', flush=True)
+
+            # 避免时间过短导致句子还没结束，函数就结束了
             if self.Dict:
                 if self.Dict["type"] == "partial_result":
                     self.total_sentance += json.loads(self.Dict['nbest'])[0]['sentence']
@@ -175,17 +184,16 @@ class Yuyin_local():
             ws.send(endData, websocket.ABNF.OPCODE_TEXT)
             self.ws_app.close()
 
-
         threading.Thread(target=run).start()
 
-    def on_error(self,ws,error,c,d):
+    def on_error(self, ws, error, c, d):
         print("\n出现了错误")
         # print(error,c,d)
 
-    def on_close(self,we,c,d):
+    def on_close(self, we, c, d):
         print("\n识别结束")
 
-    def on_data(self,we,message,message_len,isSend):
+    def on_data(self, we, message, message_len, isSend):
         pass
 
     def on_ping(self):
@@ -197,15 +205,294 @@ class Yuyin_local():
     def on_cont_message(self):
         pass
 
-    
+
+######################bp神经网络###################
+# 转换字典
+# 各种转换字典
+feature_names = {
+    "iris": ['花萼长度', '花萼宽度', '花瓣长度', '花瓣宽度'],
+    "digits": ["像素" + str(i) for i in range(64)],
+    "wine": ['酒精', '苹果酸', '灰', '灰的碱性', '镁', '总酚', '类黄酮', '非黄烷类酚类', '花青素', '颜色强度', '色调', 'od280/od315稀释葡萄酒', '脯氨酸'],
+    "breast_cancer": [
+        "半径（平均值）", "质地（平均值）", "周长（平均值）", "面积（平均值）", "光滑度（平均值）", "致密性（平均值）", "凹度（平均值）", "凹点（平均值）", "对称性（平均值）",
+        "分形维数（平均值）", "半径（平均值）",
+        "半径（标准差）", "质地（标准差）", "周长（标准差）", "面积（标准差）", "光滑度（标准差）", "致密性（标准差）", "凹度（标准差）", "凹点（标准差）", "对称性（标准差）",
+        "分形维数（标准差）", "半径（标准差）",
+        "半径（最大值）", "质地（最大值）", "周长（最大值）", "面积（最大值）", "光滑度（最大值）", "致密性（最大值）", "凹度（最大值）", "凹点（最大值）", "对称性（最大值）",
+        "分形维数（最大值）", "半径（最大值）"
+    ]
+}
+target_names = {
+    "iris": ['山鸢尾', '变色鸢尾', '维吉尼亚鸢尾'],
+    "digits": ["数字" + str(i) for i in range(10)],
+    "wine": ["琴酒", "雪莉", "贝尔摩德"],
+    "breast_cancer": ["阴性", "阳性"]
+}
+data_name = {
+    "鸢尾花": "iris",
+    "手写数字": "digits",
+    "红酒": "wine",
+    "威斯康辛州乳腺癌": "breast_cancer"
+}
+model_name = {
+    "决策树": "1",
+    "随机森林": "2",
+    "支持向量机": "3",
+    "神经网络": "4",
+}
+# 可视化部分函数
+x, y = [], []  # 用于保存绘图数据，最开始时什么都没有，默认为空
+
+
+def update(score):  # 更新函数
+    x.append(len(y))  # 添加X轴坐标
+    y.append(score)  # 添加Y轴坐标
+    plt.plot(x, y, "r--")  # 绘制折线图
+
+
+def tree_vis(model, dataName):
+    fn = feature_names[dataName]
+    cn = target_names[dataName]
+    plt.figure("决策树或随机森林的可视化")
+    plot_tree(model, filled=True, feature_names=fn, class_names=cn)
+
+
+def studyVis(scores):
+    fig = plt.figure("学习曲线(准确率)")
+    plt.ylim(min(scores) * 0.999, max(scores) * 1.01)  # Y轴取值范围
+    plt.ylabel("准确率", )  # Y轴刻度
+    plt.xlim(0, len(scores) + 1)  # X轴取值范围
+    plt.xlabel("训练轮数")  # Y轴刻度
+    global x, y
+    x, y = [], []  # 用于保存绘图数据，最开始时什么都没有，默认为空
+    ani = FuncAnimation(fig, update, frames=scores, interval=3000 / len(scores), blit=False, repeat=False)  # 创建动画效果
+    plt.show()
+
+
+# 神经网络部分函数
+def sigmod(z):
+    h = 1. / (1 + np.exp(-z))
+    return h
+
+
+def de_sigmoid(z, h):
+    return h * (1 - h)
+
+
+def relu(z):
+    h = np.maximum(z, 0)
+    return h
+
+
+def de_relu(z, h):
+    z[z <= 0] = 0
+    z[z > 0] = 1.0
+    return z
+
+
+def no_active(z):
+    h = z
+    return h
+
+
+def de_no_active(z, h):
+    return np.ones(h.shape)
+
+
+# o Nxc
+# lab Nxc
+def loss_L2(o, lab):
+    diff = lab - o
+    sqrDiff = diff ** 2
+    return 0.5 * np.sum(sqrDiff)
+
+
+def de_loss_L2(o, lab):
+    return o - lab
+
+
+def loss_CE(o, lab):
+    p = np.exp(o) / np.sum(np.exp(o), axis=1, keepdims=True)
+    loss_ce = np.sum(-lab * np.log(p))
+    return loss_ce
+
+
+def de_loss_CE(o, lab):
+    p = np.exp(o) / np.sum(np.exp(o), axis=1, keepdims=True)
+    return p - lab
+
+
+# dim_in:输入特征的维度
+# list_num_hidden： 每层输出节点的数目
+# list_act_funs： 每层的激活函数
+# list_de_act_funs: 反向传播时的函数
+
+def bulid_net(dim_in, list_num_hidden,
+              list_act_funs, list_de_act_funs):
+    layers = []
+
+    # 逐层的进行网络构建
+    for i in range(len(list_num_hidden)):
+        layer = {}
+
+        # 定义每一层的权重
+        if i == 0:
+            # layer["w"]= 0.2*np.random.randn(dim_in,list_num_hidden[i])-0.1 # 用sigmoid激活函数
+            layer["w"] = 0.01 * np.random.randn(dim_in, list_num_hidden[i])  # 用relu 激活函数
+        else:
+            # layer["w"]= 0.2*np.random.randn(list_num_hidden[i-1],list_num_hidden[i])-0.1 # 用sigmoid激活函数
+            layer["w"] = 0.01 * np.random.randn(list_num_hidden[i - 1], list_num_hidden[i])  # 用relu 激活函数
+
+        # 定义每一层的偏置
+        layer["b"] = 0.1 * np.ones([1, list_num_hidden[i]])
+        layer["act_fun"] = list_act_funs[i]
+        layer["de_act_fun"] = list_de_act_funs[i]
+        layers.append(layer)
+
+    return layers
+
+
+# 返回每一层的输入
+# 与最后一层的输出
+def fead_forward(datas, layers):
+    input_layers = []
+    input_acfun = []
+    for i in range(len(layers)):
+        layer = layers[i]
+        if i == 0:
+            inputs = datas
+            z = np.dot(inputs, layer["w"]) + layer["b"]
+            h = layer['act_fun'](z)
+            input_layers.append(inputs)
+            input_acfun.append(z)
+        else:
+            inputs = h
+            z = np.dot(inputs, layer["w"]) + layer["b"]
+            h = layer['act_fun'](z)
+            input_layers.append(inputs)
+            input_acfun.append(z)
+    return input_layers, input_acfun, h
+
+
+# 进行参数更新更新
+def updata_wb(datas, labs, layers, loss_fun, de_loss_fun, alpha=0.01):
+    N, D = np.shape(datas)
+    # 进行前馈操作
+    inputs, input_acfun, output = fead_forward(datas, layers)
+    # 计算 loss
+    loss = loss_fun(output, labs)
+    # 从后向前计算
+    deltas0 = de_loss_fun(output, labs)
+    # 从后向前计算误差
+    deltas = []
+    for i in range(len(layers)):
+        index = -i - 1
+        if i == 0:
+            h = output
+            z = input_acfun[index]
+            delta = deltas0 * layers[index]["de_act_fun"](z, h)
+
+        else:
+            h = inputs[index + 1]
+            z = input_acfun[index]
+            delta = np.dot(delta, layers[index + 1]["w"].T) * layers[index]["de_act_fun"](z, h)
+
+        deltas.insert(0, delta)
+
+    # 利用误差 对每一层的权重进行修成
+    for i in range(len(layers)):
+        # 计算 dw 与 db
+        dw = np.dot(inputs[i].T, deltas[i])
+
+        db = np.sum(deltas[i], axis=0, keepdims=True)
+        # 梯度下降
+        layers[i]["w"] = layers[i]["w"] - alpha * dw
+        # print(alpha * dw)
+        # print("-" * 10)
+        layers[i]["b"] = layers[i]["b"] - alpha * db
+    return layers, loss
+
+
+def test_accuracy(datas, labs_true, layers):
+    _, _, output = fead_forward(datas, layers)
+    lab_det = np.argmax(output, axis=1)
+    labs_true = np.argmax(labs_true, axis=1)
+    N_error = np.where(np.abs(labs_true - lab_det) > 0)[0].shape[0]
+
+    error_rate = N_error / np.shape(datas)[0]
+    return error_rate
+
+
+def one_hot(target, classNum):
+    N = len(target)
+    lab_onehot = np.zeros([N, classNum])
+    for i in range(N):
+        id = int(target[i])
+        lab_onehot[i, id] = 1
+    return lab_onehot
+
+
+class BPnet():
+    def __init__(self):
+        pass
+
+    def __initNetStruct(self):
+        list_num_hidden = [30, 5, self.classNum]
+        list_act_funs = [relu, relu, no_active]
+        list_de_act_funs = [de_relu, de_relu, de_no_active]
+        # 定义损失函数
+        self.loss_fun = loss_CE
+        self.de_loss_fun = de_loss_CE
+        self.model = bulid_net(self.featureNum, list_num_hidden,
+                               list_act_funs, list_de_act_funs)
+
+    def fit(self, x_train, y_train):
+        self.train_data = normalize(x_train, axis=0, norm='max')
+        self.classNum = np.max(y_train) + 1
+        self.featureNum = x_train.shape[1]
+        self.train_lab_onehot = one_hot(y_train, self.classNum)
+        self.__initNetStruct()
+        scores = []
+        # 进行训练
+        n_epoch = 5000
+
+        batchsize = 20
+        N = x_train.shape[0]
+        N_batch = N // batchsize
+        for i in range(n_epoch):
+            # 数据打乱
+            rand_index = np.random.permutation(N).tolist()
+            # 每个batch 更新一下weight
+            loss_sum = 0
+            for j in range(N_batch):
+                index = rand_index[j * batchsize:(j + 1) * batchsize]
+                batch_datas = self.train_data[index]
+                batch_labs = self.train_lab_onehot[index]
+                layers, loss = updata_wb(batch_datas, batch_labs, self.model, self.loss_fun, self.de_loss_fun,
+                                         alpha=0.01)
+                loss_sum = loss_sum + loss
+
+            error = test_accuracy(self.train_data, self.train_lab_onehot, self.model)
+            score = 1 - error
+            interval = n_epoch // 100
+            if i % interval == 0:
+                scores.append(score * 100)
+        return scores
+
+    def score(self, x_test, y_test):
+        x_test = normalize(x_test, axis=0, norm='max')
+        test_lab_onehot = one_hot(y_test, self.classNum)
+        error = test_accuracy(x_test, test_lab_onehot, self.model)
+        return (1 - error) * 100
+
+    def predict(self, feature):
+        feature = normalize(feature, axis=0, norm='max')
+        _, _, output = fead_forward(feature, self.model)
+        return np.argmax(output, axis=1)
+
 ######################词云###################
 
-from tkinter import  Text,Frame,Tk,Button, END, messagebox, filedialog, INSERT, DISABLED
-from PIL import ImageTk, Image
-import numpy as np
-from wordcloud import WordCloud, ImageColorGenerator
-import matplotlib.pyplot as plt
-import jieba,sys
+
 system_platform = sys.platform
 # 设置路径
 if 'win' in system_platform:
@@ -216,6 +503,7 @@ if 'win' in system_platform:
             file_path = os.getcwd()
     main_path = os.path.join(file_path, 'resources', 'assets', 'class').replace("\\", "/")
 
+
 def generateCloud():
     root = Tk()
     root.geometry("784x400")
@@ -224,8 +512,9 @@ def generateCloud():
     app = Application(root)
     root.mainloop()
 
+
 class Application(Frame):
-    def __init__(self,master=None):
+    def __init__(self, master=None):
         super().__init__(master)
         self.master = master
         self.pack()
@@ -239,8 +528,8 @@ class Application(Frame):
             os.getcwd().replace("\\", "/"), ".")
 
     def creatWidget(self):
-        self.w1 = Text(self, width=50, heigh=30) # 宽度为80个字母(40个汉字)，高度为1个行高
-        self.w2 = Text(self, width=50, heigh=30,bg='white')
+        self.w1 = Text(self, width=50, heigh=30)  # 宽度为80个字母(40个汉字)，高度为1个行高
+        self.w2 = Text(self, width=50, heigh=30, bg='white')
         self.w2.configure(state=DISABLED)
         self.w1.pack(side="left")
         self.w2.pack(side="left")
@@ -256,18 +545,18 @@ class Application(Frame):
     # 返回信息
     def convert(self):
         allText = self.w1.get(1.0, END)
-        if len(allText.split())==0:
+        if len(allText.split()) == 0:
             messagebox.showinfo("错误", "内容不能为空")
         else:
             print("正在转换...")
             wcd = self.generate_wordCloud(allText)
             self.img = wcd.to_image()
             self.photo = ImageTk.PhotoImage(self.img)
-            self.w2.delete(1.0,END)
+            self.w2.delete(1.0, END)
             self.w2.image_create(1.0, image=self.photo)
             print("转换成功")
 
-    def count_frequencies(self,word_list):
+    def count_frequencies(self, word_list):
         freq = dict()
         for w in word_list:
             if w not in freq.keys():
@@ -276,7 +565,7 @@ class Application(Frame):
                 freq[w] += 1
         return freq
 
-    def plt_imshow(self,x, ax=None, show=True):
+    def plt_imshow(self, x, ax=None, show=True):
         if ax is None:
             fig, ax = plt.subplots()
         ax.imshow(x)
@@ -284,7 +573,7 @@ class Application(Frame):
         if show: plt.show()
         return ax
 
-    def generate_wordCloud(self,text):
+    def generate_wordCloud(self, text):
         # 读取需要过滤的词
         with open(self.fname_stop, encoding='utf8') as f:
             STOPWORDS_CH = f.read().split()
@@ -312,7 +601,7 @@ class Application(Frame):
     def seletFile(self):
         path = filedialog.askopenfilename()
         if path.endswith(".txt"):
-            with open(path,'r',encoding='utf-8') as f:
+            with open(path, 'r', encoding='utf-8') as f:
                 self.w1.insert(INSERT, f.read())
         else:
             messagebox.showinfo("错误", "请选择txt文件")
@@ -323,12 +612,12 @@ class Application(Frame):
     def saveImg(self):
         try:
             file_path = filedialog.asksaveasfilename(title=u'保存文件')
-            print(file_path+".png")
+            print(file_path + ".png")
             if file_path.endswith(".png"):
                 self.img.save(file_path)
             else:
-                print(file_path+".png")
-                self.img.save(file_path+".png")
+                print(file_path + ".png")
+                self.img.save(file_path + ".png")
             messagebox.showinfo("成功", "保存成功")
         except:
             messagebox.showinfo("错误", "保存失败")
@@ -610,5 +899,3 @@ else:
             playsound = lambda sound, block=True: _playsoundAnotherPython('/usr/bin/python3', sound, block, macOS=False)
 
 del system
-
-
