@@ -287,12 +287,12 @@ class ModelNew(object):
                     self.model.fit(x_train, y_train)
                 scores.append(self.model.score(x_train, y_train))
         if visible:
-            studyVis(scores)
             if self.model_name == model_name['决策树']:
                 tree_vis(self.model, dataName)
 
             elif self.model_name == model_name["随机森林"]:
                 tree_vis(self.model.estimators_[0], dataName)
+            studyVis(scores)
 
     def test(self, x_test, y_test):
         self.test_score = self.model.score(x_test, y_test)
