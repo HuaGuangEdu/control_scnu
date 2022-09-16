@@ -4,12 +4,13 @@
 
 """
 2022/9/16
-control_version:0.6.9
-blcoklyFile_version:2.2.8
+control_version:0.7.0
+blcoklyFile_version:2.2.9
 blockly_version:2.2.2
 1、机器学习库重构（不过保留了之前的，以兼容以前版本的编程块）
     影响到的库有machine_learning和unique
 2、blocklyFiles中的机器学习编程块做出部分改动
+3、增加颜色聚类的代码和块
 """
 
 
