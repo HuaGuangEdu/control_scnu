@@ -1000,10 +1000,9 @@ class Img(basicImg,AdvancedImg):
         G = middle_part[:, :, 1].flatten()
         R = middle_part[:, :, 2].flatten()
         input_data = np.array([B.mean(), G.mean(), R.mean()]).reshape(1, 3)
-        self.color_cluster_result = k_means.predict(input_data)
+        self.color_cluster_result = k_means.predict(input_data)[0]
 
     def mouse(self, event, x, y, flags, param):
-        global is_recording, is_break
         if event == cv2.EVENT_LBUTTONDOWN:
             if 630 > x > 490 and 5 < y < 50:
                 self.is_recording = not self.is_recording
