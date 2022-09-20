@@ -6,7 +6,6 @@ from collections import deque
 import math
 from .shijue0 import basicImg
 from .shijue2 import AdvancedImg
-from cvzone.SelfiSegmentationModule import SelfiSegmentation
 import os
 from typing import Any
 from .unique import cv2AddChineseText,draw_dotted_rect
@@ -28,9 +27,11 @@ if 'win' in system_platform:
 else:
     try:
         import mediapipe as mp
-    except ImportError:
+    except (ImportError, ModuleNotFoundError):
         print('你的树莓派没有安装mediapipe。现在安装……')
         os.system('sudo pip3 install mediapipe-rpi4')
+
+from cvzone.SelfiSegmentationModule import SelfiSegmentation
 picture_path = os.path.join(main_path , 'picture/')  # 图片文件夹
 model_path = os.path.join(main_path , 'model/')  # 识别模型文件夹
 d_path = os.path.join(main_path , 'camera_pos/')
