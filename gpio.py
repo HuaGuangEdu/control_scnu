@@ -411,15 +411,17 @@ class Led(object):
         打开led灯
         :return:None
         '''
-        # 灯亮
-        GPIO.output(self.__gpio, GPIO.HIGH)
+        # 灯亮（更换led后未低电平亮灯--22.9.22）
+        GPIO.output(self.__gpio, GPIO.LOW)
+        #GPIO.output(self.__gpio, GPIO.HIGH)
     
     def closeled(self):
         '''
         关闭led灯
         :return:None
         '''
-        GPIO.output(self.__gpio, GPIO.LOW)
+        GPIO.output(self.__gpio, GPIO.HIGH)
+        #GPIO.output(self.__gpio, GPIO.LOW)
 
 
 class TempHump(object):
