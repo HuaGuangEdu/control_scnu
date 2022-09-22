@@ -3,6 +3,14 @@
 """
 
 """
+2022/9/22
+control_version:0.7.1
+blcoklyFile_version:2.2.9
+blockly_version:2.2.2
+1、修改gpio中led，修正亮灯为低电平（硬件更换了）
+"""
+
+"""
 2022/9/16
 control_version:0.7.0
 blcoklyFile_version:2.2.9
