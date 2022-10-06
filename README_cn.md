@@ -13,7 +13,7 @@
   - [maths.py](#mathspy)
   - [requirements.txt](#requirementstxt)
   - [shijue (shijue0,shijue1,shijue2)](#shijue-shijue0shijue1shijue2)
-  - [unique](#unique)
+  - [unique.py](#uniquepy)
   - [yuyin.py](#yuyinpy)
 # 0.control_scnu
 该库为 华光人工智能教育创新团队 [案例部] 开发  
@@ -36,7 +36,18 @@ init文件
 文件操作相关库
 
 ## gpio.py
-小车硬件相关库
+小车硬件相关库  
+小车前进的例程(该项需要在小车上运行):
+```
+from control import gpio
+import time
+
+m=gpio.Mecanum_wheel()
+m.uart_init()
+m.car_go(200)
+time.sleep(2)
+m.car_stop()
+```
 
 ## integration.py
 用于高集成化案例的库
@@ -86,7 +97,7 @@ while  True:
     a.delay(1)
 ```
 
-## unique
+## unique.py
 
 ## yuyin.py
 语音相关库  
