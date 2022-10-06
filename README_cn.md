@@ -16,7 +16,8 @@
   - [unique](#unique)
   - [yuyin.py](#yuyinpy)
 # 0.control_scnu
-该库属于 华光人工智能教育创新团队
+该库为 华光人工智能教育创新团队 [案例部] 开发  
+适用于人工智能教育
 
 # 1.安装control库
 ```python
