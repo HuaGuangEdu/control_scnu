@@ -4,7 +4,6 @@
 - [2.各个对应文件描述](#2各个对应文件描述)
   - [template](#template)
   - [_init_.py](#initpy)
-  - [creat_img.py](#creat_imgpy)
   - [file_operation.py](#file_operationpy)
   - [gpio.py](#gpiopy)
   - [integration.py](#integrationpy)
@@ -27,10 +26,10 @@ pip3 install control-scnu
 # 2.各个对应文件描述
 ## template
 各种模型文件保存的位置
+
 ## _init_.py
 init文件  
 里面使用注释写明了软件、编程快、库的版本信息
-## creat_img.py
 
 ## file_operation.py
 文件操作相关库
@@ -98,6 +97,7 @@ while  True:
 ```
 
 ## unique.py
+放一些特别的东西
 
 ## yuyin.py
 语音相关库  
