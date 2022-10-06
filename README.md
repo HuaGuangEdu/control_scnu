@@ -7,7 +7,7 @@ English | [简体中文](README_cn.md)
 ```python
 pip3 install control-scnu
 ```
-
+```
 ########### 目录结构描述
 ├── Readme.md                   // help
 ├── app                         // 应用
