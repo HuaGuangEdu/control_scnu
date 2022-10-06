@@ -29,7 +29,7 @@ pip3 install control-scnu
 
 ## _init_.py
 init文件  
-里面使用注释写明了软件、编程快、库的版本信息
+里面使用注释写明了软件、编程块、库的版本信息
 
 ## file_operation.py
 文件操作相关库
