@@ -57,3 +57,13 @@ init文件，里面使用注释写明了软件、编程快、库的版本信息
 
 ## yuyin.py
 语音相关库
+语音识别并复述的例程
+```
+from control import yuyin
+
+s=yuyin.Yuyin(online=True)  #实例化语音，选择在线识别模式
+s.my_record(3,"speech")   #录音3秒保存到 speech
+print(s.stt("speech"))  #打印识别的文字
+s.play_txt(s.stt("speech"))  #复述识别的文字
+
+image.png
