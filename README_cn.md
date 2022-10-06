@@ -70,6 +70,21 @@ print(model.pred,flush=True)
 库的依赖txt文件
 
 ## shijue (shijue0,shijue1,shijue2)
+视觉相关的库  
+摄像头获取图像并二值化显示例程：
+'''
+from control import shijue1
+
+a=shijue1.Img()
+a.camera(0)
+a.name_windows('img')
+while  True:
+    a.get_img()
+    a.BGR2GRAY()
+    a.GRAY2BIN()
+    a.show_image('img')
+    a.delay(1)
+'''
 
 ## unique
 
