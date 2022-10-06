@@ -3,7 +3,7 @@
 - [1.安装control库](#1安装control库)
 - [2.各个对应文件描述](#2各个对应文件描述)
   - [template](#template)
-  - [_init_,py](#initpy)
+  - [_init_.py](#initpy)
   - [creat_img.py](#creat_imgpy)
   - [file_operation.py](#file_operationpy)
   - [gpio.py](#gpiopy)
@@ -28,7 +28,7 @@ pip3 install control-scnu
 # 2.各个对应文件描述
 ## template
 各种模型文件
-## _init_,py
+## _init_.py
 init文件，里面使用注释写明了软件、编程快、库的版本信息
 ## creat_img.py
 
