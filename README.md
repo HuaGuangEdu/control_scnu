@@ -1,4 +1,4 @@
-[English] | 简体中文(README_cn.md)
+English | [简体中文](README_cn.md)
 
 # control_scnu
 该库属于 华光人工智能教育创新团队
