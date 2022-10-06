@@ -56,7 +56,7 @@ init文件，里面使用注释写明了软件、编程快、库的版本信息
 ## unique
 
 ## yuyin.py
-语音相关库\n
+语音相关库  
 语音识别并复述的例程
 ```
 from control import yuyin
