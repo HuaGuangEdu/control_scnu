@@ -71,8 +71,8 @@ print(model.pred,flush=True)
 
 ## shijue (shijue0,shijue1,shijue2)
 视觉相关的库  
-摄像头获取图像并二值化显示例程：
-'''
+摄像头获取图像并二值化显示例程:
+```
 from control import shijue1
 
 a=shijue1.Img()
@@ -84,7 +84,7 @@ while  True:
     a.GRAY2BIN()
     a.show_image('img')
     a.delay(1)
-'''
+```
 
 ## unique
 
