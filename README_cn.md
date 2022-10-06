@@ -12,9 +12,7 @@
   - [machine_learning.py](#machine_learningpy)
   - [maths.py](#mathspy)
   - [requirements.txt](#requirementstxt)
-  - [shijue0](#shijue0)
-  - [shijue1](#shijue1)
-  - [shijue2](#shijue2)
+  - [shijue (shijue0,shijue1,shijue2)](#shijue-shijue0shijue1shijue2)
   - [unique](#unique)
   - [yuyin.py](#yuyinpy)
 # 0.control_scnu
@@ -53,11 +51,7 @@ init文件，里面使用注释写明了软件、编程快、库的版本信息
 ## requirements.txt
 库的依赖txt文件
 
-## shijue0
-
-## shijue1
-
-## shijue2
+## shijue (shijue0,shijue1,shijue2)
 
 ## unique
 
