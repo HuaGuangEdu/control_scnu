@@ -1,14 +1,25 @@
-English | [简体中文](README_cn.md)
+DEMO
+===========================
 
-# control_scnu
-该库属于 华光人工智能教育创新团队
+###########环境依赖
+node v0.10.28+
+redIs ~
 
-# 1.安装control库
-```python
-pip3 install control-scnu
-```
-```
-########### 目录结构描述
+###########部署步骤
+1. 添加系统环境变量
+    export $PORTAL_VERSION="production" // production, test, dev
+
+
+2. npm install  //安装node运行环境
+
+3. gulp build   //前端编译
+
+4. 启动两个配置(已forever为例)
+    eg: forever start app-service.js
+        forever start logger-service.js
+
+
+###########目录结构描述
 ├── Readme.md                   // help
 ├── app                         // 应用
 ├── config                      // 配置
