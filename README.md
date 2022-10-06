@@ -5,5 +5,5 @@
 # 1.第一次使用
 ## 1.1安装control库
 ```python
-pip install control-scnu
+pip3 install control-scnu
 ```
