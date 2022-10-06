@@ -2,4 +2,5 @@
 
 control_scnu
 ===
+# control
 该库属于 华光人工智能教育创新团队
