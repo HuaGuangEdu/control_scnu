@@ -2,8 +2,21 @@
 - [0.control_scnu](#0control_scnu)
 - [1.安装control库](#1安装control库)
 - [2.各个对应文件描述](#2各个对应文件描述)
-  - [XXXXX](#xxxxx)
-  - [XXX](#xxx)
+  - [template](#template)
+  - [_init_,py](#initpy)
+  - [creat_img.py](#creat_imgpy)
+  - [file_operation.py](#file_operationpy)
+  - [gpio.py](#gpiopy)
+  - [integration.py](#integrationpy)
+  - [jiami.py](#jiamipy)
+  - [machine_learning.py](#machine_learningpy)
+  - [maths.py](#mathspy)
+  - [requirements.txt](#requirementstxt)
+  - [shijue0](#shijue0)
+  - [shijue1](#shijue1)
+  - [shijue2](#shijue2)
+  - [unique](#unique)
+  - [yuyin.py](#yuyinpy)
 # 0.control_scnu
 该库属于 华光人工智能教育创新团队
 
@@ -13,7 +26,40 @@ pip3 install control-scnu
 ```
 
 # 2.各个对应文件描述
-## XXXXX
-SDGAGD
-## XXX
-SGDGSG
+## template
+各种模型文件
+## _init_,py
+init文件，里面使用注释写明了软件、编程快、库的版本信息
+## creat_img.py
+
+## file_operation.py
+文件操作相关库
+
+## gpio.py
+小车硬件相关库
+
+## integration.py
+用于高集成化案例的库
+
+## jiami.py
+加密文件的库
+
+## machine_learning.py
+机器学习的库
+
+## maths.py
+基本数学相关的库
+
+## requirements.txt
+库的依赖txt文件
+
+## shijue0
+
+## shijue1
+
+## shijue2
+
+## unique
+
+## yuyin.py
+语音相关库
