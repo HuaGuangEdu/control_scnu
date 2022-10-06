@@ -37,7 +37,7 @@ init文件
 
 ## gpio.py
 小车硬件相关库  
-小车前进的例程(该项需要在小车上运行):
+小车前进的例程（该项需要在小车上运行）:
 ```
 from control import gpio
 import time
