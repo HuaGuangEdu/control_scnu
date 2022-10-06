@@ -43,7 +43,23 @@ init文件，里面使用注释写明了软件、编程快、库的版本信息
 加密文件的库
 
 ## machine_learning.py
-机器学习的库
+机器学习的库  
+鸢尾花机器学习例程:
+```
+from control import machine_learning as ml
+
+datasets=ml.DatasetsNew(ml.data_name["鸢尾花"])
+model= ml.ModelNew(ml.model_name['神经网络'])
+model.train(datasets.x_train, datasets.y_train,dataName=datasets.data_name)
+model.test(datasets.x_test,datasets.y_test)
+print(model.test_score,flush=True)
+model.predict(datasets.x_test)
+print(model.pred,flush=True)
+model.save(name='myFirstModel')
+model1=ml.ModelNew('myFirstModel.proto')
+model1.test(datasets.x_test,datasets.y_test)
+print(model.pred,flush=True)
+```
 
 ## maths.py
 基本数学相关的库
@@ -63,5 +79,5 @@ from control import yuyin
 
 s=yuyin.Yuyin(online=True) 
 s.my_record(3,"speech")   
-print(s.stt("speech"))  
+print(s.stt("speech"),flush=True)  
 s.play_txt(s.stt("speech"))  
