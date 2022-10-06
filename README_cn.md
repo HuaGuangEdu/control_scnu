@@ -1,4 +1,5 @@
 
+[English](README.md) | 简体中文
 - [0.control_scnu](#0control_scnu)
 - [1.安装control库](#1安装control库)
 - [2.各个对应文件描述](#2各个对应文件描述)
