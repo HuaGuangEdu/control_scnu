@@ -12,6 +12,7 @@ blockly_version:2.2.2
 2、增加了案例体验这个分支，增加了本地化语音、启动古诗生成器编程块，将词云编程块从画图转移到文本，将语音控制小车编程块从硬件控制转移到案例体验
 3、删除了integration.py并在readme中同步删除了跟integration.py有关的信息
 4、删除了lcd文件夹中没有用到的py文件
+5、更新了requirements
 """
 
 """
