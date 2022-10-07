@@ -1,26 +1,9 @@
 import cv2
-import sys
 import numpy as np
-import os
+from .util.all_path import picture_path,model_path,system_platform
 
-is_windows = 1
-system_platform = sys.platform
+is_windows = 1 if 'win' in system_platform else 0
 
-if 'win' in system_platform:
-    is_windows = 1
-    file_path = os.path.join(os.getcwd().split('blockly-electron')[0], 'blockly-electron')
-    if not os.path.exists(file_path):
-        if os.path.exists(os.path.join(os.getcwd(), "resources")):
-            file_path = os.getcwd()
-    main_path = os.path.join(file_path, 'resources', 'assets', 'class').replace("\\", "/")
-else:
-    is_windows = 0
-    main_path = '/home/pi/class/'  # 读取和保存文件所用主文件夹
-
-
-
-picture_path =os.path.join( main_path , 'picture/')  # 图片文件夹
-model_path = os.path.join(main_path, 'model/')  # 识别模型文件夹
 
 
 def check_model(model):
