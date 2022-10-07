@@ -1,0 +1,30 @@
+# 作者：tomoya
+# 创建：2019-09-30
+# 更新：2019-09-30
+# 用意：用于存放各个文件夹地址
+import os
+import sys
+import warnings
+
+warnings.filterwarnings("ignore")
+system_platform = sys.platform
+
+if 'win' in system_platform:
+    # 获取当前文件的位置，就是有我们软件的exe的那个路径
+    file_path = os.path.join(os.getcwd().split('blockly-electron')[0], 'blockly-electron')
+    if not os.path.exists(file_path):
+        # 有时候拿到的是免安装版本的，就会出现没有blockly-electron这个文件夹
+        if os.path.exists(os.path.join(os.getcwd(), "resources")):
+            file_path = os.getcwd()
+    class_path = os.path.join(file_path, 'resources', 'assets', 'class').replace("\\", "/")
+else:
+    class_path = '/home/pi/class/'  # 树莓派的class文件夹地址
+data_path = os.path.join(class_path, 'data')
+decorate_path = os.path.join(class_path, 'decorate')
+emulator_files_path = os.path.join(class_path, 'emulator_files')
+file_operation_path = os.path.join(class_path, 'file_operation')
+fonts_path = os.path.join(class_path, 'fonts')
+model_path = os.path.join(class_path, 'model')
+picture_path = os.path.join(class_path, 'picture')
+speech_path = os.path.join(class_path, 'speech')
+txt_path = os.path.join(class_path, 'txt')

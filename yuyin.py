@@ -4,48 +4,30 @@
 这是用来实现机器人语音的源码程序
 """
 import warnings
+
 warnings.filterwarnings("ignore")
-from control.unique import Number_Convert,playsound,Yuyin_local
+from .util.number_convert import Number_Convert
+from .util.local_yuyin import Yuyin_local
+from .util.playsound_change import playsound
 from aip.speech import AipSpeech
-import os, re,json,threading,subprocess
+import os
 import wave
 import time
 import pyaudio
 import audioop
-import pygame
 import requests
 import urllib
-import sys
-import webbrowser
-import random
-from importlib import reload
 import pyttsx3
-# from unique import playsound
-# os.close(sys.stderr.fileno())
-
-system_platform = sys.platform
-
-# 读取和保存文件所用主文件夹
-main_path = '/home/pi/class/'
-if 'win' in system_platform:
-    # 获取当前文件的位置
-
-    file_path = os.path.join(os.getcwd().split('blockly-electron')[0],'blockly-electron')
-    if not os.path.exists(file_path):
-        if os.path.exists(os.path.join(os.getcwd(),"resources")):
-            file_path = os.getcwd()
-    main_path = os.path.join(file_path , 'resources','assets','class').replace("\\","/")
-# 文本文件夹
-txt_path = os.path.join(main_path , 'txt/').replace("\\","/")
+from .util.all_path import system_platform, class_path
+from .util.download import download, getFileSize, models
 
 # 音频文件夹
-audio_path = os.path.join(main_path , 'speech/').replace("\\","/")
+audio_path = os.path.join(class_path, 'speech').replace("\\", "/")
 if not os.path.exists(audio_path):
-    os.makedirs(audio_path)
-# # 开始时删除所有合成音频--Nonexxxxxxx.mp3/wav(固定格式)
-for t in os.listdir(audio_path):
-    if t.split(".")[-1] in ["mp3","wav"]:
-        os.remove(audio_path+t)
+    os.mkdir(audio_path)
+for file in os.listdir(audio_path):
+    if file.split(".")[-1] in ["mp3", "wav"]:
+        os.remove(os.path.join(audio_path, file))
 
 # 百度API账号
 app_id = '19925995'
@@ -60,8 +42,7 @@ ID = {"粤语女声何春": "hchunf_ctn", "男声小军": "xijunma", "知性女�
 
 
 
-# 初始类 Yuyin
-class Yuyin():
+class Yuyin:
     """
     Introduction:
         Yuyin类是用来为机器人提供一系列语音操作的，如播放语音，文字转语音，人机语音交互等
@@ -72,19 +53,20 @@ class Yuyin():
         pyaudio.PyAudio():pyaudio库的PyAudio方法
         AipSpeech:百度语音API中的方法，是语音识别的Python SDK客户端提供语音识别一系列交互方法
     """
-    def __init__(self,  **kwargs):
+
+    def __init__(self, **kwargs):
         """
         初始化Yuyin类
         :param None
         """
-        self.online = True # 这个参数是针对本地化语音转文字的，如果是True就是调用百度在线的，否则调用本地化的
-        for key,value in kwargs.items():
-            if key=="online":
+        self.online = True  # 这个参数是针对本地化语音转文字的，如果是True就是调用百度在线的，否则调用本地化的
+        for key, value in kwargs.items():
+            if key == "online":
                 self.online = value and ('win' in system_platform)
         if 'win' not in system_platform:
             print("树莓派上暂不支持本地模式，已为你切换成在线模式")
-            self.online=True
-        #下面这三个是写死的
+            self.online = True
+        # 下面这三个是写死的
         self.app_id = app_id
         self.api_key = app_key
         self.secret_key = app_secret_key
@@ -103,11 +85,16 @@ class Yuyin():
         self.spd_DUI = 1
         self.gender = "xijunma"
 
-        self.NumConverter = Number_Convert() #把百度的语音转文字中的中文数字转化成阿拉伯数字
+        self.NumConverter = Number_Convert()  # 把百度的语音转文字中的中文数字转化成阿拉伯数字
         if not self.online:
             self.engine = pyttsx3.init()
+            if os.path.exists(os.path.join(audio_path, "local_yuyin")) is False or getFileSize(
+                    os.path.join(audio_path, "local_yuyin")) != models['本地化语音']["actual_size"]:
+                # 没有本地化语音的模型，所以要下载模型
+                print("未发现模型或模型不完整，准备下载模型")
+                download("本地化语音")
 
-    def change_vol_spd_gender_DUI(self, vol:int, spd:int, gender:str):
+    def change_vol_spd_gender_DUI(self, vol: int, spd: int, gender: str):
         """
         选择机器人播放时候的音量，播放速度以及声线（DUI版）
         网站：https://www.duiopen.com/docs/ct_cloud_TTS_Voice
@@ -121,14 +108,14 @@ class Yuyin():
             self.spd_DUI = spd
             self.gender = ID.get(gender, None)
 
-            # 手动抛出异常，防止输入错误的self.gender而导致程序崩溃
             if not self.gender:
                 raise KeyError("没有这个音色！")
         else:
-            self.engine.setProperty('rate', int(200*(1/spd)))  # 设置语速
-            self.engine.setProperty('volume', 0.6*0.01*vol)  # 设置音量
+            print("成功设置语速的音量，但本地文字转语音不支持设置声线")
+            self.engine.setProperty('rate', int(200 * (1 / spd)))  # 设置语速
+            self.engine.setProperty('volume', 0.6 * 0.01 * vol)  # 设置音量
 
-    def chat(self, my_text:str):
+    def chat(self, my_text: str):
         """
         在百度API获取聊天机器人，将聊天机器人的语句通过self.chat_ret返回
         :param my_text: 对机器人说的话，以str类型输入
@@ -139,7 +126,8 @@ class Yuyin():
         html = requests.get(url)
         self.chat_ret = html.json()["content"]
 
-    def downsampleWav(self, src:str, dst:str, inrate:int=48000, outrate:int=16000, inchannels:int=1, outchannels:int=1):
+    def downsampleWav(self, src: str, dst: str, inrate: int = 48000, outrate: int = 16000, inchannels: int = 1,
+                      outchannels: int = 1):
         """
         修改成语音文件格式到适合百度语音api
         :param src: 原来的录音文件
@@ -196,8 +184,7 @@ class Yuyin():
             return False
         return True
 
-
-    def my_record(self, TIME:int, file_name:str):
+    def my_record(self, TIME: int, file_name: str):
         """
         机器人录音，并将录音保存到.wav文件
         :param TIME: 录音时间长度
@@ -217,7 +204,7 @@ class Yuyin():
 
         # 用时间戳和file_name作为文件名，时间戳保证文件的独特性
         try:
-            file_name = audio_path + str(file_name) +  '.wav'
+            file_name = os.path.join(audio_path, str(file_name) + '.wav')
             stream = self.p.open(format=FORMAT,
                                  channels=CHANNELS,
                                  rate=RATE,
@@ -245,7 +232,7 @@ class Yuyin():
         wf.writeframes(b''.join(frames))
         wf.close()
         if self.online:
-            file_new_name = audio_path + 'new.wav'
+            file_new_name = os.path.join(audio_path, 'new.wav')
             # 通过downsampleWav（）函数对录音的音频文件进行修改
             self.downsampleWav(file_name, file_new_name)
 
@@ -257,13 +244,13 @@ class Yuyin():
         else:
             pass
 
-    def stt(self, filename:str):
+    def stt(self, filename: str):
         """
         语音识别返回识别结果字符串, 识别.wav文件中的语音,  中文普通话识别的免费次数为50000次。
         :param filename: 要进行转换的文本文件
         :return: None
         """
-        filename = audio_path + str(filename) + '.wav'
+        filename = os.path.join(audio_path, str(filename) + '.wav')
         if self.online:
             try:
                 if os.path.exists(filename):
@@ -280,31 +267,32 @@ class Yuyin():
 
                     # 解析返回值，打印语音识别的结果
                     if result['err_msg'] == 'success.':
-                        word = result['result'][0] # utf-8编码
+                        word = result['result'][0]  # utf-8编码
                         numList = self.NumConverter.num_convert3(word)[1]
                         self.recordNumberList = [num[0] for num in numList]
-                        return self.NumConverter.num_convert3(word)[0] # 返回识别结果值
+                        return self.NumConverter.num_convert3(word)[0]  # 返回识别结果值
                     else:
                         if 'win' not in system_platform:
                             addStr = "是不是没装麦克风？文件名是:"
                         else:
                             addStr = "文件名是:"
-                        return "语音识别失败"+addStr + filename
+                        return "语音识别失败" + addStr + filename
             except:
                 return "没有连接网络"
 
-        else: #本地化语音转文字
-            local_yuyinPath = os.path.join(audio_path, "local_yuyin") #本地化语音模型存放地点
-            preWorkDir = os.getcwd() #将目前工作路径记录下来
-            os.chdir(local_yuyinPath) #切换工作路径到本地化语音模型路径
-            local_yuyin = Yuyin_local(record_time_s=-1,local_yuyinPath=local_yuyinPath,asyn=False,filename=filename)
-            # local_yuyin.filename = filename
-            local_yuyin.run()
-            os.chdir(preWorkDir) #将工作路径切换回去
+        else:  # 本地化语音转文字
+            local_yuyinPath = os.path.join(audio_path, "local_yuyin")  # 本地化语音模型存放地点
+            preWorkDir = os.getcwd()  # 将目前工作路径记录下来
+            os.chdir(local_yuyinPath)  # 切换工作路径到本地化语音模型路径
+            local_yuyin = Yuyin_local(record_time_s=-1, local_yuyinPath=local_yuyinPath, asyn=False, filename=filename)
+            isError = local_yuyin.run()
+            if isError:
+                os.system("cls")
+                local_yuyin.run()
+            os.chdir(preWorkDir)  # 将工作路径切换回去
             return local_yuyin.total_sentance
 
-
-    def tts(self, txt:str,filename:str):
+    def tts(self, txt: str, filename: str):
         """
         将文本转为音频  语音合成免费额度只有5000次（未认证），认证之后有50000次，在180天内有效
         :param txt: 转语音的文本
@@ -312,64 +300,57 @@ class Yuyin():
         :param tmp: 1使用百度api，2使用DUI，暂时使用，默认2
         :return: None
         """
-
-        if not isinstance(txt,str):
-            print("请输入字符串类型")
-
-        if len(txt) != 0:
-                try:
-                    url = "https://dds.dui.ai/runtime/v1/synthesize?voiceId=" + self.gender + \
-                          "&speed=" + str(self.spd_DUI) + \
-                          "&volume=" + str(self.vol_DUI) + \
-                          "&text=" + txt
-
-                    r = requests.get(url)
-                    result = r.content
-                except:
-                    raise FileNotFoundError('没有连接网络')
-
-                filename = str(filename)
-                file = audio_path + filename + '.mp3'
-
-                if os.path.exists(file):
-                    os.remove(file)
-                with open(file, 'wb') as f:
-                    f.write(result)
+        if len(txt) == 0:
+            raise ValueError("文字转语音中输入的字符串不能为空")
+        filename = str(filename)
 
 
-    def asyn_speech2text(self,record_time_s:int):
-        '''
+        if self.online:
+            try:
+                url = "https://dds.dui.ai/runtime/v1/synthesize?voiceId=" + self.gender + \
+                      "&speed=" + str(self.spd_DUI) + \
+                      "&volume=" + str(self.vol_DUI) + \
+                      "&text=" + txt
+
+                r = requests.get(url)
+                result = r.content
+            except:
+                raise FileNotFoundError('没有连接网络')
+            file = os.path.join(audio_path, filename + '.mp3')
+            if os.path.exists(file):
+                os.remove(file)
+            with open(file, 'wb') as f:
+                f.write(result)
+        else:
+            # pyttsx3的音频必须要保存成wav格式，不然playsound无法播放
+            file = os.path.join(audio_path, filename + '.wav')
+            if os.path.exists(file):
+                os.remove(file)
+            self.engine.save_to_file(txt, file.replace(".mp3", ".wav"))
+            self.engine.runAndWait()
+
+    def asyn_speech2text(self, record_time_s: int):
+        """
         一边说话一边识别
         :return:
-        '''
+        """
         if self.online:
-            self.my_record(record_time_s,"asy_yuyin")
+            self.my_record(record_time_s, "asy_yuyin")
             return self.stt("asy_yuyin")
         else:
-            #下面涉及切换工作路径的原因可以参考上面stt的注释
+            # 下面涉及切换工作路径的原因可以参考上面stt的注释
             local_yuyinPath = os.path.join(audio_path, "local_yuyin")
             preWorkDir = os.getcwd()
             os.chdir(local_yuyinPath)
-            local_yuyin = Yuyin_local(record_time_s,local_yuyinPath=local_yuyinPath)
-            local_yuyin.run()
+            local_yuyin = Yuyin_local(record_time_s, local_yuyinPath=local_yuyinPath)
+            isError = local_yuyin.run()
+            if isError:
+                os.system("cls")
+                local_yuyin.run()
             os.chdir(preWorkDir)
             return local_yuyin.total_sentance
 
-
-    def play_bufen(self, filename:str, play_time:int):
-        """
-        用于加载音频文件并播放
-        :param filename: 音频文件
-        :param play_time: 音频播放时间
-        :return: None
-        """
-        pygame.mixer.init(frequency=16000, size=-16, channels=1, buffer=2000)
-        track = pygame.mixer.music.load(audio_path + filename)
-        pygame.mixer.music.play()
-        time.sleep(play_time)
-        pygame.mixer.music.stop()
-
-    def play_music(self, filename:str):
+    def play_music(self, filename: str):
 
         """
         播放音频及音乐,只能播放.mp3文件
@@ -380,11 +361,10 @@ class Yuyin():
         :param time: 音乐播放部分时候的播放时间
         :return: None
         """
-        # filename = audio_path+str(filename)
 
-        if os.path.exists (audio_path+filename+".mp3"):
+        if os.path.exists(os.path.join(audio_path, filename + ".mp3")):
             filename += ".mp3"
-        elif os.path.exists (audio_path+filename+".wav"):
+        elif os.path.exists(os.path.join(audio_path, filename + ".wav")):
             filename += ".wav"
         else:
             raise FileNotFoundError("找不到该音频文件，是不是还没录制呢？")
@@ -393,31 +373,24 @@ class Yuyin():
         if 'win' in system_platform:
             playsound(filename)
         else:
-            result = os.system("mplayer "+filename)
+            result = os.system("mplayer " + filename)
             if result != 0:
                 print("这台树莓派上好像没有装mplayer(用于播放音频)，下面开始安装...")
                 os.system("sudo apt install mplayer")
-                os.system("mplayer "+filename)
+                os.system("mplayer " + filename)
         os.chdir(precwd)
 
-
-    def play_txt(self, txt:str):
-        '''
+    def play_txt(self, txt: str):
+        """
         将文本转换为语音并播放
         :param txt: 需要转换为音频的文本
         :return: None
-        '''
+        """
         if self.online:
             txt = str(txt)
             tmp = 'audio'
             self.tts(txt, tmp)
             self.play_music(tmp)
         else:
-            self.engine = pyttsx3.init()
             self.engine.say(txt)
             self.engine.runAndWait()
-
-
-
-
-

@@ -7,7 +7,6 @@
   - [_init_.py](#initpy)
   - [file_operation.py](#file_operationpy)
   - [gpio.py](#gpiopy)
-  - [integration.py](#integrationpy)
   - [jiami.py](#jiamipy)
   - [machine_learning.py](#machine_learningpy)
   - [maths.py](#mathspy)
@@ -49,8 +48,6 @@ time.sleep(2)
 m.car_stop()
 ```
 
-## integration.py
-用于高集成化案例的库
 
 ## jiami.py
 加密文件的库

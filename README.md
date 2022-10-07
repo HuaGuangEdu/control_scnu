@@ -6,7 +6,6 @@ English | [简体中文](README_cn.md)
   - [_init_.py](#initpy)
   - [file_operation.py](#file_operationpy)
   - [gpio.py](#gpiopy)
-  - [integration.py](#integrationpy)
   - [jiami.py](#jiamipy)
   - [machine_learning.py](#machine_learningpy)
   - [maths.py](#mathspy)
@@ -47,9 +46,6 @@ m.car_go(200)
 time.sleep(2)
 m.car_stop()
 ```
-
-## integration.py
-Libraries for highly integrated cases
 
 ## jiami.py
 A library for encrypted files
