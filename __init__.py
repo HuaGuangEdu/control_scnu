@@ -4,6 +4,62 @@
 
 
 """
+2022/10/07
+control_version:0.7.2
+blcoklyFile_version:2.2.10
+blockly_version:2.2.2
+1、整理了control库，增加了util文件夹存放各种工具
+2、增加了案例体验这个分支，增加了本地化语音、启动古诗生成器编程块，将词云编程块从画图转移到文本，将语音控制小车编程块从硬件控制转移到案例体验
+"""
+
+"""
+2022/9/22
+control_version:0.7.1
+blcoklyFile_version:2.2.9
+blockly_version:2.2.2
+1、修改gpio中led，修正亮灯为低电平（硬件更换了）
+"""
+
+"""
+2022/9/16
+control_version:0.7.0
+blcoklyFile_version:2.2.9
+blockly_version:2.2.2
+1、机器学习库重构（不过保留了之前的，以兼容以前版本的编程块）
+    影响到的库有machine_learning和unique
+2、blocklyFiles中的机器学习编程块做出部分改动
+3、增加颜色聚类的代码和块
+"""
+
+
+"""
+2022/9/3
+control_version:0.6.9
+blcoklyFile_version:2.2.8
+blockly_version:2.2.2
+修复了已知bug
+
+2022/8/27
+control_version:0.6.8
+blcoklyFile_version:2.2.8
+blockly_version:2.2.2
+增加了语音的本地化文字转语音，并修改了语音的块
+
+2022/7/15
+control_version:0.6.7
+blcoklyFile_version:2.2.7
+blockly_version:2.2.2
+blockly_version:2.2.2
+control库增加了一个maths模块
+
+blocklyFiles
+1、重写了数学、逻辑、控制三个分支内的部分编程块
+2、删除了语音的js文件内重复出现的定义函数
+3、删除了输入/输出分支的js文件内无用的定义函数
+
+"""
+
+"""
 2022/7/3
 control_version:0.6.7
 blcoklyFile_version:2.2.7
@@ -12,7 +68,11 @@ shijue1增加了两个函数
 1、创建一个与输入图像相同尺寸的全零图像
 2、输入图像和两点，在图像的这两点之间画线
 
-blocklyFiles在shijue那里加入了四个块，用于蓝线挑战案例
+unique增加了一个函数和一个类，用于词云案例
+
+blocklyFiles
+1、在视觉的基本操作那里加入了四个块，用于蓝线挑战案例
+2、在画图里面加入了一个块，用于词云案例
 """
 
 """
