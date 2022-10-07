@@ -1,7 +1,8 @@
-English | [简体中文](README_cn.md)
+
+[English](README.md) | 简体中文
 - [0.control_scnu](#0control_scnu)
-- [1.Install control](#1install-control)
-- [2.Each corresponding file description](#2each-corresponding-file-description)
+- [1.安装control库](#1安装control库)
+- [2.各个对应文件描述](#2各个对应文件描述)
   - [template](#template)
   - [_init_.py](#initpy)
   - [file_operation.py](#file_operationpy)
@@ -15,28 +16,28 @@ English | [简体中文](README_cn.md)
   - [unique.py](#uniquepy)
   - [yuyin.py](#yuyinpy)
 # 0.control_scnu
-The library was developed for Huaguang AI Education Innovation Team [Case Department]    
-Applicable to artificial intelligence education
+该库为 华光人工智能教育创新团队 [案例部] 开发  
+适用于人工智能教育
 
-# 1.Install control
+# 1.安装control库
 ```python
 pip3 install control-scnu
 ```
 
-# 2.Each corresponding file description
+# 2.各个对应文件描述
 ## template
-Where the various model files are saved
+各种模型文件保存的位置
 
 ## _init_.py
-The init file  
-The version information of the software, programming block and library is indicated in this file
+init文件  
+里面使用注释写明了软件、编程块、库的版本信息
 
 ## file_operation.py
-File manipulation related libraries
+文件操作相关库
 
 ## gpio.py
-Car hardware related library 
-The car forward routine (This item needs to run on the car):
+小车硬件相关库  
+小车前进的例程（该项需要在小车上运行）:
 ```
 from control import gpio
 import time
@@ -49,14 +50,14 @@ m.car_stop()
 ```
 
 ## integration.py
-Libraries for highly integrated cases
+用于高集成化案例的库
 
 ## jiami.py
-A library for encrypted files
+加密文件的库
 
 ## machine_learning.py
-Library for machine learning    
-Iris machine learning routine:
+机器学习的库  
+鸢尾花机器学习例程:
 ```
 from control import machine_learning as ml
 
@@ -74,14 +75,14 @@ print(model.pred,flush=True)
 ```
 
 ## maths.py
-Library related to basic mathematics
+基本数学相关的库
 
 ## requirements.txt
-Library dependent TXT file
+库的依赖txt文件
 
 ## shijue (shijue0,shijue1,shijue2)
-Visual related libraries   
-The camera obtains the image and binarizes the display routine:
+视觉相关的库  
+摄像头获取图像并二值化显示例程:
 ```
 from control import shijue1
 
@@ -97,11 +98,11 @@ while  True:
 ```
 
 ## unique.py
-Put something special in it
+放一些特别的东西
 
 ## yuyin.py
-Speech correlation library    
-Routines for speech recognition and retelling:
+语音相关库  
+语音识别并复述的例程:
 ```
 from control import yuyin
 
