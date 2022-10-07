@@ -7,7 +7,6 @@
   - [_init_.py](#initpy)
   - [file_operation.py](#file_operationpy)
   - [gpio.py](#gpiopy)
-  - [integration.py](#integrationpy)
   - [jiami.py](#jiamipy)
   - [machine_learning.py](#machine_learningpy)
   - [maths.py](#mathspy)
