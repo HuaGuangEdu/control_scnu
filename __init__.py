@@ -8,7 +8,7 @@ control_version:0.7.3
 blcoklyFile_version:2.2.10
 blockly_version:2.2.5
 1、加入树莓派版本的本地化语音合成
-2、调整了依赖
+2、调整了requirements
 """
 
 
