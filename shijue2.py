@@ -4,14 +4,18 @@ from .util.all_path import picture_path,model_path,system_platform
 
 is_windows = 1 if 'win' in system_platform else 0
 
-
+if not is_windows:
+    try:
+        import paddlelite.lite
+    except:
+        print('没有安装paddlelite。请到官网下载树莓派镜像源，并按说明书操作')
 
 def check_model(model):
     if model[-2:] != 'nb' and model[-4:] != 'onnx':
         raise TypeError('模型格式不对，确保你的模型格式是.nb或.onnx格式的')
-    if model[-2:] != 'nb' and is_windows == 0:
+    elif model[-2:] != 'nb' and is_windows == 0:
         raise TypeError('模型格式不对，在树莓派或其他设备上只能用.nb格式的')
-    if model[-4:] != 'onnx' and is_windows == 1:
+    elif model[-4:] != 'onnx' and is_windows == 1:
         raise TypeError('模型格式不对，在windows上只能用.onnx格式的')
 
 
@@ -22,11 +26,6 @@ class AdvancedImg:
         self.img_std = [0.229, 0.224, 0.225]
 
     def process_image(self, image_data, shape=64, standard=True, black=False):
-        if not is_windows:
-            try:
-                import paddlelite.lite
-            except:
-                raise ImportError('没有安装paddlelite。请到官网下载树莓派镜像源，并按说明书操作')
         image_data = cv2.cvtColor(image_data, cv2.COLOR_BGR2RGB)
         if black:
             gray = cv2.cvtColor(image_data, cv2.COLOR_BGR2GRAY)
