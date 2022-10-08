@@ -1015,3 +1015,43 @@ class Screen:
                 break
 
         cap.release()
+class RGB():  #是否考虑加入PWM“呼吸灯”技能
+    '''
+    四pin RGB三色灯显示
+    '''
+    def __init__(self, uw_num: int):
+        '''
+        初始化RGB灯的类
+        :param uw_num: RGB灯的接口，整数类型，如1
+        ps：使用的与uw（超声波）同样的串口，所以用同样的字典命名等
+        '''
+        self.__trig_p = UW_IO[uw_num][0]
+        self.__echo_p = UW_IO[uw_num][1]
+        #由于是三色灯，选择变成了两个out的io口
+        GPIO.setup(self.__trig_p, GPIO.OUT)
+        GPIO.setup(self.__echo_p, GPIO.OUT)
+    
+    def Close(self):
+        '''
+        关闭灯 对应的 tr ec为 00
+        '''
+        GPIO.output(self.__trig_p, GPIO.LOW)
+        GPIO.output(self.__echo_p, GPIO.LOW)
+    def RedON(self):
+        '''
+        打开红灯，对应的 tr ec为 01
+        '''
+        GPIO.output(self.__trig_p, GPIO.LOW)
+        GPIO.output(self.__echo_p, GPIO.HIGH)
+    def YellowON(self):
+        '''
+        打开绿灯，对应的 tr ec为 10
+        '''
+        GPIO.output(self.__trig_p, GPIO.HIGH)
+        GPIO.output(self.__echo_p, GPIO.LOW)
+    def GreenON(self):
+        '''
+        打开绿灯，对应的 tr ec为 11
+        '''
+        GPIO.output(self.__trig_p, GPIO.HIGH)
+        GPIO.output(self.__echo_p, GPIO.HIGH)
