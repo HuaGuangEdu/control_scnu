@@ -12,12 +12,15 @@ from .util.playsound_change import playsound
 from aip.speech import AipSpeech
 import os
 import wave
-import time
 import pyaudio
 import audioop
 import requests
 import urllib
 import pyttsx3
+import zhtts
+import sounddevice as sd
+import time
+import soundfile as sf
 from .util.all_path import system_platform, class_path
 from .util.download import download, getFileSize, models
 
@@ -41,7 +44,6 @@ ID = {"粤语女声何春": "hchunf_ctn", "男声小军": "xijunma", "知性女�
       "客服女声芳芳": "gdfanfp"}
 
 
-
 class Yuyin:
     """
     Introduction:
@@ -62,10 +64,7 @@ class Yuyin:
         self.online = True  # 这个参数是针对本地化语音转文字的，如果是True就是调用百度在线的，否则调用本地化的
         for key, value in kwargs.items():
             if key == "online":
-                self.online = value and ('win' in system_platform)
-        if 'win' not in system_platform:
-            print("树莓派上暂不支持本地模式，已为你切换成在线模式")
-            self.online = True
+                self.online = value
         # 下面这三个是写死的
         self.app_id = app_id
         self.api_key = app_key
@@ -86,13 +85,16 @@ class Yuyin:
         self.gender = "xijunma"
 
         self.NumConverter = Number_Convert()  # 把百度的语音转文字中的中文数字转化成阿拉伯数字
-        if not self.online:
-            self.engine = pyttsx3.init()
-            if os.path.exists(os.path.join(audio_path, "local_yuyin")) is False or getFileSize(
-                    os.path.join(audio_path, "local_yuyin")) != models['本地化语音']["actual_size"]:
-                # 没有本地化语音的模型，所以要下载模型
-                print("未发现模型或模型不完整，准备下载模型")
-                download("本地化语音")
+        if self.online is False:
+            if "win" in system_platform:
+                self.engine = pyttsx3.init()
+                if os.path.exists(os.path.join(audio_path, "local_yuyin")) is False or getFileSize(
+                        os.path.join(audio_path, "local_yuyin")) != models['本地化语音']["actual_size"]:
+                    # 没有本地化语音的模型，所以要下载模型
+                    print("未发现模型或模型不完整，准备下载模型")
+                    download("本地化语音")
+            else:
+                self.rpiT2S = zhtts.TTS()
 
     def change_vol_spd_gender_DUI(self, vol: int, spd: int, gender: str):
         """
@@ -103,7 +105,7 @@ class Yuyin:
         :param gender: 语音播放的声线
         :return: None
         """
-        if self.online:
+        if self.online or "win" not in system_platform:
             self.vol_DUI = vol
             self.spd_DUI = spd
             self.gender = ID.get(gender, None)
@@ -194,7 +196,7 @@ class Yuyin:
 
         FORMAT = pyaudio.paInt16
         CHANNELS = 1  # 声道
-        if self.online:
+        if self.online or "win" not in system_platform:
             CHUNK = 2000  # 采样点
             RATE = 48000  # 采样率
         # RECORD_SECONDS = 2                        # 采样宽度2bytes
@@ -231,7 +233,7 @@ class Yuyin:
         wf.setframerate(RATE)
         wf.writeframes(b''.join(frames))
         wf.close()
-        if self.online:
+        if self.online or "win" not in system_platform:
             file_new_name = os.path.join(audio_path, 'new.wav')
             # 通过downsampleWav（）函数对录音的音频文件进行修改
             self.downsampleWav(file_name, file_new_name)
@@ -251,7 +253,7 @@ class Yuyin:
         :return: None
         """
         filename = os.path.join(audio_path, str(filename) + '.wav')
-        if self.online:
+        if self.online or "win" not in system_platform:
             try:
                 if os.path.exists(filename):
 
@@ -304,7 +306,6 @@ class Yuyin:
             raise ValueError("文字转语音中输入的字符串不能为空")
         filename = str(filename)
 
-
         if self.online:
             try:
                 url = "https://dds.dui.ai/runtime/v1/synthesize?voiceId=" + self.gender + \
@@ -322,19 +323,24 @@ class Yuyin:
             with open(file, 'wb') as f:
                 f.write(result)
         else:
-            # pyttsx3的音频必须要保存成wav格式，不然playsound无法播放
+            # pyttsx3或zhtts的音频都必须要保存成wav格式，不然playsound无法播放
             file = os.path.join(audio_path, filename + '.wav')
-            if os.path.exists(file):
-                os.remove(file)
-            self.engine.save_to_file(txt, file.replace(".mp3", ".wav"))
-            self.engine.runAndWait()
+            if "win" in system_platform:
+                if os.path.exists(file):
+                    os.remove(file)
+                self.engine.save_to_file(txt, file.replace(".mp3", ".wav"))
+                self.engine.runAndWait()
+            else:
+                mel = self.rpiT2S.text2mel(txt)
+                audio = self.rpiT2S.mel2audio(mel)
+                sf.write("a.wav", audio, 24000, 'PCM_16')
 
     def asyn_speech2text(self, record_time_s: int):
         """
         一边说话一边识别
         :return:
         """
-        if self.online:
+        if self.online or "win" not in system_platform:
             self.my_record(record_time_s, "asy_yuyin")
             return self.stt("asy_yuyin")
         else:
@@ -392,5 +398,11 @@ class Yuyin:
             self.tts(txt, tmp)
             self.play_music(tmp)
         else:
-            self.engine.say(txt)
-            self.engine.runAndWait()
+            if "win" in system_platform:
+                self.engine.say(txt)
+                self.engine.runAndWait()
+            else:
+                mel = self.rpiT2S.text2mel(txt)
+                audio = self.rpiT2S.mel2audio(mel)
+                sd.play(audio, samplerate=24000)
+                sd.wait()
