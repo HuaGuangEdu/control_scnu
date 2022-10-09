@@ -17,13 +17,13 @@ import audioop
 import requests
 import urllib
 import pyttsx3
-import zhtts
-import sounddevice as sd
 import time
 import soundfile as sf
 from .util.all_path import system_platform, class_path
 from .util.download import download, getFileSize, models
-
+if "win" not in system_platform:
+    import zhtts
+    import sounddevice as sd
 # 音频文件夹
 audio_path = os.path.join(class_path, 'speech').replace("\\", "/")
 if not os.path.exists(audio_path):
