@@ -1031,27 +1031,24 @@ class RGB():  #是否考虑加入PWM“呼吸灯”技能
         GPIO.setup(self.__trig_p, GPIO.OUT)
         GPIO.setup(self.__echo_p, GPIO.OUT)
     
-    def Close(self):
+    def LightClose(self):
         '''
         关闭灯 对应的 tr ec为 00
         '''
         GPIO.output(self.__trig_p, GPIO.LOW)
         GPIO.output(self.__echo_p, GPIO.LOW)
-    def RedON(self):
+    def LightON(self,Color):
         '''
-        打开红灯，对应的 tr ec为 01
+        打开某个灯
+        Args：
+            Color：要打开的灯的颜色
         '''
-        GPIO.output(self.__trig_p, GPIO.LOW)
-        GPIO.output(self.__echo_p, GPIO.HIGH)
-    def YellowON(self):
-        '''
-        打开绿灯，对应的 tr ec为 10
-        '''
-        GPIO.output(self.__trig_p, GPIO.HIGH)
-        GPIO.output(self.__echo_p, GPIO.LOW)
-    def GreenON(self):
-        '''
-        打开绿灯，对应的 tr ec为 11
-        '''
-        GPIO.output(self.__trig_p, GPIO.HIGH)
-        GPIO.output(self.__echo_p, GPIO.HIGH)
+        if Color == "Red":  #打开红灯，对应的 tr ec为 01
+            GPIO.output(self.__trig_p, GPIO.LOW)
+            GPIO.output(self.__echo_p, GPIO.HIGH)
+        elif Color == "Yellow":  #打开黄灯，对应的 tr ec为 10
+            GPIO.output(self.__trig_p, GPIO.HIGH)
+            GPIO.output(self.__echo_p, GPIO.LOW)
+        elif Color == "Green":  #打开绿灯，对应的 tr ec为 11
+            GPIO.output(self.__trig_p, GPIO.HIGH)
+            GPIO.output(self.__echo_p, GPIO.HIGH)
