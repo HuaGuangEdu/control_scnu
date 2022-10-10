@@ -14,7 +14,7 @@ import os
 import cv2
 from PIL import Image, ImageDraw, ImageFont, ImageFilter  # 放图片的包
 import logging  # 加载字体
-from util.all_path import system_platform, fonts_path
+from .util.all_path import system_platform, fonts_path
 
 if 'win' in system_platform:
     raise BaseException("请在树莓派上使用本库")
