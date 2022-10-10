@@ -18,12 +18,17 @@ import requests
 import urllib
 import pyttsx3
 import time
-import soundfile as sf
 from .util.all_path import system_platform, class_path
 from .util.download import download, getFileSize, models
+
 if "win" not in system_platform:
-    import zhtts
-    import sounddevice as sd
+    try:
+        import soundfile as sf
+        import zhtts
+        import sounddevice as sd
+    except:
+        pass
+
 # 音频文件夹
 audio_path = os.path.join(class_path, 'speech').replace("\\", "/")
 if not os.path.exists(audio_path):
@@ -94,6 +99,7 @@ class Yuyin:
                     print("未发现模型或模型不完整，准备下载模型")
                     download("本地化语音")
             else:
+
                 self.rpiT2S = zhtts.TTS()
 
     def change_vol_spd_gender_DUI(self, vol: int, spd: int, gender: str):
