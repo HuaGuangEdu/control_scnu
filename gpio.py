@@ -933,7 +933,7 @@ class Screen:
         """
         下面是字体的选择
         """
-        Font = ImageFont.truetype(os.path.join(fonts_path, "simkai.ttf"), font_size)
+        Font = ImageFont.truetype(os.path.join(fonts_path, "1.ttf"), font_size)
         font_number_max = int(320 / font_size - 1)
         # 字体一行最多的数量
         if len(string) < font_number_max:
