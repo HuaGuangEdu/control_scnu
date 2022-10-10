@@ -2,22 +2,18 @@
 更新内容一览
 """
 
-"""
-2022/10/08
-control_version:0.7.4
-blcoklyFile_version:2.2.10
-blockly_version:2.2.5
-1、GPIO三色灯优化逻辑与命名
-"""
+
 
 """
-2022/10/08
+2022/10/10
 control_version:0.7.3
 blcoklyFile_version:2.2.10
 blockly_version:2.2.5
 1、加入树莓派版本的本地化语音合成
 2、调整了requirements
 3.GPIO库加入了RGB三色灯的应用
+4、GPIO三色灯优化逻辑与命名
+5、改LCD字体
 """
 
 

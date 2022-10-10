@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b5cdc265-fe7d-4c9b-9028-0c68b35547ac" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/control_scnu.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/control_scnu.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shijue2.py" beforeDir="false" afterPath="$PROJECT_DIR$/shijue2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,6 +73,8 @@
       <workItem from="1661735582974" duration="606000" />
       <workItem from="1663647710698" duration="25073000" />
       <workItem from="1665212913275" duration="124000" />
+      <workItem from="1665216448044" duration="3170000" />
+      <workItem from="1665316803415" duration="2913000" />
     </task>
     <servers />
   </component>
