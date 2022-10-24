@@ -1,6 +1,6 @@
 # 作者：tomoya
-# 创建：2019-09-29
-# 更新：2019-09-29
+# 创建：2022-09-29
+# 更新：2022-09-29
 # 用意：本地化语音转文字专用的类
 import os
 import subprocess
@@ -9,6 +9,7 @@ import pyaudio
 import time
 import json
 import threading
+from control.util.all_path import speech_path, system_platform
 
 
 class Yuyin_local():
@@ -120,7 +121,6 @@ class Yuyin_local():
         threading.Thread(target=run).start()
 
     def on_error(self, ws, error):
-        print("报错")
         if "由于目标计算机积极拒绝，无法连接" in str(error) or "强迫关闭" in str(error):
             vbsPath = os.path.join(self.local_yuyinPath, "runbat.vbs")
             subprocess.call(f"cscript  {vbsPath}", stdout=None, stdin=None)
@@ -129,9 +129,7 @@ class Yuyin_local():
             print(error)
 
     def on_close(self, we):
-        print("关闭")
         pass
-        # print("\n识别结束")
 
     def on_data(self, we, message, message_len, isSend):
         pass
@@ -144,3 +142,33 @@ class Yuyin_local():
 
     def on_cont_message(self):
         pass
+
+
+class Yuyin_local2():
+    def __init__(self, modelName, wavFile):
+        self.modelName = modelName
+        # win的可执行文件有个.exe后缀，linux的可执行文件没有
+        self.exe_path = os.path.join(speech_path, "exeFile", modelName + ".exe" if "win" in system_platform else "")
+        self.model_path = os.path.join(speech_path, modelName)
+        self.wav_path = os.path.join(speech_path, wavFile)
+
+    def recognize(self):
+        # 调用可执行文件
+        result = os.popen(" ".join([self.exe_path, self.model_path, self.wav_path]))
+        if self.modelName == 'stream':
+            # 流式语音识别
+            while True:
+                nowResult = result.buffer.readline().decode("utf8")
+                if nowResult == '':
+                    break
+                elif "当前识别结果" in nowResult:
+                    print('\r', nowResult.replace("\r\n", "").replace("当前识别结果:  ", "").replace('"', "")[:-1], end='',
+                          flush=True)
+                elif "最终结果" in nowResult:
+                    final = nowResult
+            print("\n")
+            return final.replace('最终结果为: "', "")[:-4]
+        # 非流式语音识别
+        result = result.buffer.read().decode('utf-8')  # 将输出以utf8解码，这样就不会报错
+        result = result[result.find("识别结果") + 7:result.rfind("识别时间") - 1]  # 从输出中选择语音识别的结果，不需要其他信息
+        return result

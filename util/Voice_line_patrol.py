@@ -1,6 +1,6 @@
 # 作者：tomoya
-# 创建：2019-09-30
-# 更新：2019-09-30
+# 创建：2022-09-30
+# 更新：2022-09-30
 # 用意：用于语音训练案例
 from control import yuyin, gpio
 import time

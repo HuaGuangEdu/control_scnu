@@ -1,11 +1,14 @@
 # 作者：tomoya
-# 创建：2019-09-30
-# 更新：2019-09-30
+# 创建：2022-09-30
+# 更新：2022-09-30
 # 用意：用于存放各个文件夹地址
 import os
 import sys
 import warnings
+from control.util.checkLibVersion import LibVersionChecker
 
+# 查看当前control库是否为最新版本
+LibVersionChecker().run()
 warnings.filterwarnings("ignore")
 system_platform = sys.platform
 
@@ -28,3 +31,13 @@ model_path = os.path.join(class_path, 'model')
 picture_path = os.path.join(class_path, 'picture')
 speech_path = os.path.join(class_path, 'speech')
 txt_path = os.path.join(class_path, 'txt')
+
+
+def checkPathExists(path):
+    if os.path.exists(path) is False:
+        os.mkdir(path)
+
+
+for path in [data_path, decorate_path, emulator_files_path, file_operation_path, fonts_path, model_path, picture_path,
+             speech_path, txt_path]:
+    checkPathExists(path)

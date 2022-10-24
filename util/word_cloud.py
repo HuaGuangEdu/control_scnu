@@ -1,6 +1,6 @@
 # 作者：tomoya
-# 创建：2019-09-29
-# 更新：2019-09-29
+# 创建：2022-09-29
+# 更新：2022-09-29
 # 用意：词云
 import os
 from tkinter import Text, Frame, Tk, Button, END, messagebox, filedialog, INSERT, DISABLED

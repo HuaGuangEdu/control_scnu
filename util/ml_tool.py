@@ -1,6 +1,6 @@
 # 作者：tomoya
-# 创建：2019-09-29
-# 更新：2019-09-29
+# 创建：2022-09-29
+# 更新：2022-09-29
 # 用意：机器学习中调用的BP神经网络
 
 from sklearn.preprocessing import normalize

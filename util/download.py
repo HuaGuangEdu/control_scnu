@@ -1,6 +1,6 @@
 # 作者：tomoya
-# 创建：2019-09-30
-# 更新：2019-09-30
+# 创建：2022-09-30
+# 更新：2022-09-30
 # 用意：用于从飞书上下载模型之类的大型文件
 import py7zr
 import os
@@ -9,14 +9,48 @@ import requests
 import browser_cookie3
 import math
 from tqdm import trange
-
 models = {
+    "win语音识别可执行文件": {
+        "fileName": "exeFile",  # 文件夹或者文件名字
+        "name": "boxcn1UjUBYR76mRR0IZQUl9BLc",  # 飞书上预览该文件的时候路径的名字
+        "size": 3951174,  # 压缩成7z格式之后的文件大小，单位是字节
+        "savePath": all_path.speech_path,  # 模型最终保存路径
+        "actual_size": 28543677  # 模型解压缩之后的大小
+    },
+    "linux语音识别可执行文件": {
+        "fileName": "exeFile",  # 文件夹或者文件名字
+        "name": "boxcnwauzHs7h43zLtQW89qWxjg",  # 飞书上预览该文件的时候路径的名字
+        "size": 86545,  # 压缩成7z格式之后的文件大小，单位是字节
+        "savePath": all_path.speech_path,  # 模型最终保存路径
+        "actual_size": 1121900  # 模型解压缩之后的大小
+    },
+    "k2_rnnt": {
+        "fileName": "k2_rnnt",  # 文件夹或者文件名字
+        "name": "boxcn4arqxcni6HPIJgTpHwSkeg",  # 飞书上预览该文件的时候路径的名字
+        "size": 307196826,  # 压缩成7z格式之后的文件大小，单位是字节
+        "savePath": all_path.speech_path,  # 模型最终保存路径
+        "actual_size": 333220347  # 模型解压缩之后的大小
+    },
+    "conformer": {
+        "fileName": "conformer",  # 文件夹或者文件名字
+        "name": "boxcni63mB6wpuLzjJyvZ50rXhf",  # 飞书上预览该文件的时候路径的名字
+        "size": 427269039,  # 压缩成7z格式之后的文件大小，单位是字节
+        "savePath": all_path.speech_path,  # 模型最终保存路径
+        "actual_size": 467520352  # 模型解压缩之后的大小
+    },
+    "stream": {
+        "fileName": "stream",  # 文件夹或者文件名字
+        "name": "boxcn08bkAsqIGl6eotMMEtbcYg",  # 飞书上预览该文件的时候路径的名字
+        "size": 427915699,  # 压缩成7z格式之后的文件大小，单位是字节
+        "savePath": all_path.speech_path,  # 模型最终保存路径
+        "actual_size": 467526512  # 模型解压缩之后的大小
+    },
     "本地化语音": {
         "fileName": "local_yuyin",  # 文件夹或者文件名字
         "name": "boxcnz2bJnn8zUqtSNIw6etkxTb",  # 飞书上预览该文件的时候路径的名字
         "size": 242399826,  # 压缩成7z格式之后的文件大小，单位是字节
-        "savePath": all_path.speech_path,  # 模型最终保存路径
-        "actual_size": 417404494  # 模型解压缩之后的大小
+        "savePath": all_path.speech_path,
+        "actual_size": 417404494
     },
     "自动生成古诗": {
         "fileName": "autoPoetry",
