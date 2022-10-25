@@ -6,8 +6,8 @@
 control_version:0.8.0
 blcoklyFile_version:2.2.11
 blockly_version:2.2.5
-（1）将Yuyin类拆成三个类（语音识别，语音合成，聊天机器人）
-（2）加入本地化语音识别
+1、将Yuyin类拆成三个类（语音识别，语音合成，聊天机器人）
+2、加入本地化语音识别
 """
 
 
