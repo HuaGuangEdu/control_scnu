@@ -18,6 +18,11 @@ The library was developed for Huaguang AI Education Innovation Team [Case Depart
 Applicable to artificial intelligence education
 
 # 1.Install control
+## windows
+```python
+pip install control-scnu
+```
+## linux
 ```python
 pip3 install control-scnu
 ```
