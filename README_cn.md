@@ -19,6 +19,11 @@
 适用于人工智能教育
 
 # 1.安装control库
+## windows
+```python
+pip install control-scnu
+```
+## linux
 ```python
 pip3 install control-scnu
 ```
