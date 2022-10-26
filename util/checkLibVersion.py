@@ -50,7 +50,7 @@ class LibVersionChecker(threading.Thread):
             latestLibVersion = self.getLatestLib()
             result = nowLibVersion != latestLibVersion
             if result:
-                print(f"当前control库的版本为{nowLibVersion}不是最新的，你可以运行 pip install control-scnu -U 来更新至{latestLibVersion}")
+                print(f"warning: 当前control库的版本为{nowLibVersion}不是最新的，你可以运行 pip install control-scnu -U 来更新至{latestLibVersion}")
             with open(".LibVersionChecker", 'w') as f:
                 f.write("".join(map(str, time.localtime()[0:4])))
         except:
