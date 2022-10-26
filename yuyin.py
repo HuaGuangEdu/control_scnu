@@ -12,7 +12,6 @@ from .util.playsound_change import playsound
 import os
 import wave
 import pyaudio
-import audioop
 import requests
 import urllib
 import time
@@ -236,7 +235,6 @@ class SpeechSynthesis:
         :param vol: 语音播放时候的音量
         :param spd: 语音播放时候的速度
         :param gender: 语音播放的声线
-        :param online: 是在线语音合成还是离线语音合成
         :return: None
         """
         if self.online:
@@ -262,7 +260,6 @@ class SpeechSynthesis:
         将文本转为音频  语音合成免费额度只有5000次（未认证），认证之后有50000次，在180天内有效
         :param txt: 转语音的文本
         :param filename: 转换为音频的文件名
-        :param tmp: 1使用百度api，2使用DUI，暂时使用，默认2
         :return: None
         """
         if len(txt) == 0:
@@ -446,6 +443,7 @@ class Yuyin:
         :param outchannels: 输出通道
         :return: None
         """
+        import audioop
         if not os.path.exists(src):
             print('没有旧音频文件')
             return False
