@@ -8,7 +8,7 @@ import warnings
 from control.util.checkLibVersion import LibVersionChecker
 
 # 查看当前control库是否为最新版本
-LibVersionChecker().run()
+LibVersionChecker().start()
 warnings.filterwarnings("ignore")
 system_platform = sys.platform
 
