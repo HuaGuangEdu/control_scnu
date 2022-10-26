@@ -78,7 +78,7 @@ def download(modelName):
     modelSize = modelDict["size"]
     downloadPath = f"https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/all/{modelDict['name']}/?mount_point=explorer"
     cj = browser_cookie3.load()
-    r = requests.get(downloadPath, cookies=cj, stream=True)
+    r = requests.get(downloadPath, cookies=cj, stream=True,headers=headers)
     file = open(os.path.join(savePath, modelDict["fileName"] + ".7z"), 'wb')
     batchsSize = 1000000
     batchsNum = math.ceil(modelSize / batchsSize)
