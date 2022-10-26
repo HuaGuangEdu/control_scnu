@@ -9,7 +9,7 @@ blockly_version:2.2.5
 1、将Yuyin类拆成三个类（语音识别，语音合成，聊天机器人）
 2、加入本地化语音识别
 3、更新了语音的编程块
-4、修改util里面的local_yuyin和all_path和checkLibVersion
+4、修改util里面的local_yuyin和all_path和checkLibVersion,download
 """
 
 
