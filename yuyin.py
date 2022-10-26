@@ -686,7 +686,7 @@ class Yuyin:
             result = os.system("mplayer " + filename)
             if result != 0:
                 print("这台树莓派上好像没有装mplayer(用于播放音频)，下面开始安装...")
-                os.system("sudo apt install mplayer")
+                os.system("sudo apt install mplayer -y")
                 os.system("mplayer " + filename)
         os.chdir(precwd)
 
