@@ -148,12 +148,15 @@ class Yuyin_local2():
     def __init__(self, modelName, wavFile):
         self.modelName = modelName
         # win的可执行文件有个.exe后缀，linux的可执行文件没有
-        self.exe_path = os.path.join(speech_path, "exeFile", modelName + ".exe" if "win" in system_platform else "")
+        self.exe_path = os.path.join(speech_path, "exeFile", modelName + (".exe" if "win" in system_platform else ""))
         self.model_path = os.path.join(speech_path, modelName)
         self.wav_path = os.path.join(speech_path, wavFile)
 
     def recognize(self):
         # 调用可执行文件
+        if "win" not in system_platform:
+            # 在linux上可能需要给这个可执行文件添加可执行权限，不然后面会报权限不足
+            os.system("sudo chmod +x "+self.exe_path)
         result = os.popen(" ".join([self.exe_path, self.model_path, self.wav_path]))
         if self.modelName == 'stream':
             # 流式语音识别

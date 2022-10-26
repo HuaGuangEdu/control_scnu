@@ -9,6 +9,7 @@ import requests
 import browser_cookie3
 import math
 from tqdm import trange
+
 models = {
     "win语音识别可执行文件": {
         "fileName": "exeFile",  # 文件夹或者文件名字
@@ -19,17 +20,17 @@ models = {
     },
     "linux语音识别可执行文件": {
         "fileName": "exeFile",  # 文件夹或者文件名字
-        "name": "boxcnwauzHs7h43zLtQW89qWxjg",  # 飞书上预览该文件的时候路径的名字
+        "name": "boxcnWgvUFyywn2vqh8fTAxD6uc",  # 飞书上预览该文件的时候路径的名字
         "size": 86545,  # 压缩成7z格式之后的文件大小，单位是字节
         "savePath": all_path.speech_path,  # 模型最终保存路径
         "actual_size": 1121900  # 模型解压缩之后的大小
     },
     "k2_rnnt": {
         "fileName": "k2_rnnt",  # 文件夹或者文件名字
-        "name": "boxcn4arqxcni6HPIJgTpHwSkeg",  # 飞书上预览该文件的时候路径的名字
-        "size": 307196826,  # 压缩成7z格式之后的文件大小，单位是字节
+        "name": "boxcnRynIDGNTsyYCcVq0gnFjDb",  # 飞书上预览该文件的时候路径的名字
+        "size": 307196361,  # 压缩成7z格式之后的文件大小，单位是字节
         "savePath": all_path.speech_path,  # 模型最终保存路径
-        "actual_size": 333220347  # 模型解压缩之后的大小
+        "actual_size": 333214810  # 模型解压缩之后的大小
     },
     "conformer": {
         "fileName": "conformer",  # 文件夹或者文件名字
@@ -60,6 +61,7 @@ models = {
         "actual_size": 710136756
     },
 }
+# 用于指定浏览器
 headers = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36 Edg/100.0.1185.50',
 }
@@ -78,7 +80,7 @@ def download(modelName):
     modelSize = modelDict["size"]
     downloadPath = f"https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/all/{modelDict['name']}/?mount_point=explorer"
     cj = browser_cookie3.load()
-    r = requests.get(downloadPath, cookies=cj, stream=True,headers=headers)
+    r = requests.get(downloadPath, cookies=cj, stream=True, headers=headers)
     file = open(os.path.join(savePath, modelDict["fileName"] + ".7z"), 'wb')
     batchsSize = 1000000
     batchsNum = math.ceil(modelSize / batchsSize)

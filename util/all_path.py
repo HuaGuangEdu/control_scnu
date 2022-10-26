@@ -38,6 +38,7 @@ def checkPathExists(path):
         os.mkdir(path)
 
 
-for path in [class_path, data_path, decorate_path, emulator_files_path, file_operation_path, fonts_path, model_path, picture_path,
+for path in [class_path, data_path, decorate_path, emulator_files_path, file_operation_path, fonts_path, model_path,
+             picture_path,
              speech_path, txt_path]:
     checkPathExists(path)
