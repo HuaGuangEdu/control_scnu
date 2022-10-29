@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from .util.all_path import picture_path,model_path,system_platform
+import os
 
 is_windows = 1 if 'win' in system_platform else 0
 
@@ -44,11 +45,11 @@ class AdvancedImg:
     def classify_number_init(self):
         if is_windows:
             model = 'numbers.onnx'
-            paddle_model = model_path + model
+            paddle_model = os.path.join(model_path , model)
             self.predictor = cv2.dnn.readNetFromONNX(paddle_model)
         else:
             model = 'numbers.nb'
-            paddle_model = model_path + model
+            paddle_model = os.path.join(model_path ,model)
             config = paddlelite.lite.MobileConfig()
             config.set_model_from_file(paddle_model)
             self.predictor = paddlelite.lite.create_paddle_predictor(config)
@@ -58,11 +59,11 @@ class AdvancedImg:
         if is_windows:
             raise ImportError('windows下暂不支持目标检测，请充值VIP后再试')
             model = 'pingpong.onnx'
-            paddle_model = model_path + model
+            paddle_model = os.path.join(model_path ,model)
             self.predictor = cv2.dnn.readNetFromONNX(paddle_model)
         else:
             model = 'pingpong.nb'
-            paddle_model = model_path + model
+            paddle_model = os.path.join(model_path ,model)
             config = paddlelite.lite.MobileConfig()
             config.set_model_from_file(paddle_model)
             self.predictor = paddlelite.lite.create_paddle_predictor(config)
@@ -71,7 +72,7 @@ class AdvancedImg:
 
     def classify_model_init(self, model='numbers.nb'):
         check_model(model)
-        paddle_model = model_path + model
+        paddle_model = os.path.join(model_path ,model)
         if not is_windows:
             config = paddlelite.lite.MobileConfig()
             config.set_model_from_file(paddle_model)
@@ -82,7 +83,7 @@ class AdvancedImg:
 
     def detect_model_init(self, model='pingpong.nb'):
         check_model(model)
-        paddle_model = model_path + model
+        paddle_model = os.path.join(model_path ,model)
         if not is_windows:
             config = paddlelite.lite.MobileConfig()
             config.set_model_from_file(paddle_model)
