@@ -1161,7 +1161,12 @@ class Img(basicImg, AdvancedImg):
                                           backGroundImageSrc)
         img_new = self.img.copy()
         h, w, _ = img_new.shape
-        backGroundImage = cv2.resize(cv2.imread(backGroundImageSrc), (w, h), cv2.INTER_AREA)
+        if os.path.exists(backGroundImageSrc) is False:
+            # 没有找到这个背景图片,那就用白色的背景
+            print("没有找到这张图片,使用白色背景")
+            backGroundImage = np.ones_like(img_new) * 255
+        else:
+            backGroundImage = cv2.resize(cv2.imread(backGroundImageSrc), (w, h), cv2.INTER_AREA)
 
         img_new = self.segmentor.removeBG(img_new, backGroundImage, threshold=0.5)
         img_new = cv2.resize(img_new, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
