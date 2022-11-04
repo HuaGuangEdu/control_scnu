@@ -1157,7 +1157,8 @@ class Img(basicImg, AdvancedImg):
         Returns:
 
         """
-        backGroundImageSrc = (picture_path if os.path.isabs(backGroundImageSrc) == False else '') + backGroundImageSrc
+        backGroundImageSrc = os.path.join((picture_path if os.path.isabs(backGroundImageSrc) == False else ''),
+                                          backGroundImageSrc)
         img_new = self.img.copy()
         h, w, _ = img_new.shape
         backGroundImage = cv2.resize(cv2.imread(backGroundImageSrc), (w, h), cv2.INTER_AREA)
