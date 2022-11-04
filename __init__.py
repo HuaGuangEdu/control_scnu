@@ -1,6 +1,16 @@
 """
 更新内容一览
 """
+
+"""
+2022/10/26
+control_version:0.8.1
+blcoklyFile_version:2.2.11
+blockly_version:2.2.5
+1、修改了shijue1中替换背景的那个函数,如果输入的背景图不存在,就默认使用白色背景而不是报错
+"""
+
+
 """
 2022/10/26
 control_version:0.8.0
