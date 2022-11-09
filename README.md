@@ -75,15 +75,10 @@ control-scnu contains the file structure as followed:
 
 ​	--lcd
 
-​		  --......
-
 ​	--util
-
-​		  --......
 
 ​	--template
 
-​		  --......
 
 Some examples are as followed. You can read the control-scnu documents for more usages.
 
