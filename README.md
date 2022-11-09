@@ -1,6 +1,6 @@
 English | [简体中文](README_cn.md)
 # control_scnu
-
+![Image text](https://github.com/HuaGuangEdu/control_scnu/blob/main/docs/control1.png)
 Developed by HuaGuang AI Education Innovation Team Case Department.
 
 Work for artificial intelligence(AI) education.
