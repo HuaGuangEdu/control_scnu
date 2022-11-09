@@ -28,10 +28,7 @@ pip install control-scnu
 pip3 install control-scnu
 ```
 
-# 2.各个对应文件描述
-## template
-各种模型文件保存的位置
-
+# 2.各个对应文件描
 ## _init_.py
 init文件  
 里面使用注释写明了软件、编程块、库的版本信息
