@@ -51,33 +51,33 @@ control-scnu contains the file structure as followed:
 
 --control-scnu
 
-​	--init.py
+​	|--init.py
 
-​	--file_operation.py
+​	|--file_operation.py
 
-​	--gpio.py
+​	|--gpio.py
 
-​	--jiami.py
+​	|--jiami.py
 
-​	--machine_learning.py
+​	|--machine_learning.py
 
-​	--maths.py
+​	|--maths.py
 
-​	--shujue0.py
+​	|--shujue0.py
 
-​	--shijue1.py
+​	|--shijue1.py
 
-​	--shijue2.py
+​	|--shijue2.py
 
-​	--yuyin.py
+​	|--yuyin.py
 
-​	--unique.py
+​	|--unique.py
 
-​	--lcd
+​	|--lcd
 
-​	--util
+​	|--util
 
-​	--template
+​	|--template
 
 
 Some examples are as followed. You can read the control-scnu documents for more usages.
