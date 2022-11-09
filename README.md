@@ -28,9 +28,6 @@ pip3 install control-scnu
 ```
 
 # 2.Each corresponding file description
-## template
-Where the various model files are saved
-
 ## _init_.py
 The init file  
 The version information of the software, programming block and library is indicated in this file
