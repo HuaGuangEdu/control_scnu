@@ -97,7 +97,7 @@ m.car_stop()
 ```
 
 ## machine_learning.py
-```
+```python
 from control import machine_learning as ml
 
 datasets=ml.DatasetsNew(ml.data_name["鸢尾花"])
@@ -129,7 +129,7 @@ while  True:
 ```
 
 ## yuyin.py
-```
+```python
 from control import yuyin
 
 s=yuyin.Yuyin(online=True) 
