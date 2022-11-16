@@ -6,7 +6,7 @@ import os
 import sys
 import warnings
 from control.util.checkLibVersion import LibVersionChecker
-
+from control import util
 # 查看当前control库是否为最新版本
 LibVersionChecker().start()
 warnings.filterwarnings("ignore")
@@ -42,3 +42,5 @@ for path in [class_path, data_path, decorate_path, emulator_files_path, file_ope
              picture_path,
              speech_path, txt_path]:
     checkPathExists(path)
+
+digit_template_dir = util.__file__.replace("__init__.py","something\\template.npy")
