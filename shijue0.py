@@ -623,3 +623,39 @@ class basicImg:
         cx = int(M["m10"] / M["m00"])
         cy = int(M["m01"] / M["m00"])
         return [cx, cy]
+
+    def filter(self, dsize: int, type: str = "average"):
+        """
+        图像滤波
+        :param dsize: 滤波核的大小，越大越平滑，但可能会很模糊
+        :param type: 选择的滤波类型：average：均值，box：方框滤波，gaussian：高斯滤波，median：中值滤波，bilateral：双边滤波
+        :return: None
+        """
+        if dsize != int(dsize) or dsize < 1:
+            # 表示dsize不是整数
+            raise ValueError("核大小必须是大于0的整数")
+        img = self.img.copy()
+        if type == "average":
+            # 均值滤波
+            img = cv2.blur(img, (dsize, dsize))
+        elif type == "box":
+            # 方框滤波
+            if dsize > 3:
+                print("对于方框滤波来说，核大小不宜过大")
+            img = cv2.boxFilter(img, -1, (dsize, dsize), normalize=False)
+        elif type == "gaussian":
+            # 高斯滤波
+            if dsize % 2 == 0:
+                raise ValueError("高斯滤波的核大小必须是奇数")
+            img = cv2.GaussianBlur(img, (dsize, dsize), 0, 0)
+        elif type == "median":
+            # 中值滤波
+            if dsize % 2 == 0:
+                raise ValueError("中值滤波的核大小必须是奇数")
+            img = cv2.medianBlur(img, dsize)
+        elif type == "bilateral":
+            # 双边滤波
+            img = cv2.bilateralFilter(img, dsize, 100, 100)
+        else:
+            print("没有这个滤波类型")
+        cv2.imshow("filterImage", img)
