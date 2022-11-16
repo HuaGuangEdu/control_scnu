@@ -659,3 +659,6 @@ class basicImg:
         else:
             print("没有这个滤波类型")
         cv2.imshow("filterImage", img)
+
+    def count(self, pixelValue: int):
+        return np.sum(self.img == pixelValue)
