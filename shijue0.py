@@ -267,13 +267,18 @@ class basicImg:
         """
         _, self.img = cv2.threshold(self.img, 0, 255, cv2.THRESH_OTSU)
 
-    def canny(self):
+    def canny(self, threshold1: int = 30, threshold2: int = 100):
         """
         边缘检测
-        Returns:
-
+        :param threshold1: 下界阈值
+        :param threshold2:  上界阈值
+        :return:
         """
-        canny_img = cv2.Canny(self.img, 30, 100)
+        if not (0<threshold1<255 and 0<threshold2<255):
+            raise ValueError("阈值必须再0到255之间")
+        if threshold1>threshold2:
+            raise ValueError("第一个阈值不能高于第二个阈值")
+        canny_img = cv2.Canny(self.img, threshold1, threshold2)
         cv2.imshow('canny', canny_img)
 
     def find_Contour(self):
