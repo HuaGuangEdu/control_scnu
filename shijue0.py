@@ -197,11 +197,11 @@ class basicImg:
             path = pic_name
         else:  # 如果是相对路径，那就补成绝对路径
             path = os.path.join(picture_path, pic_name)
-
-        # path = picture_path + pic_name + mode
-        result = cv2.imwrite(path, self.img)
-        if result == False:
-            raise NameError("保存失败，文件名不能含有中文")
+        # 因为opencv不支持保存为中文文件名，为防止中文文件名保存失败，所以先保存成英文的
+        temp_path = "huaguangTemp." + path.split(".")[-1]
+        cv2.imwrite(temp_path, self.img)
+        # 把之前保存的英文文件名的图片改名为用户想要保存的那个文件名
+        os.rename(temp_path, path)
         print('图片已保存到：', path)
 
     # resize 是用来改变图像的大小的
