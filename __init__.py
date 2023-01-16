@@ -4,6 +4,14 @@
 
 """
 2023/01/09
+control_version:0.8.3
+blcoklyFile_version:2.2.11
+blockly_version:2.2.6
+1、修改了shijue0和shijue1————每次图像处理后直接修改原图并且不展示图像（需要另外展示）
+"""
+
+"""
+2023/01/09
 control_version:0.8.2
 blcoklyFile_version:2.2.11
 blockly_version:2.2.6
