@@ -10,6 +10,7 @@ if not is_windows:
         import paddlelite.lite
     except:
         print('没有安装paddlelite。请到官网下载树莓派镜像源，并按说明书操作')
+        print('温馨提示：即使有上述提醒，您依然可以正常使用除paddlelite以外的所有功能')
 
 
 def check_model(model):

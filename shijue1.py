@@ -351,39 +351,37 @@ class Img(basicImg, AdvancedImg):
         Returns:
 
         """
-        img_new = self.img.copy()
-        imgRGB = cv2.cvtColor(img_new, cv2.COLOR_BGR2RGB)
-        self.results = self.faceDetection.process(imgRGB)
+        img_copy = self.img.copy()
+        imgRGB = cv2.cvtColor(img_copy, cv2.COLOR_BGR2RGB)
+        results = self.faceDetection.process(imgRGB)
         bboxs = []
-        if self.results.detections == None:
+        if results.detections is None:
             self.face_data = '没有人'
-            return img_new, bboxs
-        if self.results.detections:
-            self.face_data = f'检测到{len(self.results.detections)}个人'
-            for id, detection in enumerate(self.results.detections):
+            return img_copy, bboxs
+        if results.detections:
+            self.face_data = f'检测到{len(results.detections)}个人'
+            for id, detection in enumerate(results.detections):
                 bboxC = detection.location_data.relative_bounding_box
-                ih, iw, ic = img_new.shape
+                ih, iw, ic = img_copy.shape
                 bbox = int(bboxC.xmin * iw), int(bboxC.ymin * ih), int(bboxC.width * iw), int(bboxC.height * ih)
                 bboxs.append([id, bbox, detection.score])
                 if draw:
                     x, y, w, h = bbox
                     x1, y1 = x + w, y + h
                     if cool:
-                        cv2.rectangle(img_new, bbox, (255, 0, 255), 1)
+                        cv2.rectangle(img_copy, bbox, (255, 0, 255), 1)
                         # 下面这一堆只是为了画出来的矩形很酷
-                        cv2.line(img_new, (x, y), (x + 30, y), (255, 0, 255), 5)
-                        cv2.line(img_new, (x, y), (x, y + 30), (255, 0, 255), 5)
-                        cv2.line(img_new, (x1, y), (x1 - 30, y), (255, 0, 255), 5)
-                        cv2.line(img_new, (x1, y), (x1, y + 30), (255, 0, 255), 5)
-                        cv2.line(img_new, (x, y1), (x + 30, y1), (255, 0, 255), 5)
-                        cv2.line(img_new, (x, y1), (x, y1 - 30), (255, 0, 255), 5)
-                        cv2.line(img_new, (x1, y1), (x1 - 30, y1), (255, 0, 255), 5)
-                        cv2.line(img_new, (x1, y1), (x1, y1 - 30), (255, 0, 255), 5)
+                        cv2.line(img_copy, (x, y), (x + 30, y), (255, 0, 255), 5)
+                        cv2.line(img_copy, (x, y), (x, y + 30), (255, 0, 255), 5)
+                        cv2.line(img_copy, (x1, y), (x1 - 30, y), (255, 0, 255), 5)
+                        cv2.line(img_copy, (x1, y), (x1, y + 30), (255, 0, 255), 5)
+                        cv2.line(img_copy, (x, y1), (x + 30, y1), (255, 0, 255), 5)
+                        cv2.line(img_copy, (x, y1), (x, y1 - 30), (255, 0, 255), 5)
+                        cv2.line(img_copy, (x1, y1), (x1 - 30, y1), (255, 0, 255), 5)
+                        cv2.line(img_copy, (x1, y1), (x1, y1 - 30), (255, 0, 255), 5)
                     else:
-                        cv2.rectangle(img_new, bbox, (255, 0, 255), 3)
-        # self.name_windows('face detect result')
-        # self.show_image('face detect result', img_new)
-        cv2.imshow('face detect result', img_new)
+                        cv2.rectangle(img_copy, bbox, (255, 0, 255), 3)
+        self.img = img_copy
 
     def face_cap(self, path: str):
         """
@@ -660,18 +658,14 @@ class Img(basicImg, AdvancedImg):
         Returns:
 
         """
-        frame = np.copy(self.img)
+        img_copy = np.copy(self.img)
         self.data = 'none'
-        self.frame = frame
-        self.img_new = frame
         # 转到HSV空间
-        hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
-        # cv2.imshow('hsv',hsv)
-        # cv2.waitKey(40)
+        hsv = cv2.cvtColor(img_copy, cv2.COLOR_BGR2HSV)
+
         # 根据阈值构建掩膜
         mask = cv2.inRange(hsv, self.colorLower, self.colorUpper)
-        #         cv2.imshow('mask_original', mask)
-        #         cv2.waitKey(40)
+
         # 腐蚀操作
         mask = cv2.erode(mask, None, iterations=2)
         # 膨胀操作，其实先腐蚀再膨胀的效果是开运算，去除噪点
@@ -685,19 +679,9 @@ class Img(basicImg, AdvancedImg):
             c = max(cnts, key=cv2.contourArea)
             x, y, w, h = cv2.boundingRect(c)  # 最大面积区域的外接矩形   x,y是左上角的坐标，w,h是矩形的宽和高
             # print('x,y,w,h',x,y,w,h)
-            if w > 60 and h > 60:  # 宽和高大于一定数值的才要。
-                frame_bgr = cv2.cvtColor(frame, cv2.COLOR_HSV2BGR)
-                cv2.rectangle(frame_bgr, (x, y), (x + w, y + h), (0, 255, 255), 2)
-                # print('{0}',format(x))
-                if x < 0 or y < 0:
-                    # self.img_new=frame_bgr
-                    self.img_new = frame
-                else:
-                    self.img_new = frame[y + 5:y + h - 5, x + 5:x + w - 5]
-
-                self.img_new = cv2.resize(self.img_new, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
-                cv2.imshow('result', self.img_new)
-                cv2.waitKey(3)
+            if w > 60 and h > 60 and x > 0 and y > 0:  # 宽和高大于一定数值的才要。
+                cv2.rectangle(img_copy, (x + 5, y + 5), (x + w - 5, y + h - 5), (0, 255, 255), 2)
+                self.img = cv2.resize(img_copy, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
 
             # 确定面积最大的轮廓的外接圆
             ((x, y), radius) = cv2.minEnclosingCircle(c)
@@ -781,22 +765,18 @@ class Img(basicImg, AdvancedImg):
         Returns:
 
         """
-        frame = np.copy(self.img)
+        img_copy = self.img.copy()
         # 转到HSV空间
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        # cv2.imshow('hsv',hsv)
-        # cv2.waitKey(40)
+        hsv = cv2.cvtColor(img_copy, cv2.COLOR_BGR2HSV)
+
         # 根据阈值构建掩膜
         mask = cv2.inRange(hsv, self.mask_color_lower, self.mask_color_upper)
-        #         cv2.imshow('mask_original', mask)
-        #         cv2.waitKey(40)
+
         # 腐蚀操作
         mask = cv2.erode(mask, None, iterations=2)
         # 膨胀操作，其实先腐蚀再膨胀的效果是开运算，去除噪点
         self.mask_img = cv2.dilate(mask, None, iterations=2)
         self.mask_img = cv2.resize(self.mask_img, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
-        cv2.imshow('mask', self.mask_img)
-        cv2.waitKey(3)
 
     def circle_detect(self, img: np.ndarray):
         """
@@ -810,6 +790,7 @@ class Img(basicImg, AdvancedImg):
         gaussian = cv2.GaussianBlur(img, (3, 3), 0)
         circles1 = cv2.HoughCircles(gaussian, cv2.HOUGH_GRADIENT, 1, 110, param1=200, param2=35, minRadius=0,
                                     maxRadius=0)
+        print(circles1)
         if circles1 is not None:
             self.shape_type = 'circle'
             circles = circles1[0, :, :]
@@ -1045,7 +1026,7 @@ class Img(basicImg, AdvancedImg):
         else:
             self.fingertip = {}
         img_new = cv2.resize(img_new, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
-        cv2.imshow('finger_detect', img_new)
+        self.img = img_new
 
     """
     手指检测
@@ -1102,8 +1083,7 @@ class Img(basicImg, AdvancedImg):
                     ('right_ankle', 28), ('left_shoulder', 11), ('right_shoulder', 12)):
                 self.body_menu[tur[0]] = (int(poselms[tur[1]].x * w), int(poselms[tur[1]].y * h))
             self.mpDraw.draw_landmarks(img_new, results.pose_landmarks, self.mp_pose.POSE_CONNECTIONS)
-        img_new = cv2.resize(img_new, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
-        cv2.imshow('body_detect', img_new)
+        self.img = cv2.resize(img_new, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
 
     def wrist_mark(self, wrist: str = 'left_wrist', mark: str = 'x'):
         """
@@ -1169,8 +1149,7 @@ class Img(basicImg, AdvancedImg):
             backGroundImage = cv2.resize(cv2.imread(backGroundImageSrc), (w, h), cv2.INTER_AREA)
 
         img_new = self.segmentor.removeBG(img_new, backGroundImage, threshold=0.5)
-        img_new = cv2.resize(img_new, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
-        cv2.imshow('backGroundChange', img_new)
+        self.img = cv2.resize(img_new, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
 
     def faceMeshDetect_init(self):
         """
@@ -1196,8 +1175,7 @@ class Img(basicImg, AdvancedImg):
             for faceLms in results.multi_face_landmarks:
                 self.mpDraw.draw_landmarks(img_new, faceLms, self.mpFaceMesh.FACEMESH_FACE_OVAL,
                                            landmark_drawing_spec=self.drawSpec)
-        img_new = cv2.resize(img_new, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
-        cv2.imshow('faceMesh', img_new)
+        self.img = cv2.resize(img_new, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
 
     def get_shape(self, parameter: str = 'width'):
         """
@@ -1230,7 +1208,6 @@ class Img(basicImg, AdvancedImg):
         """
         self.template = None
         self.min_val, self.max_val, self.min_loc, self.max_loc = None, None, None, None
-        self.isshow = False
         templist = []
         for i in range(0, 9):
             im3 = cv2.imread(picture_path + 'blue' + str(i) + '.jpg')
@@ -1246,7 +1223,6 @@ class Img(basicImg, AdvancedImg):
         Returns:
 
         """
-        self.isshow = False
         self.template = cv2.imread((picture_path if os.path.isabs(template_name) == False else '') + template_name)
         # print(self.template.shape)
         self.template = cv2.resize(self.template, (99, 116))
@@ -1259,7 +1235,6 @@ class Img(basicImg, AdvancedImg):
         Returns:
 
         """
-        self.isshow = True
         w, h = self.template.shape[1], self.template.shape[0]
         top_left = self.max_loc
         self.max_loc_topleft = list(self.max_loc)
@@ -1267,9 +1242,8 @@ class Img(basicImg, AdvancedImg):
         bottom_right = [top_left[0] + w, top_left[1] + h]
         self.cut_img = self.img[top_left[1]:top_left[1] + h, top_left[0]: top_left[0] + w]
         self.cut_img = cv2.resize(self.img, dsize=(640, 480))  # 这一行是放大图像变回 640✖480
-        if self.isshow:
-            cv2.imshow('cut', self.cut_img)
-            cv2.rectangle(self.img, top_left, bottom_right, 255, 2)
+        cv2.imshow('cut', self.cut_img)
+        cv2.rectangle(self.img, top_left, bottom_right, 255, 2)
         """
     def predict_number_match(self, input):
         for t in templist:
