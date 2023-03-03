@@ -357,6 +357,7 @@ class Yuyin:
         初始化Yuyin类
         :param None
         """
+        print("这个类在未来将被废弃")
         warnings.warn("这个类在未来将被废弃", FutureWarning)
         self.online = True  # 这个参数是针对本地化语音转文字的，如果是True就是调用百度在线的，否则调用本地化的
         for key, value in kwargs.items():

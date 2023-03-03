@@ -5,7 +5,7 @@ import numpy as np
 import pyzbar.pyzbar as pyzbar
 from typing import Any
 from .util.all_path import picture_path, system_platform
-
+import shutil
 
 def new_file(path: str):
     """
@@ -38,6 +38,9 @@ def pic_read(filename: str, mode: int):
     img = cv2.imdecode(raw_data, mode)
     return img
 
+def change_chinese(Str:str):
+
+    pass
 
 class basicImg:
     """
@@ -191,25 +194,28 @@ class basicImg:
         Returns:
 
         """
+
         if pic_name.split(".")[-1] not in ["jpg", "png"]:
             raise NameError("图片名字缺少后缀jpg或者png或者后缀不对,请使用xx.jpg或xx.png这种名字来保存")
         pic_name = pic_name.replace("\\", "/")
         # 中间变量，使得我们可以保存图片为中文文件名
-        temp_name = "huaguangTemp." + pic_name.split(".")[-1]
-        if os.path.isabs(pic_name):  # 如果是绝对路径，那就不修改
-            path = pic_name
-            temp_path = pic_name.replace(pic_name.split("/")[-1], temp_name)
-        else:  # 如果是相对路径，那就补成绝对路径
-            path = os.path.join(picture_path, pic_name)
-            temp_path = os.path.join(picture_path, temp_name)
 
         # 因为opencv不支持保存为中文文件名，为防止中文文件名保存失败，所以先保存成英文的
-        cv2.imwrite(temp_path, self.img)
+        temp_name = "huaguangTemp." + pic_name.split(".")[-1]
+        if os.path.exists(temp_name):
+            # 如果这个图片已经存在。就把他删除。不然会报错
+            os.remove(temp_name)
+        result = cv2.imwrite(temp_name, self.img)
+        if os.path.isabs(pic_name) is False:
+            path = os.path.join(picture_path, pic_name)
+        else:
+            path = pic_name
         # 把之前保存的英文文件名的图片改名为用户想要保存的那个文件名
         if os.path.exists(path):
             # 如果这个图片已经存在。就把他删除。不然会报错
             os.remove(path)
-        os.rename(temp_path, path)
+        shutil.copy(temp_name, path)
+        os.remove(temp_name)
         print('图片已保存到：', path)
 
     # resize 是用来改变图像的大小的
