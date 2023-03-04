@@ -2,25 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b5cdc265-fe7d-4c9b-9028-0c68b35547ac" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/.gitattributes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/control_scnu.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/control_scnu.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README_cn.md" beforeDir="false" afterPath="$PROJECT_DIR$/README_cn.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpio.py" beforeDir="false" afterPath="$PROJECT_DIR$/gpio.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lcd/LCD_2inch4.py" beforeDir="false" afterPath="$PROJECT_DIR$/lcd/LCD_2inch4.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lcd/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/lcd/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lcd/lcdconfig.py" beforeDir="false" afterPath="$PROJECT_DIR$/lcd/lcdconfig.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shijue0.py" beforeDir="false" afterPath="$PROJECT_DIR$/shijue0.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shijue1.py" beforeDir="false" afterPath="$PROJECT_DIR$/shijue1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shijue2.py" beforeDir="false" afterPath="$PROJECT_DIR$/shijue2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yuyin.py" beforeDir="false" afterPath="$PROJECT_DIR$/yuyin.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,11 +32,11 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "WebServerToolWindowFactoryState": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\30215\miniconda3\envs\blockly-electron\Lib\site-packages\control" />
@@ -158,6 +143,8 @@
       <workItem from="1673880923864" duration="208000" />
       <workItem from="1677855692453" duration="2836000" />
       <workItem from="1677860091641" duration="98000" />
+      <workItem from="1677924962726" duration="107000" />
+      <workItem from="1677927202608" duration="31000" />
     </task>
     <servers />
   </component>

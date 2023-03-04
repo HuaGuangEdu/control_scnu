@@ -90,7 +90,7 @@ class Img(basicImg, AdvancedImg):
         self.model_ID = self.ID
         self.data_path = None
         self.save_model_name = None
-        self.face_model = model_path + 'face.xml'
+        self.face_model = os.path.join(model_path , 'face.xml')
         self.face_detector = cv2.CascadeClassifier(self.face_model)
         self.faces = None
         self.ids = None
@@ -169,7 +169,7 @@ class Img(basicImg, AdvancedImg):
 
         """
         self.ID = ID
-        self.data_path = face_recognize_path + self.ID + '/'
+        self.data_path = os.path.join(face_recognize_path, self.ID)
         new_file(self.data_path)
         self.save_model_name = model_path + self.ID + '.yml'
 
@@ -191,7 +191,7 @@ class Img(basicImg, AdvancedImg):
             self.get_img()
             self.name_windows('img')
             self.show_image('img')
-            pic_my_name = self.data_path + self.ID + '_' + str(i) + '.jpg'
+            pic_my_name = os.path.join(self.data_path , self.ID + '_' + str(i) + '.jpg')
             i += 1
             cv2.imwrite(pic_my_name, self.img)
             self.delay(time)
@@ -210,12 +210,13 @@ class Img(basicImg, AdvancedImg):
             imgP = []
             file = os.listdir(self.data_)
             for i in range(len(file)):
-                next_file_path = self.data_ + file[i] + '/'
+                next_file_path = os.path.join(self.data_ , file[i])
                 for f in os.listdir(next_file_path):
                     if f.split('.')[1] != 'jpg':
                         continue
                     self.names.append(file[i])
                     imgP.append(os.path.join(next_file_path, f))
+            # print(imgP)
             # print(self.names)
             # print(len(imgP), len(self.names))
             for im in range(len(imgP)):
@@ -235,10 +236,8 @@ class Img(basicImg, AdvancedImg):
             self.faces = facesSamples
             self.ids = ids
             print('成功读取标签')
-            return True
         except FileNotFoundError:
-            print('请检查数据集是否在路径内')
-            return False
+            raise FileNotFoundError('请检查数据集是否在路径内')
 
     def train(self):
         """训练人脸识别模型"""
@@ -294,8 +293,8 @@ class Img(basicImg, AdvancedImg):
                         self.face_name = str(self.names[ids - 1])
                 except:
                     pass
-            self.name_windows('face recognize result')
-            self.show_image('face recognize result', img)
+            #self.name_windows('face recognize result')
+            #self.show_image('face recognize result', img)
         except cv2.error:
             print('请到官网进行反馈')
 
