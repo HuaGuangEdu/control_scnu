@@ -4,6 +4,14 @@
 
 """
 2023/01/09
+control_version:0.8.3
+blcoklyFile_version:2.2.11
+blockly_version:2.2.6
+兼容了中文路径保存图片
+
+"""
+"""
+2023/01/09
 control_version:0.8.2
 blcoklyFile_version:2.2.11
 blockly_version:2.2.6
