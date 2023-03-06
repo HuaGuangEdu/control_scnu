@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
-from .util.all_path import picture_path, model_path, system_platform, digit_template_dir
-import os
+from .util.all_path import picture_path,model_path,system_platform
 
 is_windows = 1 if 'win' in system_platform else 0
 
@@ -10,8 +9,6 @@ if not is_windows:
         import paddlelite.lite
     except:
         print('没有安装paddlelite。请到官网下载树莓派镜像源，并按说明书操作')
-        print('温馨提示：即使有上述提醒，您依然可以正常使用除paddlelite以外的所有功能')
-
 
 def check_model(model):
     if model[-2:] != 'nb' and model[-4:] != 'onnx':
@@ -33,7 +30,7 @@ class AdvancedImg:
         if black:
             gray = cv2.cvtColor(image_data, cv2.COLOR_BGR2GRAY)
             ret, image_data = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY)
-            cv2.imshow('g', image_data)
+            cv2.imshow('g',image_data)
             cv2.waitKey(1)
             image_data = cv2.cvtColor(image_data, cv2.COLOR_GRAY2RGB)
         image_data = cv2.resize(image_data, (shape, shape))
@@ -41,17 +38,17 @@ class AdvancedImg:
         if standard:
             image_data = (image_data - np.array(self.img_mean).reshape(
                 (3, 1, 1))) / np.array(self.img_std).reshape((3, 1, 1))
-        image_data = image_data.reshape([1, 3, shape, shape]).astype('float32')
+        image_data = image_data.reshape([1, 3, shape,shape]).astype('float32')
         return image_data
 
     def classify_number_init(self):
         if is_windows:
             model = 'numbers.onnx'
-            paddle_model = os.path.join(model_path, model)
+            paddle_model = model_path + model
             self.predictor = cv2.dnn.readNetFromONNX(paddle_model)
         else:
             model = 'numbers.nb'
-            paddle_model = os.path.join(model_path, model)
+            paddle_model = model_path + model
             config = paddlelite.lite.MobileConfig()
             config.set_model_from_file(paddle_model)
             self.predictor = paddlelite.lite.create_paddle_predictor(config)
@@ -61,11 +58,11 @@ class AdvancedImg:
         if is_windows:
             raise ImportError('windows下暂不支持目标检测，请充值VIP后再试')
             model = 'pingpong.onnx'
-            paddle_model = os.path.join(model_path, model)
+            paddle_model = model_path + model
             self.predictor = cv2.dnn.readNetFromONNX(paddle_model)
         else:
             model = 'pingpong.nb'
-            paddle_model = os.path.join(model_path, model)
+            paddle_model = model_path + model
             config = paddlelite.lite.MobileConfig()
             config.set_model_from_file(paddle_model)
             self.predictor = paddlelite.lite.create_paddle_predictor(config)
@@ -74,7 +71,7 @@ class AdvancedImg:
 
     def classify_model_init(self, model='numbers.nb'):
         check_model(model)
-        paddle_model = os.path.join(model_path, model)
+        paddle_model = model_path + model
         if not is_windows:
             config = paddlelite.lite.MobileConfig()
             config.set_model_from_file(paddle_model)
@@ -85,7 +82,7 @@ class AdvancedImg:
 
     def detect_model_init(self, model='pingpong.nb'):
         check_model(model)
-        paddle_model = os.path.join(model_path, model)
+        paddle_model = model_path + model
         if not is_windows:
             config = paddlelite.lite.MobileConfig()
             config.set_model_from_file(paddle_model)
@@ -97,8 +94,8 @@ class AdvancedImg:
 
     def infer_number(self):
         input_c, input_h, input_w = 3, 128, 128
-        temp = np.load(digit_template_dir, allow_pickle=True)
-        temp = cv2.resize(temp, (130, 130))
+        temp = cv2.imread(picture_path + 'temp_number.jpg')
+        temp = cv2.resize(temp, (130,130))
         res = cv2.matchTemplate(self.img, temp, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
         w, h = temp.shape[1], temp.shape[0]
@@ -126,13 +123,13 @@ class AdvancedImg:
             self.m_data = -1
 
     def infer_pingpong(self):
-        label, x1, y1, x2, y2 = 'None', 0, 0, 0, 0
+        label, x1, y1, x2, y2 = 'None',0,0,0,0
         datalist = []
         input_h, input_w, input_c = self.img.shape
         img2 = self.img.copy()
         image_data = self.process_image(img2, shape=128)
         if not is_windows:
-            put1 = np.array([128 / input_h, 128 / input_w])
+            put1 = np.array([128/input_h, 128/input_w])
             put1 = put1.reshape([1, 2]).astype('float32')
             self.input_tensor0.from_numpy(image_data)
             self.input_tensor1.from_numpy(put1)
@@ -147,7 +144,7 @@ class AdvancedImg:
             if i[1] >= 0.3:
                 label, pro, x1, y1, x2, y2 = i
                 label = 'ball'
-                datalist.append([label, (x1, y1), (x2, y2)])
+                datalist.append([label,(x1,y1),(x2,y2)])
                 cv2.rectangle(self.img, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
         self.m_data = label
         self.datalist = datalist
