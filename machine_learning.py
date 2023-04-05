@@ -26,9 +26,10 @@ class ModelNew:
         """
         if name.endswith(".proto") or name in [i.replace(".proto", "") for i in os.listdir(model_path) if
                                                i.endswith(".proto")]:
-            name = name + ".proto" if ".proto" not in name else ""
+            name = name + (".proto" if ".proto" not in name else "")
             if not os.path.isabs(name):
                 name = os.path.join(model_path, name)
+
             model = joblib.load(name)
 
         elif name == model_name['决策树']:
@@ -104,8 +105,12 @@ class ModelNew:
         if not name.endswith(".proto"):
             name += ".proto"
         try:
-            saveName = (model_path if os.path.isabs(name) == False else "") + name
+            if os.path.isabs(name) == False:
+                saveName = os.path.join(model_path, name)
+            else:
+                saveName = name
             joblib.dump(self.model, saveName)  # 模型后缀名统一为.proto
+            print(saveName)
             print("保存模型成功！")
         except:
             print('保存模型失败！')

@@ -5,7 +5,7 @@ import numpy as np
 import pyzbar.pyzbar as pyzbar
 from typing import Any
 from .util.all_path import picture_path, system_platform
-
+import shutil
 
 def new_file(path: str):
     """
@@ -38,6 +38,9 @@ def pic_read(filename: str, mode: int):
     img = cv2.imdecode(raw_data, mode)
     return img
 
+def change_chinese(Str:str):
+
+    pass
 
 class basicImg:
     """
@@ -119,12 +122,13 @@ class basicImg:
         Returns:
 
         """
+        img_copy = self.img.copy()
         if flip_by == 'y':
-            self.img = cv2.flip(self.img, 1)
+            self.img = cv2.flip(img_copy, 1)
         elif flip_by == 'x':
-            self.img = cv2.flip(self.img, 0)
+            self.img = cv2.flip(img_copy, 0)
         elif flip_by == 'xy':
-            self.img = cv2.flip(self.img, -1)
+            self.img = cv2.flip(img_copy, -1)
 
     # get_frame 是从某个路径中获取图片
     def get_frame(self, path: str, file_dir: str):
@@ -190,18 +194,28 @@ class basicImg:
         Returns:
 
         """
+
         if pic_name.split(".")[-1] not in ["jpg", "png"]:
             raise NameError("图片名字缺少后缀jpg或者png或者后缀不对,请使用xx.jpg或xx.png这种名字来保存")
+        pic_name = pic_name.replace("\\", "/")
+        # 中间变量，使得我们可以保存图片为中文文件名
 
-        if os.path.isabs(pic_name):  # 如果是绝对路径，那就不修改
-            path = pic_name
-        else:  # 如果是相对路径，那就补成绝对路径
+        # 因为opencv不支持保存为中文文件名，为防止中文文件名保存失败，所以先保存成英文的
+        temp_name = "huaguangTemp." + pic_name.split(".")[-1]
+        if os.path.exists(temp_name):
+            # 如果这个图片已经存在。就把他删除。不然会报错
+            os.remove(temp_name)
+        result = cv2.imwrite(temp_name, self.img)
+        if os.path.isabs(pic_name) is False:
             path = os.path.join(picture_path, pic_name)
-
-        # path = picture_path + pic_name + mode
-        result = cv2.imwrite(path, self.img)
-        if result == False:
-            raise NameError("保存失败，文件名不能含有中文")
+        else:
+            path = pic_name
+        # 把之前保存的英文文件名的图片改名为用户想要保存的那个文件名
+        if os.path.exists(path):
+            # 如果这个图片已经存在。就把他删除。不然会报错
+            os.remove(path)
+        shutil.copy(temp_name, path)
+        os.remove(temp_name)
         print('图片已保存到：', path)
 
     # resize 是用来改变图像的大小的
@@ -214,7 +228,8 @@ class basicImg:
         Returns:
 
         """
-        self.img = cv2.resize(self.img, newsize)
+        img_copy = self.img.copy()
+        self.img = cv2.resize(img_copy, newsize)
 
     # delay 是用来进行展示延时的，有一个或者多个窗口进行展示时，此函数必须用上
     def delay(self, time: int = 1):
@@ -238,7 +253,8 @@ class basicImg:
         Returns:
 
         """
-        self.img = cv2.erode(self.img, None, iterations=2)
+        img_copy = self.img.copy()
+        self.img = cv2.erode(img_copy, None, iterations=2)
 
     # dilation 是用来给图片进行膨胀操作的
     def dilation(self):
@@ -247,7 +263,8 @@ class basicImg:
         Returns:
 
         """
-        self.img = cv2.dilate(self.img, None, iterations=2)
+        img_copy = self.img.copy()
+        self.img = cv2.dilate(img_copy, None, iterations=2)
 
     # BGR2GRAY是用来将彩色图转成灰度图的
     def BGR2GRAY(self):
@@ -256,7 +273,8 @@ class basicImg:
         Returns:
 
         """
-        self.img = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+        img_copy = self.img.copy()
+        self.img = cv2.cvtColor(img_copy, cv2.COLOR_BGR2GRAY)
 
     # GRAY2BIN 是用来将灰度图转成二值化图的
     def GRAY2BIN(self):
@@ -265,16 +283,22 @@ class basicImg:
         Returns:
 
         """
-        _, self.img = cv2.threshold(self.img, 0, 255, cv2.THRESH_OTSU)
+        img_copy = self.img.copy()
+        _, self.img = cv2.threshold(img_copy, 0, 255, cv2.THRESH_OTSU)
 
-    def canny(self):
+    def canny(self, threshold1: int = 30, threshold2: int = 100):
         """
         边缘检测
-        Returns:
-
+        :param threshold1: 下界阈值
+        :param threshold2:  上界阈值
+        :return:
         """
-        canny_img = cv2.Canny(self.img, 30, 100)
-        cv2.imshow('canny', canny_img)
+        img_copy = self.img.copy()
+        if not (0 < threshold1 < 255 and 0 < threshold2 < 255):
+            raise ValueError("阈值必须再0到255之间")
+        if threshold1 > threshold2:
+            raise ValueError("第一个阈值不能高于第二个阈值")
+        self.img = cv2.Canny(img_copy, threshold1, threshold2)
 
     def find_Contour(self):
         """
@@ -282,12 +306,13 @@ class basicImg:
         Returns:
 
         """
+        img_copy = self.img.copy()
         if self.img.ndim == 2:
             raise ValueError('imgTypeError: 输入的图片必须是彩色图像')
-        gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(img_copy, cv2.COLOR_BGR2GRAY)
         _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)
         contours, _ = cv2.findContours(binary, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
-        cv2.drawContours(self.img, contours, -1, (255, 0, 0), 3)
+        self.img = cv2.drawContours(img_copy, contours, -1, (255, 0, 0), 3)
 
     def img_type(self):
         """
@@ -323,18 +348,17 @@ class basicImg:
 
         """
         barcodes = pyzbar.decode(image)
-        img = self.img
+        img_copy = self.img.copy()
         for barcode in barcodes:
             (x, y, w, h) = barcode.rect
-            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 5)
-            cv2.circle(img, (int(x + w / 2), int(y + h / 2)), int(h / 2), (255, 0, 0), 5)
+            cv2.rectangle(img_copy, (x, y), (x + w, y + h), (0, 0, 255), 5)
+            cv2.circle(img_copy, (int(x + w / 2), int(y + h / 2)), int(h / 2), (255, 0, 0), 5)
             barcodeData = barcode.data.decode("utf-8")
             self.er_data = barcodeData
             self.QR_code_data = self.er_data
         # self.name_windows('Result of QRcode')
         # self.show_image('Result of QRcode', img)
-        img = cv2.resize(self.img, dsize=(640, 480))
-        cv2.imshow('Result of QRcode', img)
+        self.img = cv2.resize(img_copy, dsize=(640, 480))
 
     def erweima_detect(self):
         """
@@ -364,19 +388,17 @@ class basicImg:
         fc = v1 * 12.5  # 双边滤波参数之一
         p = 0.1
         # 双边滤波
-        copy = self.img
-        temp1 = cv2.bilateralFilter(copy, dx, fc, fc)
-        temp2 = cv2.subtract(temp1, copy)
+        img_copy = self.img.copy()
+        temp1 = cv2.bilateralFilter(img_copy, dx, fc, fc)
+        temp2 = cv2.subtract(temp1, img_copy)
         temp2 = cv2.add(temp2, (10, 10, 10, 128))
         # 高斯模糊
         temp3 = cv2.GaussianBlur(temp2, (2 * v2 - 1, 2 * v2 - 1), 0)
-        temp4 = cv2.add(copy, temp3)
-        dst = cv2.addWeighted(copy, p, temp4, 1 - p, 0.0)
+        temp4 = cv2.add(img_copy, temp3)
+        dst = cv2.addWeighted(img_copy, p, temp4, 1 - p, 0.0)
         img = cv2.add(dst, (10, 10, 10, 255))
-        self.name_windows('after_beauty')
         # self.show_image('after_beauty', img)
-        img = cv2.resize(self.img, dsize=(640, 480))
-        cv2.imshow('after_beauty', img)
+        self.img = cv2.resize(img, dsize=(640, 480))
 
     """
         以下是彬锋师兄于2021年初写的视觉函数，用于重庆杯的比赛内容
@@ -623,3 +645,42 @@ class basicImg:
         cx = int(M["m10"] / M["m00"])
         cy = int(M["m01"] / M["m00"])
         return [cx, cy]
+
+    def filter(self, dsize: int, type: str = "average"):
+        """
+        图像滤波
+        :param dsize: 滤波核的大小，越大越平滑，但可能会很模糊
+        :param type: 选择的滤波类型：average：均值，box：方框滤波，gaussian：高斯滤波，median：中值滤波，bilateral：双边滤波
+        :return: None
+        """
+        if dsize != int(dsize) or dsize < 1:
+            # 表示dsize不是整数
+            raise ValueError("核大小必须是大于0的整数")
+        img_copy = self.img.copy()
+        if type == "average":
+            # 均值滤波
+            img = cv2.blur(img_copy, (dsize, dsize))
+        elif type == "box":
+            # 方框滤波
+            if dsize > 3:
+                print("对于方框滤波来说，核大小不宜过大")
+            img = cv2.boxFilter(img_copy, -1, (dsize, dsize), normalize=False)
+        elif type == "gaussian":
+            # 高斯滤波
+            if dsize % 2 == 0:
+                raise ValueError("高斯滤波的核大小必须是奇数")
+            img = cv2.GaussianBlur(img_copy, (dsize, dsize), 0, 0)
+        elif type == "median":
+            # 中值滤波
+            if dsize % 2 == 0:
+                raise ValueError("中值滤波的核大小必须是奇数")
+            img = cv2.medianBlur(img_copy, dsize)
+        elif type == "bilateral":
+            # 双边滤波
+            img = cv2.bilateralFilter(img_copy, dsize, 100, 100)
+        else:
+            print("没有这个滤波类型")
+        self.img = img
+
+    def count(self, pixelValue: int):
+        return np.sum(self.img == pixelValue)
