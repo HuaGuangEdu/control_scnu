@@ -3,6 +3,11 @@
 """
 
 """
+2022/04/23
+没有更新，只是发现有些更新日志没有写上去。现在已经是0.8.6了，希望下一任能够继续完善本库，善待本库，有时间就每周一更。更新完记得github也更上去，别版本错乱了
+"""
+
+"""
 2023/03/04
 control_version:0.8.3
 blcoklyFile_version:2.2.11
@@ -251,6 +256,7 @@ blockly_version:2.2.2
 忘了修改了什么
 
 """
+
 """
 2022/5/10
 control_version:0.5.10
@@ -266,6 +272,7 @@ blcoklyFile_version:2.2.6
 blockly_version:2.2.2
 修改舵机
 """
+
 """
 2022/5/5
 control_version:0.5.8
@@ -287,7 +294,7 @@ blockly_version:2.2.2
 1.加入摄像头判定语句，若为Win系统则不进行缩放（电脑算力足够）
 2.修改显示图像resize逻辑，直接写为640，320大小。（之前是放大两倍存在逻辑问题）
 更改了了blockly读取图片逻辑奇怪的问题
-contro对应加入了一个self.picture参数判断
+control对应加入了一个self.picture参数判断
 """
 
 """
@@ -332,6 +339,7 @@ blockly_version:2.2.1
 增加了模版匹配函数
 增加了模版匹配的块
 """
+
 """
 2022/3/27
 control_version:0.5.2
@@ -342,6 +350,7 @@ blockly_version:2.2.1
 增加了屏幕函数
 修改了仿真器的块
 """
+
 """
 2022/3/21
 control_version:0.5.1
@@ -350,6 +359,7 @@ blockly_version:2.2.1
 更新内容：
 修改了在树莓派不能调用摄像头的bug
 """
+
 """
 2022/3/21
 control_version:0.5.0
@@ -364,6 +374,7 @@ blockly_version:2.2.1
 6.删除了原来有的人脸检测，换成了mediapipe的
 7.增加了背景图像切换的操作
 """
+
 """
 2022/3/13
 control_version:0.4.2
@@ -377,6 +388,7 @@ blockly_version:2.2.1
 5、增加了轮廓检测的块
 6、修改了返回图像类型的块的代码区域的内容
 """
+
 """
 2022/3/7
 control_version:0.4.1
