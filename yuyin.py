@@ -70,7 +70,7 @@ def play_music(filename: str):
     os.chdir(precwd)
 
 
-def get_music_file(filename: str):
+def get_music_file_return(filename: str):
     """
     获取对应路径的音频文件
     :param filename: 音频文件名
