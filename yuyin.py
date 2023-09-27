@@ -70,6 +70,22 @@ def play_music(filename: str):
     os.chdir(precwd)
 
 
+def get_music_file(filename: str):
+    """
+    获取对应路径的音频文件
+    :param filename: 音频文件名
+    :return: 音频文件字节流
+    """
+    if os.path.exists(os.path.join(audio_path, filename + ".mp3")):
+        filename += ".mp3"
+    elif os.path.exists(os.path.join(audio_path, filename + ".wav")):
+        filename += ".wav"
+    else:
+        raise FileNotFoundError("找不到该音频文件，是不是还没录制呢？")
+    with open(os.path.join(audio_path, filename), "rb") as f:
+        return f.read()
+
+
 def my_record(TIME: int, file_name: str):
     """
     机器人录音，并将录音保存到.wav文件
