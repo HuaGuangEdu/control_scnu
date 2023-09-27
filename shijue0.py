@@ -112,6 +112,19 @@ class basicImg:
         else:
             print("未检测到摄像头，请注意摄像头是否接触不良或者未设置允许摄像头")
 
+    def get_img_and_return(self):
+        """
+        获取图片，并返回图片
+        Returns:
+
+        """
+        self.ret, img = self.cam.read()
+        if self.ret:
+            self.img = img
+            return img
+        else:
+            raise OSError("未检测到摄像头，请注意摄像头是否接触不良或者未设置允许摄像头")
+
     # img_flip 是用来翻转镜像图片的
     def img_flip(self, flip_by: str):
         """
