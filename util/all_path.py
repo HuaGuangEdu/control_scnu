@@ -32,10 +32,14 @@ picture_path = os.path.join(class_path, 'picture')
 speech_path = os.path.join(class_path, 'speech')
 txt_path = os.path.join(class_path, 'txt')
 
-
+# 新的cheakpath
 def checkPathExists(path):
-    if os.path.exists(path) is False:
-        os.mkdir(path)
+    if not os.path.exists(path):  # 如果已经有了是不会创建目录的
+        os.makedirs(path, exist_ok=True)
+
+# 检查并创建目录
+checkPathExists(class_path)
+
 
 
 for path in [class_path, data_path, decorate_path, emulator_files_path, file_operation_path, fonts_path, model_path,
