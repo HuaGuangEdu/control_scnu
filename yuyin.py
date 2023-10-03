@@ -120,9 +120,17 @@ def my_record(TIME: int, file_name: str):
     except:
         print("打开电脑音频失败，请重新尝试")
         exit()
+    save_wav_file(file_name, CHANNELS, frames, RATE, FORMAT)
 
+
+def my_record_and_return(TIME: int, file_name: str):
+    my_record(TIME, file_name)
+    return get_music_file_return(file_name)
+
+
+def save_wav_file(filename: str, CHANNELS: int, frames: list, RATE: int, FORMAT: int):
     # 打开WAV文件，以二进制写模式，并对WAV文件进行一系列操作
-    wf = wave.open(file_name, 'wb')
+    wf = wave.open(filename, 'wb')
     wf.setnchannels(CHANNELS)
     wf.setsampwidth(p.get_sample_size(FORMAT))
     wf.setframerate(RATE)
@@ -548,12 +556,7 @@ class Yuyin:
             exit()
 
         # 打开WAV文件，以二进制写模式，并对WAV文件进行一系列操作
-        wf = wave.open(file_name, 'wb')
-        wf.setnchannels(CHANNELS)
-        wf.setsampwidth(self.p.get_sample_size(FORMAT))
-        wf.setframerate(RATE)
-        wf.writeframes(b''.join(frames))
-        wf.close()
+        save_wav_file(file_name, CHANNELS, frames, RATE, FORMAT)
         if self.online or "win" not in system_platform:
             file_new_name = os.path.join(audio_path, 'new.wav')
             # 通过downsampleWav（）函数对录音的音频文件进行修改
