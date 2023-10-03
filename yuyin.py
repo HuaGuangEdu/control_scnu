@@ -129,6 +129,18 @@ def my_record_and_return(TIME: int, file_name: str):
     return json.dumps({"type": "audio", "data": get_music_file_return(file_name)})
 
 
+def write_wav_file_to_file(filename: str, data):
+    """
+    将音频文件写入到文件中
+    :param filename: 文件路径
+    :param data: 文件内容
+    :return:
+    """
+    filename = os.path.join(audio_path, str(filename) + '.wav')
+    with open(filename, "wb") as f:
+        f.write(data)
+
+
 def save_wav_file(filename: str, CHANNELS: int, frames: list, RATE: int, FORMAT: int):
     # 打开WAV文件，以二进制写模式，并对WAV文件进行一系列操作
     wf = wave.open(filename, 'wb')
