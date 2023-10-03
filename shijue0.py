@@ -1,3 +1,4 @@
+import json
 import os
 import cv2
 import imutils
@@ -114,14 +115,14 @@ class basicImg:
 
     def get_img_and_return(self):
         """
-        获取图片，并返回图片
+        获取图片，并返回图片，专门为远程控制设计的
         Returns:
 
         """
         self.ret, img = self.cam.read()
         if self.ret:
             self.img = img
-            return img
+            return json.dumps({'type': 'img', 'data': img})
         else:
             raise OSError("未检测到摄像头，请注意摄像头是否接触不良或者未设置允许摄像头")
 

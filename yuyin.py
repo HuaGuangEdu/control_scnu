@@ -3,6 +3,7 @@
 """
 这是用来实现机器人语音的源码程序
 """
+import json
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -125,7 +126,7 @@ def my_record(TIME: int, file_name: str):
 
 def my_record_and_return(TIME: int, file_name: str):
     my_record(TIME, file_name)
-    return get_music_file_return(file_name)
+    return json.dumps({"type": "audio", "data": get_music_file_return(file_name)})
 
 
 def save_wav_file(filename: str, CHANNELS: int, frames: list, RATE: int, FORMAT: int):
