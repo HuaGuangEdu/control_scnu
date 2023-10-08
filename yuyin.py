@@ -136,7 +136,7 @@ def my_record_and_return(TIME: int, file_name: str):
     return {"type": "audio", "data": get_music_file_return(file_name)}
 
 
-def write_wav_file_to_file(filename: str, data):
+def write_wav_bytes_to_file(filename: str, data):
     """
     将音频文件写入到文件中
     :param filename: 文件路径
