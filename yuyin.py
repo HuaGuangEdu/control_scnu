@@ -73,7 +73,7 @@ def play_music(filename: str):
 
 def get_music_file_return(filename: str):
     """
-    获取对应路径的音频文件
+    获取对应路径的音频文件的字节流数据
     :param filename: 音频文件名
     :return: 音频文件字节流
     """

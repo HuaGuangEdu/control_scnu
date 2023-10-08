@@ -122,7 +122,7 @@ class basicImg:
         self.ret, img = self.cam.read()
         if self.ret:
             self.img = img
-            return json.dumps({'type': 'img', 'data': img})
+            return {'type': 'img', 'data': cv2.imencode('.jpg', self.img)[1].tobytes()}
         else:
             raise OSError("未检测到摄像头，请注意摄像头是否接触不良或者未设置允许摄像头")
 
