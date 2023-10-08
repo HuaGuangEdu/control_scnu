@@ -121,12 +121,19 @@ def my_record(TIME: int, file_name: str):
     except:
         print("打开电脑音频失败，请重新尝试")
         exit()
-    save_wav_file(file_name, CHANNELS, frames, RATE, FORMAT)
+
+    # 打开WAV文件，以二进制写模式，并对WAV文件进行一系列操作
+    wf = wave.open(file_name, 'wb')
+    wf.setnchannels(CHANNELS)
+    wf.setsampwidth(p.get_sample_size(FORMAT))
+    wf.setframerate(RATE)
+    wf.writeframes(b''.join(frames))
+    wf.close()
 
 
 def my_record_and_return(TIME: int, file_name: str):
     my_record(TIME, file_name)
-    return json.dumps({"type": "audio", "data": get_music_file_return(file_name)})
+    return {"type": "audio", "data": get_music_file_return(file_name)}
 
 
 def write_wav_file_to_file(filename: str, data):
@@ -136,19 +143,12 @@ def write_wav_file_to_file(filename: str, data):
     :param data: 文件内容
     :return:
     """
-    filename = os.path.join(audio_path, str(filename) + '.wav')
-    with open(filename, "wb") as f:
-        f.write(data)
-
-
-def save_wav_file(filename: str, CHANNELS: int, frames: list, RATE: int, FORMAT: int):
-    # 打开WAV文件，以二进制写模式，并对WAV文件进行一系列操作
-    wf = wave.open(filename, 'wb')
-    wf.setnchannels(CHANNELS)
-    wf.setsampwidth(p.get_sample_size(FORMAT))
-    wf.setframerate(RATE)
-    wf.writeframes(b''.join(frames))
-    wf.close()
+    if data:
+        filename = os.path.join(audio_path, str(filename) + '.wav')
+        with open(filename, "wb") as f:
+            f.write(data)
+    else:
+        raise ValueError("data 不能为空")
 
 
 class SpeechRecognizer:
@@ -569,7 +569,12 @@ class Yuyin:
             exit()
 
         # 打开WAV文件，以二进制写模式，并对WAV文件进行一系列操作
-        save_wav_file(file_name, CHANNELS, frames, RATE, FORMAT)
+        wf = wave.open(file_name, 'wb')
+        wf.setnchannels(CHANNELS)
+        wf.setsampwidth(self.p.get_sample_size(FORMAT))
+        wf.setframerate(RATE)
+        wf.writeframes(b''.join(frames))
+        wf.close()
         if self.online or "win" not in system_platform:
             file_new_name = os.path.join(audio_path, 'new.wav')
             # 通过downsampleWav（）函数对录音的音频文件进行修改
