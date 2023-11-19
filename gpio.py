@@ -340,6 +340,14 @@ class CSB:
         distance_cm = round(distance_cm, 2)  # 保留两位小数  使用round内置函数
         self.dis = int(distance_cm)
 
+    def get_distance_and_return(self):
+        """
+        通过传感器返回值进行计算
+        :return: 距离的json数据
+        """
+        self.get_distance()
+        return {'type': 'int', 'data': self.dis}
+
 
 # 普通io口的蜂鸣器,有源蜂鸣器
 class Beep:
